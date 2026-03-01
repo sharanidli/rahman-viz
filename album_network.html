@@ -14965,12 +14965,23 @@ function showTooltip(ev, n) {
     const connected = e.data.source === n.id || e.data.target === n.id;
     e.line.setAttribute('stroke', connected ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.02)');
   });
-  // Only the hovered node stays bright; everything else vanishes
+  // Find the strongest connection
+  const connEdges = edges.filter(e => e.source === n.id || e.target === n.id);
+  let bestId = null, bestWeight = 0;
+  connEdges.forEach(e => {
+    if (e.weight > bestWeight) {
+      bestWeight = e.weight;
+      bestId = e.source === n.id ? e.target : e.source;
+    }
+  });
+
+  // Hovered + strongest connection stay visible; everything else vanishes
   nodeEls.forEach(ne => {
     const isHovered = ne.data.id === n.id;
-    ne.circle.setAttribute('opacity', isHovered ? 1 : 0);
+    const isBest = ne.data.id === bestId;
+    ne.circle.setAttribute('opacity', (isHovered || isBest) ? 1 : 0);
     ne.glow.setAttribute('opacity', isHovered ? 0.3 : 0);
-    ne.texts.forEach(t => t.setAttribute('opacity', isHovered ? 1 : 0));
+    ne.texts.forEach(t => t.setAttribute('opacity', (isHovered || isBest) ? 1 : 0));
     if (isHovered) {
       ne.circle.setAttribute('r', ne.data.radius * 1.3);
       ne.glow.setAttribute('r', (ne.data.radius + 8) * 1.3);
