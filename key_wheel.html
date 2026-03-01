@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AR Rahman — Key & Mode Wheel</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0a1a;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+  #header {
+    padding: 24px 24px 8px;
+    text-align: center;
+  }
+  #header h1 { font-size: 22px; font-weight: 700; color: #fff; }
+  #header p { font-size: 13px; color: #888; margin-top: 4px; }
+
+  #stats {
+    display: flex; gap: 32px; justify-content: center;
+    padding: 12px 24px; margin-bottom: 8px;
+  }
+  .stat-box { text-align: center; }
+  .stat-num { font-size: 24px; font-weight: 700; }
+  .stat-label { font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  #tooltip {
+    position: fixed; pointer-events: none;
+    background: rgba(20, 20, 40, 0.96);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px; padding: 14px 18px;
+    font-size: 13px; line-height: 1.6;
+    max-width: 320px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    display: none; z-index: 100;
+    backdrop-filter: blur(8px);
+  }
+
+  #legend {
+    display: flex; gap: 24px; justify-content: center;
+    padding: 8px; font-size: 12px;
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-swatch { width: 14px; height: 14px; border-radius: 3px; }
+
+  /* Track list for selected key */
+  #track-list {
+    position: fixed; right: 20px; top: 80px; bottom: 20px;
+    width: 240px; overflow-y: auto;
+    background: rgba(20, 20, 40, 0.85);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px; padding: 12px;
+    backdrop-filter: blur(8px);
+    font-size: 11px; z-index: 10;
+    display: none;
+  }
+  #track-list h3 { font-size: 12px; color: #f0c46c; margin-bottom: 8px; }
+  #track-list .track-item { padding: 3px 0; color: #aaa; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  #track-list .track-item .mode-tag {
+    display: inline-block; font-size: 9px; padding: 1px 4px; border-radius: 3px;
+    margin-left: 4px;
+  }
+  #track-list-close {
+    position: absolute; top: 8px; right: 10px; cursor: pointer;
+    color: #666; font-size: 16px;
+  }
+  #track-list-close:hover { color: #fff; }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <h1>AR Rahman — Key & Mode Wheel</h1>
+  <p>Which musical keys does Rahman favour? &middot; Click a segment to see tracks</p>
+</div>
+
+<div id="stats">
+  <div class="stat-box">
+    <div class="stat-num" style="color:#f0c46c">268</div>
+    <div class="stat-label">Tracks Analyzed</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-num" style="color:#e8836a">164</div>
+    <div class="stat-label">Major Key</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-num" style="color:#6ab0d4">104</div>
+    <div class="stat-label">Minor Key</div>
+  </div>
+</div>
+
+<div id="legend">
+  <div class="legend-item">
+    <div class="legend-swatch" style="background:#e8836a"></div>
+    <span style="color:#aaa">Major</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-swatch" style="background:#6ab0d4"></div>
+    <span style="color:#aaa">Minor</span>
+  </div>
+</div>
+
+<div id="tooltip"></div>
+<div id="track-list">
+  <span id="track-list-close">&times;</span>
+  <div id="track-list-content"></div>
+</div>
+
+<svg id="chart"></svg>
+
+<script>
+const DATA = {"wheel": [{"key": 0, "keyName": "C", "major": 17, "minor": 2, "total": 19}, {"key": 1, "keyName": "C#/Db", "major": 10, "minor": 6, "total": 16}, {"key": 2, "keyName": "D", "major": 40, "minor": 4, "total": 44}, {"key": 3, "keyName": "D#/Eb", "major": 1, "minor": 2, "total": 3}, {"key": 4, "keyName": "E", "major": 11, "minor": 15, "total": 26}, {"key": 5, "keyName": "F", "major": 9, "minor": 10, "total": 19}, {"key": 6, "keyName": "F#/Gb", "major": 14, "minor": 14, "total": 28}, {"key": 7, "keyName": "G", "major": 29, "minor": 11, "total": 40}, {"key": 8, "keyName": "G#/Ab", "major": 7, "minor": 2, "total": 9}, {"key": 9, "keyName": "A", "major": 15, "minor": 10, "total": 25}, {"key": 10, "keyName": "A#/Bb", "major": 2, "minor": 8, "total": 10}, {"key": 11, "keyName": "B", "major": 9, "minor": 20, "total": 29}], "tracks": [{"title": "Endrendrum Punnagai", "album": "Alai Payuthey", "year": 2000, "key": 7, "keyName": "G", "mode": 1, "modeName": "Major", "energy": 0.421, "valence": 0.842, "tempo": 110.0}, {"title": "Snehidhane, Pt. 1", "album": "Alai Payuthey", "year": 2000, "key": 5, "keyName": "F", "mode": 0, "modeName": "Minor", "energy": 0.343, "valence": 0.416, "tempo": 104.0}, {"title": "Yaro Yarodi", "album": "Alai Payuthey", "year": 2000, "key": 9, "keyName": "A", "mode": 1, "modeName": "Major", "energy": 0.299, "valence": 0.43, "tempo": 131.0}, {"title": "Alai Payuthey", "album": "Alai Payuthey", "year": 2000, "key": 6, "keyName": "F#/Gb", "mode": 0, "modeName": "Minor", "energy": 0.542, "valence": 0.462, "tempo": 82.0}, {"title": "Evano Oruvan", "album": "Alai Payuthey", "year": 2000, "key": 10, "keyName": "A#/Bb", "mode": 0, "modeName": "Minor", "energy": 0.337, "valence": 0.372, "tempo": 114.9}, {"title": "Pachai Nirame", "album": "Alai Payuthey", "year": 2000, "key": 1, "keyName": "C#/Db", "mode": 0, "modeName": "Minor", "energy": 0.399, "valence": 0.579, "tempo": 88.0}, {"title": "September Madham", "album": "Alai Payuthey", "year": 2000, "key": 8, "keyName": "G#/Ab", "mode": 1, "modeName": "Major", "energy": 0.523, "valence": 0.921, "tempo": 137.0}, {"title": "Kadhal Sadugudu", "album": "Alai Payuthey", "year": 2000, "key": 7, "keyName": "G", "mode": 0, "modeName": "Minor", "energy": 0.272, "valence": 0.372, "tempo": 88.0}, {"title": "Snehidhane, Pt. 2", "album": "Alai Payuthey", "year": 2000, "key": 8, "keyName": "G#/Ab", "mode": 1, "modeName": "Major", "energy": 0.345, "valence": 0.496, "tempo": 104.0}, {"title": "Enga Poonuku Enna Korachal - Dialogues", "album": "Alai Payuthey", "year": 2000, "key": 1, "keyName": "C#/Db", "mode": 1, "modeName": "Major", "energy": 0.782, "valence": 0.961, "tempo": 86.1}, {"title": "Yean Da Unna Vazhathu - Dialogues", "album": "Alai Payuthey", "year": 2000, "key": 5, "keyName": "F", "mode": 0, "modeName": "Minor", "energy": 0.432, "valence": 0.964, "tempo": 88.9}, {"title": "Yaar Nu Theriyathu - Dialogues", "album": "Alai Payuthey", "year": 2000, "key": 11, "keyName": "B", "mode": 1, "modeName": "Major", "energy": 0.436, "valence": 0.968, "tempo": 82.8}, {"title": "Shakthi Naan Unna Virumbala - Dialogues", "album": "Alai Payuthey", "year": 2000, "key": 6, "keyName": "F#/Gb", "mode": 0, "modeName": "Minor", "energy": 0.596, "valence": 0.758, "tempo": 116.8}, {"title": "Per Ennakarthick - Dialogues", "album": "Alai Payuthey", "year": 2000, "key": 6, "keyName": "F#/Gb", "mode": 0, "modeName": "Minor", "energy": 0.646, "valence": 0.331, "tempo": 83.3}, {"title": "Shakthi Yaa Koopidungae - Dialogues", "album": "Alai Payuthey", "year": 2000, "key": 1, "keyName": "C#/Db", "mode": 1, "modeName": "Major", "energy": 0.321, "valence": 0.748, "tempo": 117.4}, {"title": "Hello Yaar - Dialogues", "album": "Alai Payuthey", "year": 2000, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.496, "valence": 0.808, "tempo": 69.1}, {"title": "Nee Eppadi Apadi Sollalam - Dialogues", "album": "Alai Payuthey", "year": 2000, "key": 8, "keyName": "G#/Ab", "mode": 1, "modeName": "Major", "energy": 0.866, "valence": 0.711, "tempo": 128.1}, {"title": "Hey Enna Aachu - Dialogues", "album": "Alai Payuthey", "year": 2000, "key": 10, "keyName": "A#/Bb", "mode": 0, "modeName": "Minor", "energy": 0.701, "valence": 0.701, "tempo": 68.6}, {"title": "Indha Kadhal Unnaku - Dialogues", "album": "Alai Payuthey", "year": 2000, "key": 1, "keyName": "C#/Db", "mode": 0, "modeName": "Minor", "energy": 0.534, "valence": 0.819, "tempo": 117.2}, {"title": "Yean Enna Thedi Vara - Dialogues", "album": "Alai Payuthey", "year": 2000, "key": 10, "keyName": "A#/Bb", "mode": 0, "modeName": "Minor", "energy": 0.781, "valence": 0.335, "tempo": 108.8}, {"title": "Edhu Enna Thirutu - Dialogues", "album": "Alai Payuthey", "year": 2000, "key": 11, "keyName": "B", "mode": 0, "modeName": "Minor", "energy": 0.775, "valence": 0.646, "tempo": 131.8}, {"title": "Marriage Certificate En Kaila - Dialogues", "album": "Alai Payuthey", "year": 2000, "key": 5, "keyName": "F", "mode": 1, "modeName": "Major", "energy": 0.381, "valence": 0.963, "tempo": 217.3}, {"title": "Hello I Love U - Dialogues", "album": "Alai Payuthey", "year": 2000, "key": 7, "keyName": "G", "mode": 1, "modeName": "Major", "energy": 0.432, "valence": 0.93, "tempo": 119.2}, {"title": "Rendu Nimisham Thaan Erukku - Dialogues", "album": "Alai Payuthey", "year": 2000, "key": 10, "keyName": "A#/Bb", "mode": 0, "modeName": "Minor", "energy": 0.622, "valence": 0.673, "tempo": 103.3}, {"title": "Bombay Theme", "album": "Bombay", "year": 1995, "key": 7, "keyName": "G", "mode": 1, "modeName": "Major", "energy": 0.177, "valence": 0.04, "tempo": 81.2}, {"title": "Kannalane", "album": "Bombay", "year": 1995, "key": 4, "keyName": "E", "mode": 0, "modeName": "Minor", "energy": 0.587, "valence": 0.562, "tempo": 127.0}, {"title": "Andha Arabi Kadaloram", "album": "Bombay", "year": 1995, "key": 0, "keyName": "C", "mode": 1, "modeName": "Major", "energy": 0.841, "valence": 0.807, "tempo": 95.0}, {"title": "Uyire Uyire", "album": "Bombay", "year": 1995, "key": 3, "keyName": "D#/Eb", "mode": 1, "modeName": "Major", "energy": 0.384, "valence": 0.423, "tempo": 100.6}, {"title": "Kuchi Kuchi Rakkamma", "album": "Bombay", "year": 1995, "key": 7, "keyName": "G", "mode": 1, "modeName": "Major", "energy": 0.762, "valence": 0.82, "tempo": 176.2}, {"title": "Poovukku Enna Poottu", "album": "Bombay", "year": 1995, "key": 7, "keyName": "G", "mode": 0, "modeName": "Minor", "energy": 0.905, "valence": 0.798, "tempo": 124.0}, {"title": "Daud", "album": "Daud", "year": 1997, "key": 7, "keyName": "G", "mode": 1, "modeName": "Major", "energy": 0.596, "valence": 0.331, "tempo": 125.0}, {"title": "Daud - Bhangra", "album": "Daud", "year": 1997, "key": 0, "keyName": "C", "mode": 1, "modeName": "Major", "energy": 0.516, "valence": 0.374, "tempo": 125.0}, {"title": "O Bhavre", "album": "Daud", "year": 1997, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.433, "valence": 0.745, "tempo": 100.0}, {"title": "O Bhavre - Remix", "album": "Daud", "year": 1997, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.673, "valence": 0.777, "tempo": 100.2}, {"title": "O! Sai Yaiye", "album": "Daud", "year": 1997, "key": 0, "keyName": "C", "mode": 1, "modeName": "Major", "energy": 0.435, "valence": 0.591, "tempo": 93.0}, {"title": "Shabba Shabba", "album": "Daud", "year": 1997, "key": 11, "keyName": "B", "mode": 0, "modeName": "Minor", "energy": 0.425, "valence": 0.725, "tempo": 100.0}, {"title": "The Thump Of Daud - Instrumental", "album": "Daud", "year": 1997, "key": 1, "keyName": "C#/Db", "mode": 0, "modeName": "Minor", "energy": 0.343, "valence": 0.453, "tempo": 180.1}, {"title": "Yeh Jaan", "album": "Daud", "year": 1997, "key": 11, "keyName": "B", "mode": 1, "modeName": "Major", "energy": 0.336, "valence": 0.169, "tempo": 113.0}, {"title": "Zehreela Pyar", "album": "Daud", "year": 1997, "key": 8, "keyName": "G#/Ab", "mode": 0, "modeName": "Minor", "energy": 0.181, "valence": 0.218, "tempo": 114.8}, {"title": "Chaiyya Chaiyya", "album": "Dil Se..", "year": 1998, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.579, "valence": 0.481, "tempo": 90.0}, {"title": "Jiya Jale", "album": "Dil Se..", "year": 1998, "key": 9, "keyName": "A", "mode": 1, "modeName": "Major", "energy": 0.503, "valence": 0.483, "tempo": 142.0}, {"title": "Dil Se Re", "album": "Dil Se..", "year": 1998, "key": 9, "keyName": "A", "mode": 1, "modeName": "Major", "energy": 0.442, "valence": 0.436, "tempo": 106.0}, {"title": "Ae Ajnabi", "album": "Dil Se..", "year": 1998, "key": 11, "keyName": "B", "mode": 0, "modeName": "Minor", "energy": 0.323, "valence": 0.481, "tempo": 122.0}, {"title": "Thayya Thayya", "album": "Dil Se..", "year": 1998, "key": 4, "keyName": "E", "mode": 0, "modeName": "Minor", "energy": 0.704, "valence": 0.205, "tempo": 180.0}, {"title": "Satarangi Re", "album": "Dil Se..", "year": 1998, "key": 3, "keyName": "D#/Eb", "mode": 0, "modeName": "Minor", "energy": 0.504, "valence": 0.345, "tempo": 91.0}, {"title": "Taram Pum Taram Pum", "album": "Doli Saja Ke Rakhna", "year": 1998, "key": 7, "keyName": "G", "mode": 1, "modeName": "Major", "energy": 0.642, "valence": 0.838, "tempo": 136.1}, {"title": "Kissa Hum Likhenge", "album": "Doli Saja Ke Rakhna", "year": 1998, "key": 6, "keyName": "F#/Gb", "mode": 0, "modeName": "Minor", "energy": 0.523, "valence": 0.821, "tempo": 104.0}, {"title": "Chal Kehva Re Kheva", "album": "Doli Saja Ke Rakhna", "year": 1998, "key": 4, "keyName": "E", "mode": 0, "modeName": "Minor", "energy": 0.9, "valence": 0.801, "tempo": 95.0}, {"title": "Jhula Bahon Ka", "album": "Doli Saja Ke Rakhna", "year": 1998, "key": 1, "keyName": "C#/Db", "mode": 0, "modeName": "Minor", "energy": 0.763, "valence": 0.584, "tempo": 95.0}, {"title": "Bol Sajni Mori Sajni", "album": "Doli Saja Ke Rakhna", "year": 1998, "key": 11, "keyName": "B", "mode": 0, "modeName": "Minor", "energy": 0.786, "valence": 0.734, "tempo": 171.9}, {"title": "Jhula Bahon Ka Ii", "album": "Doli Saja Ke Rakhna", "year": 1998, "key": 1, "keyName": "C#/Db", "mode": 0, "modeName": "Minor", "energy": 0.811, "valence": 0.453, "tempo": 95.0}, {"title": "Taram Pum Taram Pum (Instrumental)", "album": "Doli Saja Ke Rakhna", "year": 1998, "key": 7, "keyName": "G", "mode": 1, "modeName": "Major", "energy": 0.746, "valence": 0.796, "tempo": 136.0}, {"title": "Bol Sajni Mori Sajni (Instrumental)", "album": "Doli Saja Ke Rakhna", "year": 1998, "key": 11, "keyName": "B", "mode": 0, "modeName": "Minor", "energy": 0.623, "valence": 0.634, "tempo": 172.0}, {"title": "Kodite Kolatam", "album": "Duet", "year": 1994, "key": 0, "keyName": "C", "mode": 1, "modeName": "Major", "energy": 0.476, "valence": 0.802, "tempo": 67.2}, {"title": "Kalame Kammaga Sage", "album": "Duet", "year": 1994, "key": 10, "keyName": "A#/Bb", "mode": 0, "modeName": "Minor", "energy": 0.585, "valence": 0.94, "tempo": 112.1}, {"title": "Anjali Anjali", "album": "Duet", "year": 1994, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.372, "valence": 0.422, "tempo": 88.7}, {"title": "Nepade Geetham", "album": "Duet", "year": 1994, "key": 9, "keyName": "A", "mode": 1, "modeName": "Major", "energy": 0.424, "valence": 0.332, "tempo": 99.9}, {"title": "Gauti Vanki", "album": "Duet", "year": 1994, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.595, "valence": 0.732, "tempo": 116.2}, {"title": "Vendimabhu Therumeeda", "album": "Duet", "year": 1994, "key": 4, "keyName": "E", "mode": 0, "modeName": "Minor", "energy": 0.454, "valence": 0.552, "tempo": 102.8}, {"title": "Neenecheli Neenecheli", "album": "Duet", "year": 1994, "key": 4, "keyName": "E", "mode": 1, "modeName": "Major", "energy": 0.241, "valence": 0.171, "tempo": 80.9}, {"title": "Anjali Anjali - Sad Version", "album": "Duet", "year": 1994, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.357, "valence": 0.402, "tempo": 87.9}, {"title": "Ruth Aa Gayee Re", "album": "Earth", "year": 1998, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.614, "valence": 0.888, "tempo": 104.0}, {"title": "Dheemi Dheemi", "album": "Earth", "year": 1998, "key": 9, "keyName": "A", "mode": 1, "modeName": "Major", "energy": 0.476, "valence": 0.053, "tempo": 93.1}, {"title": "Yeh Jo Zindagi Hai", "album": "Earth", "year": 1998, "key": 4, "keyName": "E", "mode": 1, "modeName": "Major", "energy": 0.28, "valence": 0.473, "tempo": 67.2}, {"title": "Theme Music", "album": "Earth", "year": 1998, "key": 9, "keyName": "A", "mode": 1, "modeName": "Major", "energy": 0.17, "valence": 0.155, "tempo": 156.5}, {"title": "Raat Ki Daldal Hai", "album": "Earth", "year": 1998, "key": 6, "keyName": "F#/Gb", "mode": 0, "modeName": "Minor", "energy": 0.485, "valence": 0.333, "tempo": 99.9}, {"title": "Ishwar Allah", "album": "Earth", "year": 1998, "key": 7, "keyName": "G", "mode": 1, "modeName": "Major", "energy": 0.384, "valence": 0.058, "tempo": 140.0}, {"title": "Yeh Jo Zindagi Hai", "album": "Earth", "year": 1998, "key": 4, "keyName": "E", "mode": 1, "modeName": "Major", "energy": 0.258, "valence": 0.523, "tempo": 66.4}, {"title": "Piano Music", "album": "Earth", "year": 1998, "key": 9, "keyName": "A", "mode": 0, "modeName": "Minor", "energy": 0.059, "valence": 0.172, "tempo": 168.4}, {"title": "Banno Rani", "album": "Earth", "year": 1998, "key": 11, "keyName": "B", "mode": 1, "modeName": "Major", "energy": 0.518, "valence": 0.828, "tempo": 111.3}, {"title": "Bombay Theme Intro", "album": "Fire", "year": 1996, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.122, "valence": 0.043, "tempo": 81.1}, {"title": "Radha & Sita Love Theme", "album": "Fire", "year": 1996, "key": 0, "keyName": "C", "mode": 1, "modeName": "Major", "energy": 0.156, "valence": 0.033, "tempo": 89.7}, {"title": "Sita's Theme", "album": "Fire", "year": 1996, "key": 0, "keyName": "C", "mode": 1, "modeName": "Major", "energy": 0.108, "valence": 0.038, "tempo": 172.3}, {"title": "Radha's Theme !", "album": "Fire", "year": 1996, "key": 5, "keyName": "F", "mode": 1, "modeName": "Major", "energy": 0.079, "valence": 0.035, "tempo": 85.8}, {"title": "Andha Arabic Kadal", "album": "Fire", "year": 1996, "key": 0, "keyName": "C", "mode": 1, "modeName": "Major", "energy": 0.418, "valence": 0.777, "tempo": 95.0}, {"title": "Mundu's Fantasy Part1", "album": "Fire", "year": 1996, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.115, "valence": 0.034, "tempo": 80.4}, {"title": "Mundu's Fantasy Part2", "album": "Fire", "year": 1996, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.38, "valence": 0.078, "tempo": 125.9}, {"title": "Desire Night", "album": "Fire", "year": 1996, "key": 0, "keyName": "C", "mode": 1, "modeName": "Major", "energy": 0.144, "valence": 0.03, "tempo": 180.6}, {"title": "Bangles Theme", "album": "Fire", "year": 1996, "key": 7, "keyName": "G", "mode": 0, "modeName": "Minor", "energy": 0.173, "valence": 0.093, "tempo": 168.3}, {"title": "Ramayan", "album": "Fire", "year": 1996, "key": 9, "keyName": "A", "mode": 0, "modeName": "Minor", "energy": 0.283, "valence": 0.547, "tempo": 82.4}, {"title": "Allah Hu", "album": "Fire", "year": 1996, "key": 6, "keyName": "F#/Gb", "mode": 1, "modeName": "Major", "energy": 0.596, "valence": 0.046, "tempo": 123.7}, {"title": "Rahda's Confession", "album": "Fire", "year": 1996, "key": 0, "keyName": "C", "mode": 0, "modeName": "Minor", "energy": 0.036, "valence": 0.12, "tempo": 88.3}, {"title": "Passion", "album": "Fire", "year": 1996, "key": 1, "keyName": "C#/Db", "mode": 1, "modeName": "Major", "energy": 0.161, "valence": 0.125, "tempo": 113.0}, {"title": "Bombay Theme Finale & Radha's Soul", "album": "Fire", "year": 1996, "key": 7, "keyName": "G", "mode": 1, "modeName": "Major", "energy": 0.121, "valence": 0.037, "tempo": 80.1}, {"title": "Julie's Theme", "album": "Fire", "year": 1996, "key": 2, "keyName": "D", "mode": 0, "modeName": "Minor", "energy": 0.2, "valence": 0.617, "tempo": 181.9}, {"title": "Chinatown", "album": "Fire", "year": 1996, "key": 7, "keyName": "G", "mode": 0, "modeName": "Minor", "energy": 0.051, "valence": 0.397, "tempo": 88.0}, {"title": "Akadanu Naanga", "album": "Indian", "year": 1996, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.728, "valence": 0.629, "tempo": 88.0}, {"title": "Maya Machindra", "album": "Indian", "year": 1996, "key": 10, "keyName": "A#/Bb", "mode": 0, "modeName": "Minor", "energy": 0.552, "valence": 0.653, "tempo": 100.0}, {"title": "Pachai Kiligal (From \"Indian\")", "album": "Indian", "year": 1996, "key": 5, "keyName": "F", "mode": 1, "modeName": "Major", "energy": 0.339, "valence": 0.878, "tempo": 104.0}, {"title": "Telephone Manipol (From \"Indian\")", "album": "Indian", "year": 1996, "key": 0, "keyName": "C", "mode": 1, "modeName": "Major", "energy": 0.539, "valence": 0.556, "tempo": 93.0}, {"title": "Kappaleri Poyaachu (From \"Indian\")", "album": "Indian", "year": 1996, "key": 5, "keyName": "F", "mode": 0, "modeName": "Minor", "energy": 0.58, "valence": 0.186, "tempo": 115.0}, {"title": "Anbae Anbae", "album": "Jeans", "year": 1998, "key": 5, "keyName": "F", "mode": 0, "modeName": "Minor", "energy": 0.557, "valence": 0.799, "tempo": 122.0}, {"title": "Columbus Columbus", "album": "Jeans", "year": 1998, "key": 11, "keyName": "B", "mode": 0, "modeName": "Minor", "energy": 0.681, "valence": 0.738, "tempo": 106.0}, {"title": "Enakke Enakkaa", "album": "Jeans", "year": 1998, "key": 11, "keyName": "B", "mode": 0, "modeName": "Minor", "energy": 0.794, "valence": 0.675, "tempo": 176.1}, {"title": "Kannuodu Kaanbadhalam", "album": "Jeans", "year": 1998, "key": 5, "keyName": "F", "mode": 0, "modeName": "Minor", "energy": 0.635, "valence": 0.75, "tempo": 97.0}, {"title": "Poovukkul", "album": "Jeans", "year": 1998, "key": 7, "keyName": "G", "mode": 1, "modeName": "Major", "energy": 0.517, "valence": 0.292, "tempo": 104.0}, {"title": "Varayo En Thozhi", "album": "Jeans", "year": 1998, "key": 10, "keyName": "A#/Bb", "mode": 1, "modeName": "Major", "energy": 0.608, "valence": 0.723, "tempo": 109.1}, {"title": "Anjathey Jeeva", "album": "Jodi", "year": 1999, "key": 4, "keyName": "E", "mode": 0, "modeName": "Minor", "energy": 0.952, "valence": 0.845, "tempo": 189.9}, {"title": "Kaadhal kaditham", "album": "Jodi", "year": 1999, "key": 6, "keyName": "F#/Gb", "mode": 0, "modeName": "Minor", "energy": 0.719, "valence": 0.807, "tempo": 104.0}, {"title": "Mel Nattu Isai", "album": "Jodi", "year": 1999, "key": 4, "keyName": "E", "mode": 0, "modeName": "Minor", "energy": 0.907, "valence": 0.594, "tempo": 113.0}, {"title": "Oru Poiyavathu", "album": "Jodi", "year": 1999, "key": 4, "keyName": "E", "mode": 0, "modeName": "Minor", "energy": 0.743, "valence": 0.572, "tempo": 90.0}, {"title": "Oru Poiyavathu M", "album": "Jodi", "year": 1999, "key": 9, "keyName": "A", "mode": 1, "modeName": "Major", "energy": 0.67, "valence": 0.395, "tempo": 90.0}, {"title": "Velli Malare", "album": "Jodi", "year": 1999, "key": 11, "keyName": "B", "mode": 0, "modeName": "Minor", "energy": 0.86, "valence": 0.636, "tempo": 172.0}, {"title": "Ram Bum Bum", "album": "Jodi", "year": 1999, "key": 7, "keyName": "G", "mode": 1, "modeName": "Major", "energy": 0.911, "valence": 0.888, "tempo": 136.0}, {"title": "Ennai Kaanavillaiye", "album": "Kadhal Desam", "year": 1996, "key": 7, "keyName": "G", "mode": 1, "modeName": "Major", "energy": 0.511, "valence": 0.411, "tempo": 93.0}, {"title": "Hello Doctor", "album": "Kadhal Desam", "year": 1996, "key": 3, "keyName": "D#/Eb", "mode": 0, "modeName": "Minor", "energy": 0.903, "valence": 0.498, "tempo": 129.1}, {"title": "Kalluri Salai", "album": "Kadhal Desam", "year": 1996, "key": 9, "keyName": "A", "mode": 1, "modeName": "Major", "energy": 0.471, "valence": 0.459, "tempo": 131.0}, {"title": "Mustafa Mustafa", "album": "Kadhal Desam", "year": 1996, "key": 9, "keyName": "A", "mode": 0, "modeName": "Minor", "energy": 0.294, "valence": 0.733, "tempo": 95.0}, {"title": "Thendrale", "album": "Kadhal Desam", "year": 1996, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.061, "valence": 0.064, "tempo": 200.9}, {"title": "O Vennila", "album": "Kadhal Desam", "year": 1996, "key": 4, "keyName": "E", "mode": 0, "modeName": "Minor", "energy": 0.526, "valence": 0.435, "tempo": 120.0}, {"title": "Ghanan Ghanan", "album": "Lagaan", "year": null, "key": 4, "keyName": "E", "mode": 0, "modeName": "Minor", "energy": 0.562, "valence": 0.41, "tempo": 171.8}, {"title": "Mitwa", "album": "Lagaan", "year": null, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.408, "valence": 0.694, "tempo": 172.0}, {"title": "Radha Kaise Na Jale", "album": "Lagaan", "year": null, "key": 7, "keyName": "G", "mode": 1, "modeName": "Major", "energy": 0.505, "valence": 0.723, "tempo": 148.4}, {"title": "O Rey Chhori", "album": "Lagaan", "year": null, "key": 9, "keyName": "A", "mode": 1, "modeName": "Major", "energy": 0.398, "valence": 0.347, "tempo": 87.5}, {"title": "Chale Chalo", "album": "Lagaan", "year": null, "key": 6, "keyName": "F#/Gb", "mode": 1, "modeName": "Major", "energy": 0.41, "valence": 0.519, "tempo": 95.0}, {"title": "Waltz for a Romance - In 'A' Major", "album": "Lagaan", "year": null, "key": 9, "keyName": "A", "mode": 1, "modeName": "Major", "energy": 0.157, "valence": 0.117, "tempo": 160.6}, {"title": "O Paalanhaare", "album": "Lagaan", "year": null, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.336, "valence": 0.176, "tempo": 81.8}, {"title": "Lagaan..... Once Upon a Time in India", "album": "Lagaan", "year": null, "key": 0, "keyName": "C", "mode": 1, "modeName": "Major", "energy": 0.256, "valence": 0.037, "tempo": 79.6}, {"title": "Come On Come On", "album": "Love Birds", "year": 1996, "key": 9, "keyName": "A", "mode": 1, "modeName": "Major", "energy": 0.359, "valence": 0.642, "tempo": 147.0}, {"title": "Malargaley", "album": "Love Birds", "year": 1996, "key": 9, "keyName": "A", "mode": 1, "modeName": "Major", "energy": 0.138, "valence": 0.158, "tempo": 87.4}, {"title": "Naalai Ulagam", "album": "Love Birds", "year": 1996, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.212, "valence": 0.055, "tempo": 91.9}, {"title": "No Problem", "album": "Love Birds", "year": 1996, "key": 1, "keyName": "C#/Db", "mode": 1, "modeName": "Major", "energy": 0.475, "valence": 0.504, "tempo": 104.0}, {"title": "Samba Samba", "album": "Love Birds", "year": 1996, "key": 7, "keyName": "G", "mode": 1, "modeName": "Major", "energy": 0.481, "valence": 0.317, "tempo": 135.1}, {"title": "Poo Pookkum Osai Adhai", "album": "Minsara Kanavu", "year": 1997, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.581, "valence": 0.727, "tempo": 100.0}, {"title": "Huu Huu Lalala-Manamadurai", "album": "Minsara Kanavu", "year": 1997, "key": 11, "keyName": "B", "mode": 0, "modeName": "Minor", "energy": 0.545, "valence": 0.651, "tempo": 93.0}, {"title": "Anbendru Mazhaieley Agilangal", "album": "Minsara Kanavu", "year": 1997, "key": 1, "keyName": "C#/Db", "mode": 1, "modeName": "Major", "energy": 0.061, "valence": 0.034, "tempo": 132.5}, {"title": "Thanga Thamari Magale", "album": "Minsara Kanavu", "year": 1997, "key": 6, "keyName": "F#/Gb", "mode": 0, "modeName": "Minor", "energy": 0.478, "valence": 0.864, "tempo": 172.1}, {"title": "Strawberry Kanne Vinveli Penne", "album": "Minsara Kanavu", "year": 1997, "key": 4, "keyName": "E", "mode": 1, "modeName": "Major", "energy": 0.289, "valence": 0.367, "tempo": 65.5}, {"title": "Vennilave Vennilave Vinnai", "album": "Minsara Kanavu", "year": 1997, "key": 6, "keyName": "F#/Gb", "mode": 1, "modeName": "Major", "energy": 0.32, "valence": 0.639, "tempo": 91.0}, {"title": "Osaka Muraiya", "album": "One 2 Ka 4", "year": 2001, "key": 7, "keyName": "G", "mode": 0, "modeName": "Minor", "energy": 0.619, "valence": 0.645, "tempo": 115.1}, {"title": "Idhu Manmatha Maadham", "album": "Paarthale Paravasam", "year": 2001, "key": 8, "keyName": "G#/Ab", "mode": 1, "modeName": "Major", "energy": 0.369, "valence": 0.301, "tempo": 108.7}, {"title": "Neethan Enthan", "album": "Paarthale Paravasam", "year": 2001, "key": 6, "keyName": "F#/Gb", "mode": 1, "modeName": "Major", "energy": 0.465, "valence": 0.679, "tempo": 171.9}, {"title": "Ada Moondrezhuthu", "album": "Paarthale Paravasam", "year": 2001, "key": 10, "keyName": "A#/Bb", "mode": 0, "modeName": "Minor", "energy": 0.642, "valence": 0.916, "tempo": 90.9}, {"title": "Love Check", "album": "Paarthale Paravasam", "year": 2001, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.573, "valence": 0.4, "tempo": 171.7}, {"title": "Adhisaya Thirumanam", "album": "Paarthale Paravasam", "year": 2001, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.451, "valence": 0.724, "tempo": 95.0}, {"title": "Azhage Sukama", "album": "Paarthale Paravasam", "year": 2001, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.386, "valence": 0.286, "tempo": 104.0}, {"title": "Nadir Dhinna", "album": "Paarthale Paravasam", "year": 2001, "key": 9, "keyName": "A", "mode": 1, "modeName": "Major", "energy": 0.578, "valence": 0.752, "tempo": 140.9}, {"title": "Parthalae Paravasam", "album": "Paarthale Paravasam", "year": 2001, "key": 11, "keyName": "B", "mode": 0, "modeName": "Minor", "energy": 0.587, "valence": 0.73, "tempo": 108.0}, {"title": "Eduda Antha Sooriya", "album": "Pudhiya Mannargal", "year": 1994, "key": 9, "keyName": "A", "mode": 1, "modeName": "Major", "energy": 0.504, "valence": 0.639, "tempo": 133.0}, {"title": "Vaanil Yeni", "album": "Pudhiya Mannargal", "year": 1994, "key": 11, "keyName": "B", "mode": 0, "modeName": "Minor", "energy": 0.678, "valence": 0.485, "tempo": 104.0}, {"title": "Nee Kattum Selai", "album": "Pudhiya Mannargal", "year": 1994, "key": 8, "keyName": "G#/Ab", "mode": 0, "modeName": "Minor", "energy": 0.322, "valence": 0.842, "tempo": 66.5}, {"title": "Onnu Rendu Moonuda", "album": "Pudhiya Mannargal", "year": 1994, "key": 9, "keyName": "A", "mode": 0, "modeName": "Minor", "energy": 0.411, "valence": 0.697, "tempo": 138.0}, {"title": "Vaadi Saathukodi", "album": "Pudhiya Mannargal", "year": 1994, "key": 11, "keyName": "B", "mode": 1, "modeName": "Major", "energy": 0.44, "valence": 0.932, "tempo": 91.0}, {"title": "Netru Illatha Maatram", "album": "Pudhiya Mugam", "year": 1993, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.299, "valence": 0.418, "tempo": 88.0}, {"title": "Sambo Sambo", "album": "Pudhiya Mugam", "year": 1993, "key": 4, "keyName": "E", "mode": 1, "modeName": "Major", "energy": 0.261, "valence": 0.864, "tempo": 105.0}, {"title": "Kannukku Mai Azhagu - Male", "album": "Pudhiya Mugam", "year": 1993, "key": 6, "keyName": "F#/Gb", "mode": 1, "modeName": "Major", "energy": 0.286, "valence": 0.468, "tempo": 81.4}, {"title": "Ithuthan Vaazhkai Embada", "album": "Pudhiya Mugam", "year": 1993, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.148, "valence": 0.193, "tempo": 141.7}, {"title": "Kannukku Mai Azhagu - Female", "album": "Pudhiya Mugam", "year": 1993, "key": 6, "keyName": "F#/Gb", "mode": 1, "modeName": "Major", "energy": 0.366, "valence": 0.412, "tempo": 81.4}, {"title": "July Matham", "album": "Pudhiya Mugam", "year": 1993, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.356, "valence": 0.759, "tempo": 100.0}, {"title": "Kay Sera Sera", "album": "Pukar", "year": 2000, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.67, "valence": 0.916, "tempo": 123.0}, {"title": "Sunta Hai Mera Khuda", "album": "Pukar", "year": 2000, "key": 8, "keyName": "G#/Ab", "mode": 1, "modeName": "Major", "energy": 0.575, "valence": 0.837, "tempo": 156.0}, {"title": "Humrahi Jabho Mastana", "album": "Pukar", "year": 2000, "key": 7, "keyName": "G", "mode": 0, "modeName": "Minor", "energy": 0.55, "valence": 0.536, "tempo": 120.0}, {"title": "Hai Jaana Hai Jaana", "album": "Pukar", "year": 2000, "key": 7, "keyName": "G", "mode": 1, "modeName": "Major", "energy": 0.441, "valence": 0.116, "tempo": 118.0}, {"title": "Kismat Se Tum Hum KO Mile", "album": "Pukar", "year": 2000, "key": 11, "keyName": "B", "mode": 0, "modeName": "Minor", "energy": 0.34, "valence": 0.322, "tempo": 94.4}, {"title": "Ek Tu Hi Bharosa", "album": "Pukar", "year": 2000, "key": 2, "keyName": "D", "mode": 0, "modeName": "Minor", "energy": 0.362, "valence": 0.233, "tempo": 84.0}, {"title": "Hai Rama", "album": "Rangeela", "year": 1995, "key": 6, "keyName": "F#/Gb", "mode": 1, "modeName": "Major", "energy": 0.395, "valence": 0.464, "tempo": 84.7}, {"title": "Kya Kare Kya Na Kare", "album": "Rangeela", "year": 1995, "key": 7, "keyName": "G", "mode": 1, "modeName": "Major", "energy": 0.656, "valence": 0.537, "tempo": 113.0}, {"title": "Mangta Hai Kya", "album": "Rangeela", "year": 1995, "key": 5, "keyName": "F", "mode": 0, "modeName": "Minor", "energy": 0.603, "valence": 0.869, "tempo": 130.0}, {"title": "Pyaar Yeh Jaane Kaise", "album": "Rangeela", "year": 1995, "key": 6, "keyName": "F#/Gb", "mode": 0, "modeName": "Minor", "energy": 0.37, "valence": 0.182, "tempo": 97.2}, {"title": "Rangeela Re", "album": "Rangeela", "year": 1995, "key": 1, "keyName": "C#/Db", "mode": 1, "modeName": "Major", "energy": 0.717, "valence": 0.725, "tempo": 113.0}, {"title": "Spirit Of Rangeela - Instrumental", "album": "Rangeela", "year": 1995, "key": 11, "keyName": "B", "mode": 0, "modeName": "Minor", "energy": 0.692, "valence": 0.907, "tempo": 129.9}, {"title": "Tanha Tanha Yahan Pe Jeena", "album": "Rangeela", "year": 1995, "key": 6, "keyName": "F#/Gb", "mode": 0, "modeName": "Minor", "energy": 0.896, "valence": 0.375, "tempo": 189.8}, {"title": "Yaaron Sun Lo Zara", "album": "Rangeela", "year": 1995, "key": 7, "keyName": "G", "mode": 0, "modeName": "Minor", "energy": 0.554, "valence": 0.604, "tempo": 144.9}, {"title": "Hai Rama - Remix", "album": "Rangeela", "year": 1995, "key": 11, "keyName": "B", "mode": 0, "modeName": "Minor", "energy": 0.54, "valence": 0.633, "tempo": 127.0}, {"title": "Phir Se Ud Chala", "album": "Rockstar", "year": 2011, "key": 11, "keyName": "B", "mode": 1, "modeName": "Major", "energy": 0.656, "valence": 0.453, "tempo": 120.0}, {"title": "Jo Bhi Main", "album": "Rockstar", "year": 2011, "key": 11, "keyName": "B", "mode": 0, "modeName": "Minor", "energy": 0.565, "valence": 0.394, "tempo": 136.0}, {"title": "Katiya Karun", "album": "Rockstar", "year": 2011, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.705, "valence": 0.928, "tempo": 176.0}, {"title": "Kun Faya Kun", "album": "Rockstar", "year": 2011, "key": 1, "keyName": "C#/Db", "mode": 1, "modeName": "Major", "energy": 0.378, "valence": 0.575, "tempo": 87.5}, {"title": "Sheher Mein", "album": "Rockstar", "year": 2011, "key": 4, "keyName": "E", "mode": 0, "modeName": "Minor", "energy": 0.658, "valence": 0.805, "tempo": 91.0}, {"title": "Haawa Haawa", "album": "Rockstar", "year": 2011, "key": 4, "keyName": "E", "mode": 0, "modeName": "Minor", "energy": 0.695, "valence": 0.882, "tempo": 145.0}, {"title": "Aur Ho", "album": "Rockstar", "year": 2011, "key": 5, "keyName": "F", "mode": 0, "modeName": "Minor", "energy": 0.373, "valence": 0.157, "tempo": 77.0}, {"title": "Tango For Taj", "album": "Rockstar", "year": 2011, "key": 9, "keyName": "A", "mode": 0, "modeName": "Minor", "energy": 0.312, "valence": 0.646, "tempo": 132.0}, {"title": "Tum Ko", "album": "Rockstar", "year": 2011, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.416, "valence": 0.17, "tempo": 172.0}, {"title": "The Dichotomy Of Fame", "album": "Rockstar", "year": 2011, "key": 0, "keyName": "C", "mode": 1, "modeName": "Major", "energy": 0.377, "valence": 0.4, "tempo": 90.9}, {"title": "Nadaan Parinde", "album": "Rockstar", "year": 2011, "key": 6, "keyName": "F#/Gb", "mode": 0, "modeName": "Minor", "energy": 0.741, "valence": 0.492, "tempo": 132.9}, {"title": "Tum Ho", "album": "Rockstar", "year": 2011, "key": 5, "keyName": "F", "mode": 1, "modeName": "Major", "energy": 0.47, "valence": 0.167, "tempo": 93.9}, {"title": "Saadda Haq", "album": "Rockstar", "year": 2011, "key": 6, "keyName": "F#/Gb", "mode": 0, "modeName": "Minor", "energy": 0.882, "valence": 0.627, "tempo": 97.0}, {"title": "Meeting Place", "album": "Rockstar", "year": 2011, "key": 9, "keyName": "A", "mode": 0, "modeName": "Minor", "energy": 0.009, "valence": 0.031, "tempo": 52.2}, {"title": "Jaagran (Rockstar)", "album": "Rockstar", "year": 2011, "key": 5, "keyName": "F", "mode": 1, "modeName": "Major", "energy": 0.678, "valence": 0.842, "tempo": 88.0}, {"title": "Chhoti Si Aasha - Version, 1", "album": "", "year": null, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.245, "valence": 0.524, "tempo": 172.1}, {"title": "Rukmani Rukmani", "album": "", "year": null, "key": 0, "keyName": "C", "mode": 0, "modeName": "Minor", "energy": 0.539, "valence": 0.645, "tempo": 167.1}, {"title": "Roja - Version, 1", "album": "", "year": null, "key": 4, "keyName": "E", "mode": 1, "modeName": "Major", "energy": 0.319, "valence": 0.431, "tempo": 91.0}, {"title": "Yeh Haseen Vadiyan Yeh Khula Aasman", "album": "", "year": null, "key": 5, "keyName": "F", "mode": 1, "modeName": "Major", "energy": 0.295, "valence": 0.107, "tempo": 121.9}, {"title": "Roja - Version, 2", "album": "", "year": null, "key": 4, "keyName": "E", "mode": 1, "modeName": "Major", "energy": 0.255, "valence": 0.45, "tempo": 91.0}, {"title": "Chhoti Si Aasha - Version, 2", "album": "", "year": null, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.122, "valence": 0.732, "tempo": 172.1}, {"title": "Bharat Humko Jaan Se Pyara Hai", "album": "", "year": null, "key": 0, "keyName": "C", "mode": 1, "modeName": "Major", "energy": 0.235, "valence": 0.337, "tempo": 84.2}, {"title": "Chhoti Si Aasha - Instrumental", "album": "", "year": null, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.292, "valence": 0.684, "tempo": 171.5}, {"title": "Rukmani Rukmani - Instrumental", "album": "", "year": null, "key": 10, "keyName": "A#/Bb", "mode": 0, "modeName": "Minor", "energy": 0.682, "valence": 0.505, "tempo": 84.3}, {"title": "Roja - Instrumental", "album": "", "year": null, "key": 4, "keyName": "E", "mode": 1, "modeName": "Major", "energy": 0.38, "valence": 0.399, "tempo": 91.2}, {"title": "Yeh Haseen Vadiyan Yeh Khula Aasman - Instrumental", "album": "", "year": null, "key": 0, "keyName": "C", "mode": 1, "modeName": "Major", "energy": 0.369, "valence": 0.323, "tempo": 122.0}, {"title": "Bharat Humko Jaan Se Pyara Hai - Instrumental", "album": "", "year": null, "key": 0, "keyName": "C", "mode": 1, "modeName": "Major", "energy": 0.302, "valence": 0.214, "tempo": 84.7}, {"title": "Manmatha Nee Yaarada", "album": "Super Police", "year": 1994, "key": 9, "keyName": "A", "mode": 0, "modeName": "Minor", "energy": 0.336, "valence": 0.387, "tempo": 121.0}, {"title": "Mama Love Pannuga", "album": "Super Police", "year": 1994, "key": 7, "keyName": "G", "mode": 0, "modeName": "Minor", "energy": 0.281, "valence": 0.503, "tempo": 144.8}, {"title": "Chinna Kuttiyo Singariyo", "album": "Super Police", "year": 1994, "key": 11, "keyName": "B", "mode": 0, "modeName": "Minor", "energy": 0.429, "valence": 0.904, "tempo": 115.0}, {"title": "Pakka Gentleman", "album": "Super Police", "year": 1994, "key": 8, "keyName": "G#/Ab", "mode": 1, "modeName": "Major", "energy": 0.72, "valence": 0.676, "tempo": 95.0}, {"title": "Muthamma Muthamma", "album": "Super Police", "year": 1994, "key": 11, "keyName": "B", "mode": 1, "modeName": "Major", "energy": 0.408, "valence": 0.549, "tempo": 104.0}, {"title": "Beat Of Passion", "album": "Taal", "year": 1999, "key": 6, "keyName": "F#/Gb", "mode": 1, "modeName": "Major", "energy": 0.632, "valence": 0.25, "tempo": 95.0}, {"title": "Ishq Bina", "album": "Taal", "year": 1999, "key": 7, "keyName": "G", "mode": 1, "modeName": "Major", "energy": 0.357, "valence": 0.501, "tempo": 88.0}, {"title": "Ishq Bina Ishq Bina", "album": "Taal", "year": 1999, "key": 11, "keyName": "B", "mode": 1, "modeName": "Major", "energy": 0.357, "valence": 0.119, "tempo": 100.0}, {"title": "Kahin Aag Lage Lag Jaaye", "album": "Taal", "year": 1999, "key": 7, "keyName": "G", "mode": 1, "modeName": "Major", "energy": 0.518, "valence": 0.46, "tempo": 95.0}, {"title": "Kariye Na", "album": "Taal", "year": 1999, "key": 11, "keyName": "B", "mode": 0, "modeName": "Minor", "energy": 0.362, "valence": 0.57, "tempo": 132.9}, {"title": "Kya Dekh Rahe Ho Tum", "album": "Taal", "year": 1999, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.259, "valence": 0.334, "tempo": 91.0}, {"title": "Nahin Saamne Tu", "album": "Taal", "year": 1999, "key": 7, "keyName": "G", "mode": 1, "modeName": "Major", "energy": 0.247, "valence": 0.083, "tempo": 175.8}, {"title": "Ni Main Samajh Gayi", "album": "Taal", "year": 1999, "key": 7, "keyName": "G", "mode": 1, "modeName": "Major", "energy": 0.502, "valence": 0.589, "tempo": 101.0}, {"title": "Raga Dance", "album": "Taal", "year": 1999, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.414, "valence": 0.038, "tempo": 115.0}, {"title": "Ramta Jogi", "album": "Taal", "year": 1999, "key": 6, "keyName": "F#/Gb", "mode": 1, "modeName": "Major", "energy": 0.636, "valence": 0.799, "tempo": 140.0}, {"title": "Taal Se Taal", "album": "Taal", "year": 1999, "key": 7, "keyName": "G", "mode": 1, "modeName": "Major", "energy": 0.532, "valence": 0.614, "tempo": 95.0}, {"title": "Taal Se Taal - Western Version", "album": "Taal", "year": 1999, "key": 7, "keyName": "G", "mode": 1, "modeName": "Major", "energy": 0.72, "valence": 0.492, "tempo": 95.0}, {"title": "Adi Manjakilanka", "album": "Taj Mahal", "year": 1999, "key": 4, "keyName": "E", "mode": 0, "modeName": "Minor", "energy": 0.471, "valence": 0.497, "tempo": 88.0}, {"title": "Eetchi Elumichi", "album": "Taj Mahal", "year": 1999, "key": 10, "keyName": "A#/Bb", "mode": 1, "modeName": "Major", "energy": 0.478, "valence": 0.901, "tempo": 156.0}, {"title": "Eetchi Elumichi - Reprise", "album": "Taj Mahal", "year": 1999, "key": 7, "keyName": "G", "mode": 0, "modeName": "Minor", "energy": 0.51, "valence": 0.917, "tempo": 156.0}, {"title": "Karisal Tarisal", "album": "Taj Mahal", "year": 1999, "key": 2, "keyName": "D", "mode": 0, "modeName": "Minor", "energy": 0.423, "valence": 0.101, "tempo": 98.9}, {"title": "Kilakke Nanthavanam", "album": "Taj Mahal", "year": 1999, "key": 9, "keyName": "A", "mode": 0, "modeName": "Minor", "energy": 0.525, "valence": 0.812, "tempo": 127.0}, {"title": "Kulliruthu Kulliruthu", "album": "Taj Mahal", "year": 1999, "key": 7, "keyName": "G", "mode": 0, "modeName": "Minor", "energy": 0.4, "valence": 0.237, "tempo": 82.4}, {"title": "Senkathay", "album": "Taj Mahal", "year": 1999, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.521, "valence": 0.297, "tempo": 90.8}, {"title": "Sotta Sotta", "album": "Taj Mahal", "year": 1999, "key": 6, "keyName": "F#/Gb", "mode": 1, "modeName": "Major", "energy": 0.388, "valence": 0.582, "tempo": 95.0}, {"title": "Sotta Sotta", "album": "Taj Mahal", "year": 1999, "key": 5, "keyName": "F", "mode": 0, "modeName": "Minor", "energy": 0.414, "valence": 0.401, "tempo": 95.0}, {"title": "Tirupatchi Aruvallu", "album": "Taj Mahal", "year": 1999, "key": 4, "keyName": "E", "mode": 0, "modeName": "Minor", "energy": 0.71, "valence": 0.603, "tempo": 172.4}, {"title": "Toofan Ki Raat", "album": "Thakshak", "year": 1999, "key": 5, "keyName": "F", "mode": 0, "modeName": "Minor", "energy": 0.827, "valence": 0.881, "tempo": 115.0}, {"title": "Dheem Ta Dare", "album": "Thakshak", "year": 1999, "key": 7, "keyName": "G", "mode": 1, "modeName": "Major", "energy": 0.555, "valence": 0.96, "tempo": 118.9}, {"title": "Rang De", "album": "Thakshak", "year": 1999, "key": 9, "keyName": "A", "mode": 0, "modeName": "Minor", "energy": 0.476, "valence": 0.795, "tempo": 122.0}, {"title": "Mujhe Rang De", "album": "Thakshak", "year": 1999, "key": 9, "keyName": "A", "mode": 0, "modeName": "Minor", "energy": 0.489, "valence": 0.64, "tempo": 122.0}, {"title": "Khamosh Raat", "album": "Thakshak", "year": 1999, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.434, "valence": 0.345, "tempo": 160.0}, {"title": "Jaan Meri", "album": "Thakshak", "year": 1999, "key": 7, "keyName": "G", "mode": 1, "modeName": "Major", "energy": 0.769, "valence": 0.3, "tempo": 120.0}, {"title": "Boondon Se Baaten", "album": "Thakshak", "year": 1999, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.695, "valence": 0.627, "tempo": 151.0}, {"title": "Dolna", "album": "Thakshak", "year": 1999, "key": 1, "keyName": "C#/Db", "mode": 1, "modeName": "Major", "energy": 0.433, "valence": 0.648, "tempo": 119.7}, {"title": "Jumbalika", "album": "Thakshak", "year": 1999, "key": 6, "keyName": "F#/Gb", "mode": 0, "modeName": "Minor", "energy": 0.471, "valence": 0.955, "tempo": 102.0}, {"title": "Des Mere Des", "album": "The Legend of Bhagat Singh", "year": 2002, "key": 7, "keyName": "G", "mode": 1, "modeName": "Major", "energy": 0.494, "valence": 0.449, "tempo": 100.0}, {"title": "Dil Se Niklegi", "album": "The Legend of Bhagat Singh", "year": 2002, "key": 9, "keyName": "A", "mode": 1, "modeName": "Major", "energy": 0.123, "valence": 0.168, "tempo": 92.2}, {"title": "Jogiya Jogiya", "album": "The Legend of Bhagat Singh", "year": 2002, "key": 4, "keyName": "E", "mode": 1, "modeName": "Major", "energy": 0.473, "valence": 0.766, "tempo": 117.9}, {"title": "Kasam Tumko Watan", "album": "The Legend of Bhagat Singh", "year": 2002, "key": 4, "keyName": "E", "mode": 1, "modeName": "Major", "energy": 0.1, "valence": 0.112, "tempo": 142.9}, {"title": "Mahive Mahive", "album": "The Legend of Bhagat Singh", "year": 2002, "key": 1, "keyName": "C#/Db", "mode": 1, "modeName": "Major", "energy": 0.452, "valence": 0.353, "tempo": 120.0}, {"title": "Mera Rang De Basanti", "album": "The Legend of Bhagat Singh", "year": 2002, "key": 5, "keyName": "F", "mode": 1, "modeName": "Major", "energy": 0.699, "valence": 0.818, "tempo": 94.6}, {"title": "Pagdi Sambhal Jatta", "album": "The Legend of Bhagat Singh", "year": 2002, "key": 7, "keyName": "G", "mode": 1, "modeName": "Major", "energy": 0.943, "valence": 0.84, "tempo": 124.0}, {"title": "Sarfaroshi Ki Tamanna", "album": "The Legend of Bhagat Singh", "year": 2002, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.569, "valence": 0.901, "tempo": 131.0}, {"title": "Sarfaroshi Ki Tamanna - Sad Version", "album": "The Legend of Bhagat Singh", "year": 2002, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.431, "valence": 0.309, "tempo": 104.3}, {"title": "Shora So Pehchaniye", "album": "The Legend of Bhagat Singh", "year": 2002, "key": 0, "keyName": "C", "mode": 1, "modeName": "Major", "energy": 0.892, "valence": 0.038, "tempo": 130.0}, {"title": "Injarango", "album": "Thenali", "year": 2000, "key": 1, "keyName": "C#/Db", "mode": 0, "modeName": "Minor", "energy": 0.683, "valence": 0.763, "tempo": 98.1}, {"title": "Thenali Thenali", "album": "Thenali", "year": 2000, "key": 11, "keyName": "B", "mode": 0, "modeName": "Minor", "energy": 0.437, "valence": 0.204, "tempo": 95.0}, {"title": "Atthini Chitthini", "album": "Thenali", "year": 2000, "key": 6, "keyName": "F#/Gb", "mode": 1, "modeName": "Major", "energy": 0.328, "valence": 0.511, "tempo": 145.0}, {"title": "Porkalam", "album": "Thenali", "year": 2000, "key": 2, "keyName": "D", "mode": 0, "modeName": "Minor", "energy": 0.34, "valence": 0.2, "tempo": 173.0}, {"title": "Alangatti Mazhai", "album": "Thenali", "year": 2000, "key": 11, "keyName": "B", "mode": 0, "modeName": "Minor", "energy": 0.433, "valence": 0.494, "tempo": 142.5}, {"title": "Swasamae", "album": "Thenali", "year": 2000, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.423, "valence": 0.354, "tempo": 90.0}, {"title": "Kannum Kannum", "album": "Thiruda Thiruda", "year": 1993, "key": 7, "keyName": "G", "mode": 1, "modeName": "Major", "energy": 0.353, "valence": 0.764, "tempo": 83.4}, {"title": "Rasathi", "album": "Thiruda Thiruda", "year": 1993, "key": 6, "keyName": "F#/Gb", "mode": 1, "modeName": "Major", "energy": 0.141, "valence": 0.399, "tempo": 130.9}, {"title": "Konjam Nilavu", "album": "Thiruda Thiruda", "year": 1993, "key": 5, "keyName": "F", "mode": 1, "modeName": "Major", "energy": 0.441, "valence": 0.556, "tempo": 104.1}, {"title": "Veerapandi Kotayyile", "album": "Thiruda Thiruda", "year": 1993, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.248, "valence": 0.335, "tempo": 126.8}, {"title": "Putham Puthu Bhoomi", "album": "Thiruda Thiruda", "year": 1993, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.406, "valence": 0.515, "tempo": 126.7}, {"title": "Thee Thee", "album": "Thiruda Thiruda", "year": 1993, "key": 2, "keyName": "D", "mode": 1, "modeName": "Major", "energy": 0.256, "valence": 0.768, "tempo": 133.1}, {"title": "Kaathu Kaathu", "album": "Uzhavan", "year": 1993, "key": 0, "keyName": "C", "mode": 1, "modeName": "Major", "energy": 0.208, "valence": 0.436, "tempo": 120.0}, {"title": "Pennala Pennala", "album": "Uzhavan", "year": 1993, "key": 5, "keyName": "F", "mode": 1, "modeName": "Major", "energy": 0.338, "valence": 0.632, "tempo": 134.9}, {"title": "Raa Kozhi Rendu (From \"Uzhavan\")", "album": "Uzhavan", "year": 1993, "key": 6, "keyName": "F#/Gb", "mode": 1, "modeName": "Major", "energy": 0.34, "valence": 0.521, "tempo": 119.9}, {"title": "Ennatha Ponnatha", "album": "Uzhavan", "year": 1993, "key": 1, "keyName": "C#/Db", "mode": 1, "modeName": "Major", "energy": 0.145, "valence": 0.063, "tempo": 95.1}, {"title": "Kanngalil Enna Iramo", "album": "Uzhavan", "year": 1993, "key": 4, "keyName": "E", "mode": 1, "modeName": "Major", "energy": 0.228, "valence": 0.443, "tempo": 133.0}, {"title": "Maari Mazhai Peiyuth", "album": "Uzhavan", "year": 1993, "key": 5, "keyName": "F", "mode": 0, "modeName": "Minor", "energy": 0.323, "valence": 0.518, "tempo": 66.9}, {"title": "Senthamizh Naatu Thamizhachiye", "album": "Vandicholai Chinraasu", "year": 1994, "key": 6, "keyName": "F#/Gb", "mode": 0, "modeName": "Minor", "energy": 0.32, "valence": 0.846, "tempo": 154.0}, {"title": "Chitthirai Nilavu", "album": "Vandicholai Chinraasu", "year": 1994, "key": 0, "keyName": "C", "mode": 1, "modeName": "Major", "energy": 0.375, "valence": 0.398, "tempo": 167.6}, {"title": "Ye Muthu Pappa", "album": "Vandicholai Chinraasu", "year": 1994, "key": 11, "keyName": "B", "mode": 1, "modeName": "Major", "energy": 0.499, "valence": 0.898, "tempo": 145.0}, {"title": "Edhu Sugam Sugam Adhu Veendum Veendum", "album": "Vandicholai Chinraasu", "year": 1994, "key": 4, "keyName": "E", "mode": 0, "modeName": "Minor", "energy": 0.265, "valence": 0.567, "tempo": 81.4}, {"title": "Barota Barota", "album": "Vandicholai Chinraasu", "year": 1994, "key": 7, "keyName": "G", "mode": 1, "modeName": "Major", "energy": 0.452, "valence": 0.912, "tempo": 140.0}, {"title": "Dheeme Dheeme", "album": "Zubeidaa", "year": 2001, "key": 8, "keyName": "G#/Ab", "mode": 1, "modeName": "Major", "energy": 0.386, "valence": 0.53, "tempo": 82.0}, {"title": "Main Albeli", "album": "Zubeidaa", "year": 2001, "key": 7, "keyName": "G", "mode": 1, "modeName": "Major", "energy": 0.499, "valence": 0.517, "tempo": 133.0}, {"title": "Mehndi Hai Rachnewali", "album": "Zubeidaa", "year": 2001, "key": 7, "keyName": "G", "mode": 0, "modeName": "Minor", "energy": 0.468, "valence": 0.871, "tempo": 82.0}, {"title": "So Gaye Hain", "album": "Zubeidaa", "year": 2001, "key": 6, "keyName": "F#/Gb", "mode": 0, "modeName": "Minor", "energy": 0.221, "valence": 0.166, "tempo": 79.6}, {"title": "Hai Na", "album": "Zubeidaa", "year": 2001, "key": 6, "keyName": "F#/Gb", "mode": 1, "modeName": "Major", "energy": 0.545, "valence": 0.619, "tempo": 85.8}, {"title": "Pyaara Sa Gaon", "album": "Zubeidaa", "year": 2001, "key": 11, "keyName": "B", "mode": 1, "modeName": "Major", "energy": 0.359, "valence": 0.21, "tempo": 99.0}, {"title": "So Gaye Hain - Pt. 2", "album": "Zubeidaa", "year": 2001, "key": 11, "keyName": "B", "mode": 0, "modeName": "Minor", "energy": 0.276, "valence": 0.078, "tempo": 97.0}, {"title": "Chhodo More Baiyyan", "album": "Zubeidaa", "year": 2001, "key": 4, "keyName": "E", "mode": 0, "modeName": "Minor", "energy": 0.507, "valence": 0.191, "tempo": 90.0}], "maxTotal": 44, "keyNames": ["C", "C#/Db", "D", "D#/Eb", "E", "F", "F#/Gb", "G", "G#/Ab", "A", "A#/Bb", "B"], "totalTracks": 268, "majorCount": 164, "minorCount": 104};
+
+const W = 700, H = 600;
+const cx = W / 2, cy = H / 2;
+const outerR = 240;
+const innerR = 80;
+
+const svg = document.getElementById('chart');
+svg.setAttribute('width', W);
+svg.setAttribute('height', H);
+
+function svgEl(tag, attrs) {
+  const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const [k, v] of Object.entries(attrs || {})) el.setAttribute(k, v);
+  return el;
+}
+
+const tooltip = document.getElementById('tooltip');
+const trackList = document.getElementById('track-list');
+const trackListContent = document.getElementById('track-list-content');
+
+document.getElementById('track-list-close').addEventListener('click', () => {
+  trackList.style.display = 'none';
+});
+
+// --- Draw the wheel ---
+// Each key gets a slice (30 degrees). Within each slice: inner ring = minor, outer ring = major.
+// Bar height proportional to count.
+
+const sliceAngle = (2 * Math.PI) / 12;
+const gap = 0.02;  // gap between slices in radians
+
+DATA.wheel.forEach((d, i) => {
+  const startAngle = -Math.PI / 2 + i * sliceAngle + gap / 2;
+  const endAngle = startAngle + sliceAngle - gap;
+
+  // Scale: bar extends from innerR outward proportional to count
+  const majorR = innerR + (d.major / DATA.maxTotal) * (outerR - innerR);
+  const minorR = innerR + (d.minor / DATA.maxTotal) * (outerR - innerR);
+
+  // Draw two half-arcs: left half = minor, right half = major
+  const midAngle = (startAngle + endAngle) / 2;
+
+  // Major (right half of slice)
+  if (d.major > 0) {
+    const path = arcPath(cx, cy, innerR, majorR, midAngle + 0.005, endAngle);
+    const majorArc = svgEl('path', {
+      d: path,
+      fill: '#e8836a',
+      opacity: 0.8,
+      stroke: '#0a0a1a',
+      'stroke-width': 1,
+      style: 'cursor: pointer',
+    });
+    svg.appendChild(majorArc);
+    addEvents(majorArc, d, 'Major');
+  }
+
+  // Minor (left half of slice)
+  if (d.minor > 0) {
+    const path = arcPath(cx, cy, innerR, minorR, startAngle, midAngle - 0.005);
+    const minorArc = svgEl('path', {
+      d: path,
+      fill: '#6ab0d4',
+      opacity: 0.8,
+      stroke: '#0a0a1a',
+      'stroke-width': 1,
+      style: 'cursor: pointer',
+    });
+    svg.appendChild(minorArc);
+    addEvents(minorArc, d, 'Minor');
+  }
+
+  // Empty background if no tracks
+  if (d.total === 0) {
+    const path = arcPath(cx, cy, innerR, innerR + 15, startAngle, endAngle);
+    const emptyArc = svgEl('path', {
+      d: path,
+      fill: 'rgba(255,255,255,0.03)',
+      stroke: '#0a0a1a',
+      'stroke-width': 1,
+    });
+    svg.appendChild(emptyArc);
+  }
+
+  // Key name label
+  const labelAngle = (startAngle + endAngle) / 2;
+  const labelR = outerR + 24;
+  const lx = cx + Math.cos(labelAngle) * labelR;
+  const ly = cy + Math.sin(labelAngle) * labelR;
+  const label = svgEl('text', {
+    x: lx, y: ly,
+    'text-anchor': 'middle', 'dominant-baseline': 'middle',
+    fill: d.total > 0 ? '#ccc' : '#444',
+    'font-size': '13px', 'font-weight': '700',
+    'font-family': 'Segoe UI, system-ui, sans-serif',
+  });
+  label.textContent = d.keyName;
+  svg.appendChild(label);
+
+  // Count label
+  if (d.total > 0) {
+    const countR = innerR + (d.total / DATA.maxTotal) * (outerR - innerR) / 2 + innerR * 0.1;
+    const countAngle = (startAngle + endAngle) / 2;
+    const countX = cx + Math.cos(countAngle) * Math.min(countR, (innerR + outerR) / 2);
+    const countY = cy + Math.sin(countAngle) * Math.min(countR, (innerR + outerR) / 2);
+    const countLabel = svgEl('text', {
+      x: countX, y: countY,
+      'text-anchor': 'middle', 'dominant-baseline': 'middle',
+      fill: '#fff', 'font-size': '11px', 'font-weight': '600',
+      'font-family': 'Segoe UI, system-ui, sans-serif',
+      'pointer-events': 'none',
+    });
+    countLabel.textContent = d.total;
+    svg.appendChild(countLabel);
+  }
+});
+
+// Center circle
+svg.appendChild(svgEl('circle', {
+  cx: cx, cy: cy, r: innerR - 2,
+  fill: '#0a0a1a', stroke: 'rgba(255,255,255,0.08)', 'stroke-width': 1,
+}));
+
+// Center text
+const centerText1 = svgEl('text', {
+  x: cx, y: cy - 8,
+  'text-anchor': 'middle', fill: '#888', 'font-size': '12px',
+  'font-family': 'Segoe UI, system-ui, sans-serif',
+});
+centerText1.textContent = 'Musical';
+svg.appendChild(centerText1);
+const centerText2 = svgEl('text', {
+  x: cx, y: cy + 10,
+  'text-anchor': 'middle', fill: '#888', 'font-size': '12px',
+  'font-family': 'Segoe UI, system-ui, sans-serif',
+});
+centerText2.textContent = 'Keys';
+svg.appendChild(centerText2);
+
+// --- Helper: draw arc path ---
+function arcPath(cx, cy, r1, r2, a1, a2) {
+  const x1i = cx + Math.cos(a1) * r1;
+  const y1i = cy + Math.sin(a1) * r1;
+  const x1o = cx + Math.cos(a1) * r2;
+  const y1o = cy + Math.sin(a1) * r2;
+  const x2i = cx + Math.cos(a2) * r1;
+  const y2i = cy + Math.sin(a2) * r1;
+  const x2o = cx + Math.cos(a2) * r2;
+  const y2o = cy + Math.sin(a2) * r2;
+  const large = (a2 - a1 > Math.PI) ? 1 : 0;
+  return `M ${x1i} ${y1i} L ${x1o} ${y1o} A ${r2} ${r2} 0 ${large} 1 ${x2o} ${y2o} L ${x2i} ${y2i} A ${r1} ${r1} 0 ${large} 0 ${x1i} ${y1i} Z`;
+}
+
+// --- Events ---
+function addEvents(el, d, modeFilter) {
+  el.addEventListener('mouseenter', (ev) => {
+    el.setAttribute('opacity', 1);
+    let html = `<div style="font-weight:700; font-size:16px; color:#f0c46c">${d.keyName} ${modeFilter}</div>`;
+    const count = modeFilter === 'Major' ? d.major : d.minor;
+    html += `<div style="color:#ddd; margin-top:4px">${count} track${count > 1 ? 's' : ''}</div>`;
+    html += `<div style="color:#888; margin-top:2px">${d.keyName} total: ${d.total} tracks (${d.major} major, ${d.minor} minor)</div>`;
+    tooltip.innerHTML = html;
+    tooltip.style.display = 'block';
+    moveTooltip(ev);
+  });
+
+  el.addEventListener('mousemove', moveTooltip);
+
+  el.addEventListener('mouseleave', () => {
+    el.setAttribute('opacity', 0.8);
+    tooltip.style.display = 'none';
+  });
+
+  el.addEventListener('click', () => showTrackList(d.key, modeFilter));
+}
+
+function moveTooltip(ev) {
+  let x = ev.clientX + 14, y = ev.clientY + 14;
+  if (x + 300 > window.innerWidth) x = ev.clientX - 310;
+  if (y + 150 > window.innerHeight) y = ev.clientY - 150;
+  tooltip.style.left = x + 'px';
+  tooltip.style.top = y + 'px';
+}
+
+function showTrackList(key, modeFilter) {
+  const mode = modeFilter === 'Major' ? 1 : 0;
+  const filtered = DATA.tracks.filter(t => t.key === key && t.mode === mode);
+  const keyName = DATA.keyNames[key];
+
+  let html = `<h3>${keyName} ${modeFilter} — ${filtered.length} tracks</h3>`;
+  filtered.sort((a, b) => (a.album || '').localeCompare(b.album || ''));
+  filtered.forEach(t => {
+    const year = t.year || '?';
+    html += `<div class="track-item">${t.title} <span style="color:#666">— ${t.album} (${year})</span></div>`;
+  });
+  trackListContent.innerHTML = html;
+  trackList.style.display = 'block';
+}
+</script>
+</body>
+</html>

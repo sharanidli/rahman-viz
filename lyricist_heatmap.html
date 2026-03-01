@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AR Rahman — Lyricist × Singer Heatmap</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0a1a;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    overflow: auto;
+  }
+  #header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+    padding: 16px 24px;
+    background: rgba(10,10,26,0.95);
+  }
+  #header h1 { font-size: 22px; font-weight: 700; color: #fff; }
+  #header p { font-size: 13px; color: #888; margin-top: 4px; }
+
+  #tooltip {
+    position: fixed; pointer-events: none;
+    background: rgba(20, 20, 40, 0.96);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px; padding: 12px 16px;
+    font-size: 13px; line-height: 1.5;
+    max-width: 280px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    display: none; z-index: 100;
+    backdrop-filter: blur(8px);
+  }
+
+  svg { display: block; margin-top: 70px; }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <h1>AR Rahman — Lyricist × Singer Heatmap</h1>
+  <p>Who writes for whom &middot; Cell intensity = number of tracks &middot; Hover for details</p>
+</div>
+
+<div id="tooltip"></div>
+
+<svg id="chart"></svg>
+
+<script>
+const DATA = {"lyricists": ["Vairamuthu", "P. K. Mishra", "Veturi", "Mehboob", "Anand Bakshi", "Javed Akhtar", "Vaali", "Vairamuthu and Malayalam lyrics from the song \"Nenjinile Nenjinile\" was penned by Gireesh Puthenchery", "A. M. Ratnam", "Siri vennela Seetharama sastry and Malayalam lyrics from the song \"Innaalilaa Ledule\" was penned by Gireesh Puthenchery", "Siva Ganesh", "Gulzar and Malayalam lyrics from the song \"Jiya Jale\" was penned by Gireesh Puthenchery", "Rajasri{{cite web |title=Premikudu |url=https://open.spotify.com/album/1fqfENcKu7uIBmYWMTTiNX |access-date=22 December 2020 |website=Spotify}}", "Bhuvana Chandra", "Mehboob Kotwal", "Vairamuthu. The track \"Signore Signore\" features Sinhalese lyrics penned by B. H. Abdul Hameed.{{Cite web |date=2023-05-30 |title=B.H. Abdul Hameed's Book: A Wayfarer On The Airwaves - An Anthropological Journey |url=https://www.colombotelegraph.com/index.php/b-h-abdul-hameeds-book-a-wayfarer-on-the-airwaves-an-anthropological-journey/ |access-date=2024-10-14 |website=Colombo Telegraph |language=en-US}}", "Rajashri", "Veturi Sundararama Murthy", "Sirivennela Sitarama Sastry", "Palani Bharathi", "Mankombu Gopalakrishnan", "Rajasri", "Jagadish Khebudkar", "Sameer", "vairamuthu", "Bhuvanachandra", "Sirivennela Seetharama Sastry", "Bichu Thirumala"], "singers": ["S. P. Balasubrahmanyam", "K. S. Chithra", "Sujatha Mohan", "Mano", "Hariharan", "Srinivas", "A. R. Rahman", "Swarnalatha", "Udit Narayan", "Kavita Krishnamurthy", "Sukhwinder Singh", "P. Unnikrishnan", "Shankar Mahadevan", "Suresh Peters", "Anuradha Sriram", "Minmini", "Unni Menon", "Harini", "Sadhana Sargam", "S. Janaki", "G. V. Prakash Kumar", "Shahul Hameed", "Anupama", "K. J. Yesudas"], "lyricistTotals": {"Vairamuthu": 180, "P. K. Mishra": 71, "Veturi": 49, "Mehboob": 46, "Anand Bakshi": 38, "Javed Akhtar": 29, "Vaali": 26, "Vairamuthu and Malayalam lyrics from the song \"Nenjinile Nenjinile\" was penned by Gireesh Puthenchery": 24, "A. M. Ratnam": 24, "Siri vennela Seetharama sastry and Malayalam lyrics from the song \"Innaalilaa Ledule\" was penned by Gireesh Puthenchery": 22, "Siva Ganesh": 21, "Gulzar and Malayalam lyrics from the song \"Jiya Jale\" was penned by Gireesh Puthenchery": 18, "Rajasri{{cite web |title=Premikudu |url=https://open.spotify.com/album/1fqfENcKu7uIBmYWMTTiNX |access-date=22 December 2020 |website=Spotify}}": 18, "Bhuvana Chandra": 18, "Mehboob Kotwal": 13, "Vairamuthu. The track \"Signore Signore\" features Sinhalese lyrics penned by B. H. Abdul Hameed.{{Cite web |date=2023-05-30 |title=B.H. Abdul Hameed's Book: A Wayfarer On The Airwaves - An Anthropological Journey |url=https://www.colombotelegraph.com/index.php/b-h-abdul-hameeds-book-a-wayfarer-on-the-airwaves-an-anthropological-journey/ |access-date=2024-10-14 |website=Colombo Telegraph |language=en-US}}": 13, "Rajashri": 12, "Veturi Sundararama Murthy": 11, "Sirivennela Sitarama Sastry": 10, "Palani Bharathi": 9, "Mankombu Gopalakrishnan": 9, "Rajasri": 9, "Jagadish Khebudkar": 9, "Sameer": 9, "vairamuthu": 8, "Bhuvanachandra": 8, "Sirivennela Seetharama Sastry": 8, "Bichu Thirumala": 8}, "singerTotals": {"S. P. Balasubrahmanyam": 72, "K. S. Chithra": 55, "Sujatha Mohan": 46, "Mano": 41, "Hariharan": 38, "Srinivas": 35, "A. R. Rahman": 26, "Swarnalatha": 23, "Udit Narayan": 21, "Kavita Krishnamurthy": 19, "Sukhwinder Singh": 19, "P. Unnikrishnan": 17, "Shankar Mahadevan": 16, "Suresh Peters": 14, "Anuradha Sriram": 14, "Minmini": 14, "Unni Menon": 14, "Harini": 11, "Sadhana Sargam": 10, "S. Janaki": 10, "G. V. Prakash Kumar": 10, "Shahul Hameed": 10, "Anupama": 9, "K. J. Yesudas": 8}, "cells": [{"lyricist": "Vairamuthu", "singer": "S. P. Balasubrahmanyam", "tracks": 19}, {"lyricist": "Vairamuthu", "singer": "K. S. Chithra", "tracks": 13}, {"lyricist": "Vairamuthu", "singer": "Sujatha Mohan", "tracks": 13}, {"lyricist": "Vairamuthu", "singer": "Mano", "tracks": 10}, {"lyricist": "Vairamuthu", "singer": "Hariharan", "tracks": 11}, {"lyricist": "Vairamuthu", "singer": "Srinivas", "tracks": 9}, {"lyricist": "Vairamuthu", "singer": "A. R. Rahman", "tracks": 4}, {"lyricist": "Vairamuthu", "singer": "Swarnalatha", "tracks": 6}, {"lyricist": "Vairamuthu", "singer": "Udit Narayan", "tracks": 2}, {"lyricist": "Vairamuthu", "singer": "Kavita Krishnamurthy", "tracks": 1}, {"lyricist": "Vairamuthu", "singer": "Sukhwinder Singh", "tracks": 1}, {"lyricist": "Vairamuthu", "singer": "P. Unnikrishnan", "tracks": 6}, {"lyricist": "Vairamuthu", "singer": "Shankar Mahadevan", "tracks": 4}, {"lyricist": "Vairamuthu", "singer": "Suresh Peters", "tracks": 4}, {"lyricist": "Vairamuthu", "singer": "Anuradha Sriram", "tracks": 3}, {"lyricist": "Vairamuthu", "singer": "Minmini", "tracks": 5}, {"lyricist": "Vairamuthu", "singer": "Unni Menon", "tracks": 4}, {"lyricist": "Vairamuthu", "singer": "Harini", "tracks": 5}, {"lyricist": "Vairamuthu", "singer": "Sadhana Sargam", "tracks": 2}, {"lyricist": "Vairamuthu", "singer": "S. Janaki", "tracks": 4}, {"lyricist": "Vairamuthu", "singer": "G. V. Prakash Kumar", "tracks": 3}, {"lyricist": "Vairamuthu", "singer": "Shahul Hameed", "tracks": 5}, {"lyricist": "Vairamuthu", "singer": "K. J. Yesudas", "tracks": 2}, {"lyricist": "P. K. Mishra", "singer": "S. P. Balasubrahmanyam", "tracks": 13}, {"lyricist": "P. K. Mishra", "singer": "K. S. Chithra", "tracks": 6}, {"lyricist": "P. K. Mishra", "singer": "Sujatha Mohan", "tracks": 5}, {"lyricist": "P. K. Mishra", "singer": "Mano", "tracks": 5}, {"lyricist": "P. K. Mishra", "singer": "Hariharan", "tracks": 5}, {"lyricist": "P. K. Mishra", "singer": "Srinivas", "tracks": 1}, {"lyricist": "P. K. Mishra", "singer": "A. R. Rahman", "tracks": 1}, {"lyricist": "P. K. Mishra", "singer": "Swarnalatha", "tracks": 1}, {"lyricist": "P. K. Mishra", "singer": "Udit Narayan", "tracks": 4}, {"lyricist": "P. K. Mishra", "singer": "Kavita Krishnamurthy", "tracks": 1}, {"lyricist": "P. K. Mishra", "singer": "Shankar Mahadevan", "tracks": 1}, {"lyricist": "P. K. Mishra", "singer": "Suresh Peters", "tracks": 2}, {"lyricist": "P. K. Mishra", "singer": "Anuradha Sriram", "tracks": 1}, {"lyricist": "P. K. Mishra", "singer": "Minmini", "tracks": 3}, {"lyricist": "P. K. Mishra", "singer": "Harini", "tracks": 1}, {"lyricist": "P. K. Mishra", "singer": "S. Janaki", "tracks": 1}, {"lyricist": "P. K. Mishra", "singer": "G. V. Prakash Kumar", "tracks": 2}, {"lyricist": "Veturi", "singer": "S. P. Balasubrahmanyam", "tracks": 4}, {"lyricist": "Veturi", "singer": "K. S. Chithra", "tracks": 4}, {"lyricist": "Veturi", "singer": "Sujatha Mohan", "tracks": 3}, {"lyricist": "Veturi", "singer": "Mano", "tracks": 2}, {"lyricist": "Veturi", "singer": "Hariharan", "tracks": 3}, {"lyricist": "Veturi", "singer": "Srinivas", "tracks": 3}, {"lyricist": "Veturi", "singer": "A. R. Rahman", "tracks": 2}, {"lyricist": "Veturi", "singer": "Swarnalatha", "tracks": 2}, {"lyricist": "Veturi", "singer": "P. Unnikrishnan", "tracks": 1}, {"lyricist": "Veturi", "singer": "Shankar Mahadevan", "tracks": 1}, {"lyricist": "Veturi", "singer": "Suresh Peters", "tracks": 2}, {"lyricist": "Veturi", "singer": "Anuradha Sriram", "tracks": 2}, {"lyricist": "Veturi", "singer": "Sadhana Sargam", "tracks": 1}, {"lyricist": "Veturi", "singer": "S. Janaki", "tracks": 1}, {"lyricist": "Veturi", "singer": "G. V. Prakash Kumar", "tracks": 1}, {"lyricist": "Veturi", "singer": "Anupama", "tracks": 2}, {"lyricist": "Mehboob", "singer": "K. S. Chithra", "tracks": 2}, {"lyricist": "Mehboob", "singer": "Sujatha Mohan", "tracks": 2}, {"lyricist": "Mehboob", "singer": "Hariharan", "tracks": 2}, {"lyricist": "Mehboob", "singer": "Srinivas", "tracks": 2}, {"lyricist": "Mehboob", "singer": "A. R. Rahman", "tracks": 2}, {"lyricist": "Mehboob", "singer": "Udit Narayan", "tracks": 3}, {"lyricist": "Mehboob", "singer": "Kavita Krishnamurthy", "tracks": 2}, {"lyricist": "Mehboob", "singer": "Shankar Mahadevan", "tracks": 1}, {"lyricist": "Mehboob", "singer": "Anuradha Sriram", "tracks": 1}, {"lyricist": "Mehboob", "singer": "G. V. Prakash Kumar", "tracks": 1}, {"lyricist": "Mehboob", "singer": "Anupama", "tracks": 1}, {"lyricist": "Anand Bakshi", "singer": "Sujatha Mohan", "tracks": 1}, {"lyricist": "Anand Bakshi", "singer": "Hariharan", "tracks": 2}, {"lyricist": "Anand Bakshi", "singer": "A. R. Rahman", "tracks": 2}, {"lyricist": "Anand Bakshi", "singer": "Udit Narayan", "tracks": 3}, {"lyricist": "Anand Bakshi", "singer": "Kavita Krishnamurthy", "tracks": 4}, {"lyricist": "Anand Bakshi", "singer": "Sukhwinder Singh", "tracks": 5}, {"lyricist": "Anand Bakshi", "singer": "Shankar Mahadevan", "tracks": 1}, {"lyricist": "Anand Bakshi", "singer": "Anuradha Sriram", "tracks": 1}, {"lyricist": "Javed Akhtar", "singer": "S. P. Balasubrahmanyam", "tracks": 1}, {"lyricist": "Javed Akhtar", "singer": "K. S. Chithra", "tracks": 1}, {"lyricist": "Javed Akhtar", "singer": "Sujatha Mohan", "tracks": 1}, {"lyricist": "Javed Akhtar", "singer": "Hariharan", "tracks": 2}, {"lyricist": "Javed Akhtar", "singer": "Srinivas", "tracks": 3}, {"lyricist": "Javed Akhtar", "singer": "Kavita Krishnamurthy", "tracks": 1}, {"lyricist": "Javed Akhtar", "singer": "Sukhwinder Singh", "tracks": 2}, {"lyricist": "Javed Akhtar", "singer": "Shankar Mahadevan", "tracks": 2}, {"lyricist": "Javed Akhtar", "singer": "Anuradha Sriram", "tracks": 2}, {"lyricist": "Javed Akhtar", "singer": "Sadhana Sargam", "tracks": 2}, {"lyricist": "Vaali", "singer": "Hariharan", "tracks": 1}, {"lyricist": "Vaali", "singer": "Srinivas", "tracks": 1}, {"lyricist": "Vaali", "singer": "A. R. Rahman", "tracks": 2}, {"lyricist": "Vaali", "singer": "Swarnalatha", "tracks": 3}, {"lyricist": "Vaali", "singer": "Kavita Krishnamurthy", "tracks": 1}, {"lyricist": "Vaali", "singer": "P. Unnikrishnan", "tracks": 1}, {"lyricist": "Vaali", "singer": "Suresh Peters", "tracks": 3}, {"lyricist": "Vaali", "singer": "Unni Menon", "tracks": 1}, {"lyricist": "Vaali", "singer": "G. V. Prakash Kumar", "tracks": 1}, {"lyricist": "Vaali", "singer": "Anupama", "tracks": 1}, {"lyricist": "Vairamuthu and Malayalam lyrics from the song \"Nenjinile Nenjinile\" was penned by Gireesh Puthenchery", "singer": "Srinivas", "tracks": 2}, {"lyricist": "Vairamuthu and Malayalam lyrics from the song \"Nenjinile Nenjinile\" was penned by Gireesh Puthenchery", "singer": "A. R. Rahman", "tracks": 2}, {"lyricist": "Vairamuthu and Malayalam lyrics from the song \"Nenjinile Nenjinile\" was penned by Gireesh Puthenchery", "singer": "Kavita Krishnamurthy", "tracks": 2}, {"lyricist": "Vairamuthu and Malayalam lyrics from the song \"Nenjinile Nenjinile\" was penned by Gireesh Puthenchery", "singer": "Sukhwinder Singh", "tracks": 2}, {"lyricist": "Vairamuthu and Malayalam lyrics from the song \"Nenjinile Nenjinile\" was penned by Gireesh Puthenchery", "singer": "Anuradha Sriram", "tracks": 2}, {"lyricist": "Vairamuthu and Malayalam lyrics from the song \"Nenjinile Nenjinile\" was penned by Gireesh Puthenchery", "singer": "S. Janaki", "tracks": 2}, {"lyricist": "Vairamuthu and Malayalam lyrics from the song \"Nenjinile Nenjinile\" was penned by Gireesh Puthenchery", "singer": "Anupama", "tracks": 2}, {"lyricist": "A. M. Ratnam", "singer": "S. P. Balasubrahmanyam", "tracks": 2}, {"lyricist": "A. M. Ratnam", "singer": "Hariharan", "tracks": 1}, {"lyricist": "A. M. Ratnam", "singer": "Srinivas", "tracks": 2}, {"lyricist": "A. M. Ratnam", "singer": "Swarnalatha", "tracks": 2}, {"lyricist": "A. M. Ratnam", "singer": "Kavita Krishnamurthy", "tracks": 2}, {"lyricist": "A. M. Ratnam", "singer": "P. Unnikrishnan", "tracks": 2}, {"lyricist": "A. M. Ratnam", "singer": "Shankar Mahadevan", "tracks": 2}, {"lyricist": "A. M. Ratnam", "singer": "Unni Menon", "tracks": 2}, {"lyricist": "A. M. Ratnam", "singer": "Harini", "tracks": 1}, {"lyricist": "A. M. Ratnam", "singer": "S. Janaki", "tracks": 1}, {"lyricist": "Siri vennela Seetharama sastry and Malayalam lyrics from the song \"Innaalilaa Ledule\" was penned by Gireesh Puthenchery", "singer": "K. S. Chithra", "tracks": 2}, {"lyricist": "Siri vennela Seetharama sastry and Malayalam lyrics from the song \"Innaalilaa Ledule\" was penned by Gireesh Puthenchery", "singer": "Mano", "tracks": 2}, {"lyricist": "Siri vennela Seetharama sastry and Malayalam lyrics from the song \"Innaalilaa Ledule\" was penned by Gireesh Puthenchery", "singer": "Srinivas", "tracks": 2}, {"lyricist": "Siri vennela Seetharama sastry and Malayalam lyrics from the song \"Innaalilaa Ledule\" was penned by Gireesh Puthenchery", "singer": "A. R. Rahman", "tracks": 2}, {"lyricist": "Siri vennela Seetharama sastry and Malayalam lyrics from the song \"Innaalilaa Ledule\" was penned by Gireesh Puthenchery", "singer": "Kavita Krishnamurthy", "tracks": 2}, {"lyricist": "Siri vennela Seetharama sastry and Malayalam lyrics from the song \"Innaalilaa Ledule\" was penned by Gireesh Puthenchery", "singer": "Sukhwinder Singh", "tracks": 2}, {"lyricist": "Siva Ganesh", "singer": "S. P. Balasubrahmanyam", "tracks": 1}, {"lyricist": "Siva Ganesh", "singer": "K. S. Chithra", "tracks": 2}, {"lyricist": "Siva Ganesh", "singer": "Hariharan", "tracks": 1}, {"lyricist": "Siva Ganesh", "singer": "Srinivas", "tracks": 1}, {"lyricist": "Siva Ganesh", "singer": "Swarnalatha", "tracks": 1}, {"lyricist": "Siva Ganesh", "singer": "Kavita Krishnamurthy", "tracks": 1}, {"lyricist": "Siva Ganesh", "singer": "P. Unnikrishnan", "tracks": 2}, {"lyricist": "Siva Ganesh", "singer": "Shankar Mahadevan", "tracks": 1}, {"lyricist": "Siva Ganesh", "singer": "Unni Menon", "tracks": 3}, {"lyricist": "Siva Ganesh", "singer": "Sadhana Sargam", "tracks": 1}, {"lyricist": "Gulzar and Malayalam lyrics from the song \"Jiya Jale\" was penned by Gireesh Puthenchery", "singer": "A. R. Rahman", "tracks": 2}, {"lyricist": "Gulzar and Malayalam lyrics from the song \"Jiya Jale\" was penned by Gireesh Puthenchery", "singer": "Sukhwinder Singh", "tracks": 2}, {"lyricist": "Gulzar and Malayalam lyrics from the song \"Jiya Jale\" was penned by Gireesh Puthenchery", "singer": "Anuradha Sriram", "tracks": 2}, {"lyricist": "Rajasri{{cite web |title=Premikudu |url=https://open.spotify.com/album/1fqfENcKu7uIBmYWMTTiNX |access-date=22 December 2020 |website=Spotify}}", "singer": "S. P. Balasubrahmanyam", "tracks": 2}, {"lyricist": "Rajasri{{cite web |title=Premikudu |url=https://open.spotify.com/album/1fqfENcKu7uIBmYWMTTiNX |access-date=22 December 2020 |website=Spotify}}", "singer": "Sujatha Mohan", "tracks": 2}, {"lyricist": "Rajasri{{cite web |title=Premikudu |url=https://open.spotify.com/album/1fqfENcKu7uIBmYWMTTiNX |access-date=22 December 2020 |website=Spotify}}", "singer": "Mano", "tracks": 1}, {"lyricist": "Rajasri{{cite web |title=Premikudu |url=https://open.spotify.com/album/1fqfENcKu7uIBmYWMTTiNX |access-date=22 December 2020 |website=Spotify}}", "singer": "A. R. Rahman", "tracks": 1}, {"lyricist": "Rajasri{{cite web |title=Premikudu |url=https://open.spotify.com/album/1fqfENcKu7uIBmYWMTTiNX |access-date=22 December 2020 |website=Spotify}}", "singer": "Udit Narayan", "tracks": 1}, {"lyricist": "Rajasri{{cite web |title=Premikudu |url=https://open.spotify.com/album/1fqfENcKu7uIBmYWMTTiNX |access-date=22 December 2020 |website=Spotify}}", "singer": "P. Unnikrishnan", "tracks": 1}, {"lyricist": "Rajasri{{cite web |title=Premikudu |url=https://open.spotify.com/album/1fqfENcKu7uIBmYWMTTiNX |access-date=22 December 2020 |website=Spotify}}", "singer": "Suresh Peters", "tracks": 2}, {"lyricist": "Rajasri{{cite web |title=Premikudu |url=https://open.spotify.com/album/1fqfENcKu7uIBmYWMTTiNX |access-date=22 December 2020 |website=Spotify}}", "singer": "Minmini", "tracks": 1}, {"lyricist": "Rajasri{{cite web |title=Premikudu |url=https://open.spotify.com/album/1fqfENcKu7uIBmYWMTTiNX |access-date=22 December 2020 |website=Spotify}}", "singer": "S. Janaki", "tracks": 1}, {"lyricist": "Rajasri{{cite web |title=Premikudu |url=https://open.spotify.com/album/1fqfENcKu7uIBmYWMTTiNX |access-date=22 December 2020 |website=Spotify}}", "singer": "Shahul Hameed", "tracks": 2}, {"lyricist": "Bhuvana Chandra", "singer": "S. P. Balasubrahmanyam", "tracks": 2}, {"lyricist": "Bhuvana Chandra", "singer": "K. S. Chithra", "tracks": 1}, {"lyricist": "Bhuvana Chandra", "singer": "Hariharan", "tracks": 1}, {"lyricist": "Bhuvana Chandra", "singer": "Swarnalatha", "tracks": 1}, {"lyricist": "Bhuvana Chandra", "singer": "Udit Narayan", "tracks": 1}, {"lyricist": "Bhuvana Chandra", "singer": "Sukhwinder Singh", "tracks": 1}, {"lyricist": "Bhuvana Chandra", "singer": "P. Unnikrishnan", "tracks": 2}, {"lyricist": "Bhuvana Chandra", "singer": "Harini", "tracks": 1}, {"lyricist": "Bhuvana Chandra", "singer": "Sadhana Sargam", "tracks": 1}, {"lyricist": "Bhuvana Chandra", "singer": "G. V. Prakash Kumar", "tracks": 1}, {"lyricist": "Bhuvana Chandra", "singer": "Anupama", "tracks": 1}, {"lyricist": "Bhuvana Chandra", "singer": "K. J. Yesudas", "tracks": 1}, {"lyricist": "Mehboob Kotwal", "singer": "S. P. Balasubrahmanyam", "tracks": 1}, {"lyricist": "Mehboob Kotwal", "singer": "Sujatha Mohan", "tracks": 1}, {"lyricist": "Mehboob Kotwal", "singer": "Hariharan", "tracks": 1}, {"lyricist": "Mehboob Kotwal", "singer": "Srinivas", "tracks": 2}, {"lyricist": "Mehboob Kotwal", "singer": "A. R. Rahman", "tracks": 1}, {"lyricist": "Mehboob Kotwal", "singer": "Udit Narayan", "tracks": 2}, {"lyricist": "Mehboob Kotwal", "singer": "Kavita Krishnamurthy", "tracks": 1}, {"lyricist": "Vairamuthu. The track \"Signore Signore\" features Sinhalese lyrics penned by B. H. Abdul Hameed.{{Cite web |date=2023-05-30 |title=B.H. Abdul Hameed's Book: A Wayfarer On The Airwaves - An Anthropological Journey |url=https://www.colombotelegraph.com/index.php/b-h-abdul-hameeds-book-a-wayfarer-on-the-airwaves-an-anthropological-journey/ |access-date=2024-10-14 |website=Colombo Telegraph |language=en-US}}", "singer": "Hariharan", "tracks": 1}, {"lyricist": "Vairamuthu. The track \"Signore Signore\" features Sinhalese lyrics penned by B. H. Abdul Hameed.{{Cite web |date=2023-05-30 |title=B.H. Abdul Hameed's Book: A Wayfarer On The Airwaves - An Anthropological Journey |url=https://www.colombotelegraph.com/index.php/b-h-abdul-hameeds-book-a-wayfarer-on-the-airwaves-an-anthropological-journey/ |access-date=2024-10-14 |website=Colombo Telegraph |language=en-US}}", "singer": "A. R. Rahman", "tracks": 1}, {"lyricist": "Vairamuthu. The track \"Signore Signore\" features Sinhalese lyrics penned by B. H. Abdul Hameed.{{Cite web |date=2023-05-30 |title=B.H. Abdul Hameed's Book: A Wayfarer On The Airwaves - An Anthropological Journey |url=https://www.colombotelegraph.com/index.php/b-h-abdul-hameeds-book-a-wayfarer-on-the-airwaves-an-anthropological-journey/ |access-date=2024-10-14 |website=Colombo Telegraph |language=en-US}}", "singer": "Swarnalatha", "tracks": 1}, {"lyricist": "Vairamuthu. The track \"Signore Signore\" features Sinhalese lyrics penned by B. H. Abdul Hameed.{{Cite web |date=2023-05-30 |title=B.H. Abdul Hameed's Book: A Wayfarer On The Airwaves - An Anthropological Journey |url=https://www.colombotelegraph.com/index.php/b-h-abdul-hameeds-book-a-wayfarer-on-the-airwaves-an-anthropological-journey/ |access-date=2024-10-14 |website=Colombo Telegraph |language=en-US}}", "singer": "Minmini", "tracks": 1}, {"lyricist": "Vairamuthu. The track \"Signore Signore\" features Sinhalese lyrics penned by B. H. Abdul Hameed.{{Cite web |date=2023-05-30 |title=B.H. Abdul Hameed's Book: A Wayfarer On The Airwaves - An Anthropological Journey |url=https://www.colombotelegraph.com/index.php/b-h-abdul-hameeds-book-a-wayfarer-on-the-airwaves-an-anthropological-journey/ |access-date=2024-10-14 |website=Colombo Telegraph |language=en-US}}", "singer": "Anupama", "tracks": 1}, {"lyricist": "Rajashri", "singer": "K. S. Chithra", "tracks": 2}, {"lyricist": "Rajashri", "singer": "Sujatha Mohan", "tracks": 1}, {"lyricist": "Rajashri", "singer": "Mano", "tracks": 3}, {"lyricist": "Rajashri", "singer": "Srinivas", "tracks": 1}, {"lyricist": "Rajashri", "singer": "Suresh Peters", "tracks": 1}, {"lyricist": "Rajashri", "singer": "Unni Menon", "tracks": 1}, {"lyricist": "Rajashri", "singer": "G. V. Prakash Kumar", "tracks": 1}, {"lyricist": "Rajashri", "singer": "Shahul Hameed", "tracks": 1}, {"lyricist": "Veturi Sundararama Murthy", "singer": "S. P. Balasubrahmanyam", "tracks": 1}, {"lyricist": "Veturi Sundararama Murthy", "singer": "K. S. Chithra", "tracks": 1}, {"lyricist": "Veturi Sundararama Murthy", "singer": "Mano", "tracks": 3}, {"lyricist": "Veturi Sundararama Murthy", "singer": "Hariharan", "tracks": 1}, {"lyricist": "Veturi Sundararama Murthy", "singer": "P. Unnikrishnan", "tracks": 1}, {"lyricist": "Veturi Sundararama Murthy", "singer": "Harini", "tracks": 1}, {"lyricist": "Sirivennela Sitarama Sastry", "singer": "S. P. Balasubrahmanyam", "tracks": 4}, {"lyricist": "Sirivennela Sitarama Sastry", "singer": "K. S. Chithra", "tracks": 5}, {"lyricist": "Palani Bharathi", "singer": "S. P. Balasubrahmanyam", "tracks": 1}, {"lyricist": "Palani Bharathi", "singer": "K. S. Chithra", "tracks": 1}, {"lyricist": "Palani Bharathi", "singer": "Sujatha Mohan", "tracks": 2}, {"lyricist": "Palani Bharathi", "singer": "Mano", "tracks": 1}, {"lyricist": "Palani Bharathi", "singer": "Minmini", "tracks": 1}, {"lyricist": "Palani Bharathi", "singer": "Shahul Hameed", "tracks": 1}, {"lyricist": "Mankombu Gopalakrishnan", "singer": "K. S. Chithra", "tracks": 2}, {"lyricist": "Mankombu Gopalakrishnan", "singer": "Sujatha Mohan", "tracks": 3}, {"lyricist": "Mankombu Gopalakrishnan", "singer": "Unni Menon", "tracks": 2}, {"lyricist": "Rajasri", "singer": "S. P. Balasubrahmanyam", "tracks": 3}, {"lyricist": "Rajasri", "singer": "K. S. Chithra", "tracks": 2}, {"lyricist": "Rajasri", "singer": "Sujatha Mohan", "tracks": 2}, {"lyricist": "Rajasri", "singer": "Mano", "tracks": 1}, {"lyricist": "Rajasri", "singer": "Minmini", "tracks": 1}, {"lyricist": "Jagadish Khebudkar", "singer": "Sujatha Mohan", "tracks": 1}, {"lyricist": "Sameer", "singer": "Sukhwinder Singh", "tracks": 3}, {"lyricist": "vairamuthu", "singer": "S. P. Balasubrahmanyam", "tracks": 4}, {"lyricist": "vairamuthu", "singer": "K. S. Chithra", "tracks": 3}, {"lyricist": "vairamuthu", "singer": "K. J. Yesudas", "tracks": 1}, {"lyricist": "Bhuvanachandra", "singer": "S. P. Balasubrahmanyam", "tracks": 2}, {"lyricist": "Bhuvanachandra", "singer": "Sujatha Mohan", "tracks": 1}, {"lyricist": "Bhuvanachandra", "singer": "Hariharan", "tracks": 1}, {"lyricist": "Bhuvanachandra", "singer": "Swarnalatha", "tracks": 2}, {"lyricist": "Bhuvanachandra", "singer": "K. J. Yesudas", "tracks": 1}, {"lyricist": "Sirivennela Seetharama Sastry", "singer": "Sujatha Mohan", "tracks": 1}, {"lyricist": "Sirivennela Seetharama Sastry", "singer": "Mano", "tracks": 1}, {"lyricist": "Sirivennela Seetharama Sastry", "singer": "Hariharan", "tracks": 1}, {"lyricist": "Sirivennela Seetharama Sastry", "singer": "A. R. Rahman", "tracks": 1}, {"lyricist": "Bichu Thirumala", "singer": "Sujatha Mohan", "tracks": 2}, {"lyricist": "Bichu Thirumala", "singer": "A. R. Rahman", "tracks": 1}, {"lyricist": "Bichu Thirumala", "singer": "K. J. Yesudas", "tracks": 3}], "maxCount": 19};
+
+const cellW = 48;
+const cellH = 32;
+const labelWLeft = 180;  // lyricist label width
+const headerH = 160;     // singer labels (angled)
+const margin = { top: headerH, left: labelWLeft, right: 40, bottom: 20 };
+
+const chartW = margin.left + DATA.singers.length * cellW + margin.right;
+const chartH = margin.top + DATA.lyricists.length * cellH + margin.bottom;
+
+const svg = document.getElementById('chart');
+svg.setAttribute('width', chartW);
+svg.setAttribute('height', chartH);
+
+function svgEl(tag, attrs) {
+  const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const [k, v] of Object.entries(attrs || {})) el.setAttribute(k, v);
+  return el;
+}
+
+const lyricistIdx = {};
+DATA.lyricists.forEach((l, i) => lyricistIdx[l] = i);
+const singerIdx = {};
+DATA.singers.forEach((s, i) => singerIdx[s] = i);
+
+// --- Singer labels (angled at top) ---
+DATA.singers.forEach((s, i) => {
+  const x = margin.left + i * cellW + cellW / 2;
+  const total = DATA.singerTotals[s];
+  const text = svgEl('text', {
+    x: x, y: margin.top - 12,
+    'text-anchor': 'start', fill: '#aaa', 'font-size': '11px',
+    'font-family': 'Segoe UI, system-ui, sans-serif',
+    transform: `rotate(-55, ${x}, ${margin.top - 12})`,
+  });
+  text.textContent = `${s} (${total})`;
+  svg.appendChild(text);
+});
+
+// --- Lyricist labels (left side) ---
+DATA.lyricists.forEach((l, i) => {
+  const y = margin.top + i * cellH + cellH / 2;
+  const total = DATA.lyricistTotals[l];
+
+  // Alternating row background
+  if (i % 2 === 0) {
+    svg.appendChild(svgEl('rect', {
+      x: 0, y: y - cellH / 2,
+      width: chartW, height: cellH,
+      fill: 'rgba(255,255,255,0.015)',
+    }));
+  }
+
+  const text = svgEl('text', {
+    x: margin.left - 12, y: y + 4,
+    'text-anchor': 'end', fill: '#aaa', 'font-size': '12px',
+    'font-family': 'Segoe UI, system-ui, sans-serif',
+  });
+  text.textContent = `${l} (${total})`;
+  svg.appendChild(text);
+});
+
+// --- Heatmap cells ---
+const tooltip = document.getElementById('tooltip');
+const cellGroup = svgEl('g');
+svg.appendChild(cellGroup);
+
+// Color scale: dark to bright warm
+function cellColor(count) {
+  const t = Math.sqrt(count / DATA.maxCount);
+  const r = Math.round(40 + t * 210);
+  const g = Math.round(20 + t * 140);
+  const b = Math.round(40 - t * 20);
+  return `rgb(${r},${g},${b})`;
+}
+
+DATA.cells.forEach(c => {
+  const col = singerIdx[c.singer];
+  const row = lyricistIdx[c.lyricist];
+  if (col === undefined || row === undefined) return;
+
+  const x = margin.left + col * cellW;
+  const y = margin.top + row * cellH;
+  const color = cellColor(c.tracks);
+
+  const rect = svgEl('rect', {
+    x: x + 1, y: y + 1,
+    width: cellW - 2, height: cellH - 2,
+    fill: color,
+    rx: 3, ry: 3,
+    opacity: 0.9,
+  });
+  cellGroup.appendChild(rect);
+
+  // Count label inside cell
+  if (c.tracks >= 2) {
+    const label = svgEl('text', {
+      x: x + cellW / 2, y: y + cellH / 2 + 4,
+      'text-anchor': 'middle', fill: '#fff',
+      'font-size': '11px', 'font-weight': '600',
+      'font-family': 'Segoe UI, system-ui, sans-serif',
+      'pointer-events': 'none',
+    });
+    label.textContent = c.tracks;
+    cellGroup.appendChild(label);
+  }
+
+  rect.addEventListener('mouseenter', (ev) => {
+    let html = `<div style="font-weight:700; color:${color}; font-size:15px">${c.lyricist} + ${c.singer}</div>`;
+    html += `<div style="color:#ddd; margin-top:6px">${c.tracks} track${c.tracks > 1 ? 's' : ''} together</div>`;
+    html += `<div style="color:#888; margin-top:4px; font-size:11px">${c.lyricist}: ${DATA.lyricistTotals[c.lyricist]} total tracks</div>`;
+    html += `<div style="color:#888; font-size:11px">${c.singer}: ${DATA.singerTotals[c.singer]} total tracks</div>`;
+    tooltip.innerHTML = html;
+    tooltip.style.display = 'block';
+    rect.setAttribute('opacity', 1);
+    rect.setAttribute('stroke', '#fff');
+    rect.setAttribute('stroke-width', '2');
+    moveTooltip(ev);
+  });
+
+  rect.addEventListener('mousemove', moveTooltip);
+
+  rect.addEventListener('mouseleave', () => {
+    tooltip.style.display = 'none';
+    rect.setAttribute('opacity', 0.9);
+    rect.removeAttribute('stroke');
+    rect.removeAttribute('stroke-width');
+  });
+});
+
+function moveTooltip(ev) {
+  let x = ev.clientX + 14, y = ev.clientY + 14;
+  if (x + 280 > window.innerWidth) x = ev.clientX - 290;
+  if (y + 150 > window.innerHeight) y = ev.clientY - 150;
+  tooltip.style.left = x + 'px';
+  tooltip.style.top = y + 'px';
+}
+</script>
+</body>
+</html>

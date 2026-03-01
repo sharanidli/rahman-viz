@@ -104,6 +104,18 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
+  .card.new-tag::after {
+    content: 'NEW';
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 700;
+    color: #0a0a1a;
+    background: #f0c46c;
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
 
   footer {
     padding: 30px;
@@ -123,21 +135,25 @@
   <h1>AR Rahman — Data Visualized</h1>
   <p>
     Interactive explorations of AR Rahman's discography: who sings with whom,
-    how albums connect through shared collaborators, and what his music sounds like
-    through the lens of audio data.
+    how albums connect through shared collaborators, what his music sounds like
+    through audio data, and which lyricists write for which singers.
   </p>
   <div class="stats">
     <div class="stat">
-      <div class="stat-num">31</div>
+      <div class="stat-num">60</div>
       <div class="stat-label">Albums</div>
     </div>
     <div class="stat">
-      <div class="stat-num">277</div>
+      <div class="stat-num">773</div>
       <div class="stat-label">Tracks</div>
     </div>
     <div class="stat">
-      <div class="stat-num">116</div>
+      <div class="stat-num">267</div>
       <div class="stat-label">Singers</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">70</div>
+      <div class="stat-label">Lyricists</div>
     </div>
     <div class="stat">
       <div class="stat-num">1992–2011</div>
@@ -153,9 +169,9 @@
     <p>
       Each album is a node. Albums that share singers are connected, with
       thicker edges meaning more singers in common. See how Rahman's early
-      Tamil films form a tight cluster while Rockstar floats alone.
+      Tamil films form a tight cluster.
     </p>
-    <div class="card-meta">Network graph &middot; 31 albums &middot; Hover for details</div>
+    <div class="card-meta">Network graph &middot; 58 albums &middot; Hover for details</div>
   </a>
 
   <a class="card" href="singer_network.html">
@@ -166,7 +182,7 @@
       of everything, connected to nearly every other vocalist. See who Rahman's
       core collaborators are and how they cluster.
     </p>
-    <div class="card-meta">Network graph &middot; 53 singers &middot; Hover for details</div>
+    <div class="card-meta">Network graph &middot; 124 singers &middot; Hover for details</div>
   </a>
 
   <a class="card" href="mood_map.html">
@@ -177,7 +193,7 @@
       features. See which albums are melancholic vs. euphoric, calm vs. intense.
       Click albums in the sidebar to filter.
     </p>
-    <div class="card-meta">Scatter plot &middot; 130 tracks &middot; Click to filter albums</div>
+    <div class="card-meta">Scatter plot &middot; 268 tracks &middot; Click to filter albums</div>
   </a>
 
   <a class="card" href="collaborator_timeline.html">
@@ -188,7 +204,40 @@
       column an album. Dot size shows how many tracks they contributed.
       Watch SPB dominate the early years.
     </p>
-    <div class="card-meta">Timeline &middot; 25 singers &times; 30 albums &middot; Hover for details</div>
+    <div class="card-meta">Timeline &middot; 25 singers &times; 59 albums &middot; Hover for details</div>
+  </a>
+
+  <a class="card new-tag" href="sound_radar.html">
+    <span class="card-icon">&#11039;</span>
+    <h2>Sound Over Time</h2>
+    <p>
+      Radar charts showing each album's average audio profile: danceability,
+      energy, valence, acousticness, and more. Navigate chronologically or
+      hit play to watch Rahman's sound evolve.
+    </p>
+    <div class="card-meta">Radar chart &middot; 31 albums &middot; Arrow keys or autoplay</div>
+  </a>
+
+  <a class="card new-tag" href="lyricist_heatmap.html">
+    <span class="card-icon">&#9638;&#9638;&#9638;</span>
+    <h2>Lyricist &times; Singer</h2>
+    <p>
+      Who writes for whom? A heatmap with lyricists on one axis and singers
+      on the other. Vairamuthu + SPB dominates with 19 tracks. See which
+      pairings define Rahman's sound.
+    </p>
+    <div class="card-meta">Heatmap &middot; 28 lyricists &times; 24 singers &middot; Hover for details</div>
+  </a>
+
+  <a class="card new-tag" href="key_wheel.html">
+    <span class="card-icon">&#9836;</span>
+    <h2>Key & Mode Wheel</h2>
+    <p>
+      Which musical keys does Rahman favour? A circular chart shows D and G
+      as his go-to keys, with 61% major vs 39% minor. Click any segment to
+      see the tracks in that key.
+    </p>
+    <div class="card-meta">Polar chart &middot; 268 tracks &middot; Click to explore</div>
   </a>
 </div>
 

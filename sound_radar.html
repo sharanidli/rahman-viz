@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AR Rahman — Sound Over Time</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0a1a;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+  #header {
+    padding: 24px 24px 12px;
+    text-align: center;
+  }
+  #header h1 { font-size: 22px; font-weight: 700; color: #fff; }
+  #header p { font-size: 13px; color: #888; margin-top: 4px; }
+
+  #controls {
+    display: flex; align-items: center; gap: 16px;
+    padding: 12px 24px;
+  }
+  #controls button {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #ccc; padding: 8px 16px; border-radius: 6px;
+    cursor: pointer; font-size: 14px;
+    transition: all 0.15s;
+  }
+  #controls button:hover { background: rgba(255,255,255,0.15); color: #fff; }
+  #controls button:disabled { opacity: 0.3; cursor: default; }
+  #album-info {
+    text-align: center; min-width: 240px;
+  }
+  #album-name {
+    font-size: 20px; font-weight: 700; color: #f0c46c;
+  }
+  #album-meta {
+    font-size: 12px; color: #888; margin-top: 2px;
+  }
+
+  #chart-area {
+    position: relative;
+    width: 600px; height: 500px;
+  }
+
+  /* Album list sidebar */
+  #album-list {
+    position: fixed; right: 20px; top: 70px; bottom: 20px;
+    width: 180px; overflow-y: auto;
+    background: rgba(20, 20, 40, 0.85);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px; padding: 12px;
+    backdrop-filter: blur(8px);
+    font-size: 11px; z-index: 10;
+  }
+  #album-list h3 { font-size: 11px; text-transform: uppercase; color: #888;
+    letter-spacing: 0.5px; margin-bottom: 8px; }
+  .album-item {
+    padding: 4px 8px; border-radius: 4px; cursor: pointer;
+    margin-bottom: 2px; color: #aaa; transition: all 0.15s;
+  }
+  .album-item:hover { background: rgba(255,255,255,0.05); color: #fff; }
+  .album-item.active { background: rgba(240,196,108,0.15); color: #f0c46c; font-weight: 600; }
+
+  #play-btn {
+    background: rgba(240,196,108,0.15) !important;
+    border-color: rgba(240,196,108,0.3) !important;
+    color: #f0c46c !important;
+  }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <h1>AR Rahman — Sound Over Time</h1>
+  <p>Average audio profile per album &middot; Navigate albums chronologically or click to jump</p>
+</div>
+
+<div id="controls">
+  <button id="prev-btn" onclick="navigate(-1)">&larr; Previous</button>
+  <div id="album-info">
+    <div id="album-name"></div>
+    <div id="album-meta"></div>
+  </div>
+  <button id="next-btn" onclick="navigate(1)">Next &rarr;</button>
+  <button id="play-btn" onclick="togglePlay()">&#9654; Play</button>
+</div>
+
+<div id="chart-area">
+  <svg id="chart" width="600" height="500"></svg>
+</div>
+
+<div id="album-list"></div>
+
+<script>
+const DATA = {"albums": ["Pudhiya Mugam", "Thiruda Thiruda", "Uzhavan", "Duet", "Pudhiya Mannargal", "Super Police", "Vandicholai Chinraasu", "Bombay", "Rangeela", "Fire", "Indian", "Kadhal Desam", "Love Birds", "Daud", "Minsara Kanavu", "Dil Se..", "Doli Saja Ke Rakhna", "Earth", "Jeans", "Jodi", "Taal", "Taj Mahal", "Thakshak", "Alai Payuthey", "Pukar", "Thenali", "Paarthale Paravasam", "Zubeidaa", "The Legend of Bhagat Singh", "Rockstar", "Lagaan"], "albumYears": {"Pudhiya Mugam": 1993, "Thiruda Thiruda": 1993, "Uzhavan": 1993, "Duet": 1994, "Pudhiya Mannargal": 1994, "Super Police": 1994, "Vandicholai Chinraasu": 1994, "Bombay": 1995, "Rangeela": 1995, "Fire": 1996, "Indian": 1996, "Kadhal Desam": 1996, "Love Birds": 1996, "Daud": 1997, "Minsara Kanavu": 1997, "Dil Se..": 1998, "Doli Saja Ke Rakhna": 1998, "Earth": 1998, "Jeans": 1998, "Jodi": 1999, "Taal": 1999, "Taj Mahal": 1999, "Thakshak": 1999, "Alai Payuthey": 2000, "Pukar": 2000, "Thenali": 2000, "Paarthale Paravasam": 2001, "Zubeidaa": 2001, "The Legend of Bhagat Singh": 2002, "Rockstar": 2011, "Lagaan": null}, "albumTrackCounts": {"Pudhiya Mugam": 6, "Thiruda Thiruda": 6, "Uzhavan": 6, "Duet": 8, "Pudhiya Mannargal": 5, "Super Police": 5, "Vandicholai Chinraasu": 5, "Bombay": 6, "Rangeela": 9, "Fire": 16, "Indian": 5, "Kadhal Desam": 6, "Love Birds": 5, "Daud": 9, "Minsara Kanavu": 6, "Dil Se..": 6, "Doli Saja Ke Rakhna": 8, "Earth": 9, "Jeans": 6, "Jodi": 7, "Taal": 12, "Taj Mahal": 10, "Thakshak": 9, "Alai Payuthey": 24, "Pukar": 6, "Thenali": 6, "Paarthale Paravasam": 8, "Zubeidaa": 8, "The Legend of Bhagat Singh": 10, "Rockstar": 15, "Lagaan": 8}, "albumAvgs": {"Pudhiya Mugam": {"danceability": 0.652, "energy": 0.286, "valence": 0.519, "acousticness": 0.682, "speechiness": 0.046, "instrumentalness": 0.0}, "Thiruda Thiruda": {"danceability": 0.674, "energy": 0.307, "valence": 0.556, "acousticness": 0.35, "speechiness": 0.097, "instrumentalness": 0.039}, "Uzhavan": {"danceability": 0.65, "energy": 0.264, "valence": 0.436, "acousticness": 0.555, "speechiness": 0.083, "instrumentalness": 0.0}, "Duet": {"danceability": 0.565, "energy": 0.438, "valence": 0.544, "acousticness": 0.863, "speechiness": 0.115, "instrumentalness": 0.078}, "Pudhiya Mannargal": {"danceability": 0.834, "energy": 0.471, "valence": 0.719, "acousticness": 0.112, "speechiness": 0.203, "instrumentalness": 0.003}, "Super Police": {"danceability": 0.839, "energy": 0.435, "valence": 0.604, "acousticness": 0.161, "speechiness": 0.198, "instrumentalness": 0.001}, "Vandicholai Chinraasu": {"danceability": 0.726, "energy": 0.382, "valence": 0.724, "acousticness": 0.342, "speechiness": 0.286, "instrumentalness": 0.0}, "Bombay": {"danceability": 0.583, "energy": 0.609, "valence": 0.575, "acousticness": 0.269, "speechiness": 0.131, "instrumentalness": 0.001}, "Rangeela": {"danceability": 0.725, "energy": 0.603, "valence": 0.588, "acousticness": 0.142, "speechiness": 0.145, "instrumentalness": 0.163}, "Fire": {"danceability": 0.405, "energy": 0.196, "valence": 0.191, "acousticness": 0.387, "speechiness": 0.09, "instrumentalness": 0.325}, "Indian": {"danceability": 0.759, "energy": 0.548, "valence": 0.58, "acousticness": 0.156, "speechiness": 0.112, "instrumentalness": 0.001}, "Kadhal Desam": {"danceability": 0.666, "energy": 0.461, "valence": 0.433, "acousticness": 0.169, "speechiness": 0.054, "instrumentalness": 0.004}, "Love Birds": {"danceability": 0.676, "energy": 0.333, "valence": 0.335, "acousticness": 0.222, "speechiness": 0.162, "instrumentalness": 0.0}, "Daud": {"danceability": 0.776, "energy": 0.438, "valence": 0.487, "acousticness": 0.118, "speechiness": 0.1, "instrumentalness": 0.107}, "Minsara Kanavu": {"danceability": 0.644, "energy": 0.379, "valence": 0.547, "acousticness": 0.22, "speechiness": 0.108, "instrumentalness": 0.0}, "Dil Se..": {"danceability": 0.748, "energy": 0.509, "valence": 0.405, "acousticness": 0.179, "speechiness": 0.154, "instrumentalness": 0.0}, "Doli Saja Ke Rakhna": {"danceability": 0.701, "energy": 0.724, "valence": 0.708, "acousticness": 0.235, "speechiness": 0.1, "instrumentalness": 0.118}, "Earth": {"danceability": 0.5, "energy": 0.36, "valence": 0.387, "acousticness": 0.319, "speechiness": 0.041, "instrumentalness": 0.131}, "Jeans": {"danceability": 0.741, "energy": 0.632, "valence": 0.663, "acousticness": 0.096, "speechiness": 0.067, "instrumentalness": 0.0}, "Jodi": {"danceability": 0.655, "energy": 0.823, "valence": 0.677, "acousticness": 0.36, "speechiness": 0.081, "instrumentalness": 0.001}, "Taal": {"danceability": 0.677, "energy": 0.461, "valence": 0.404, "acousticness": 0.124, "speechiness": 0.075, "instrumentalness": 0.078}, "Taj Mahal": {"danceability": 0.688, "energy": 0.484, "valence": 0.535, "acousticness": 0.185, "speechiness": 0.063, "instrumentalness": 0.003}, "Thakshak": {"danceability": 0.701, "energy": 0.572, "valence": 0.683, "acousticness": 0.232, "speechiness": 0.076, "instrumentalness": 0.003}, "Alai Payuthey": {"danceability": 0.682, "energy": 0.512, "valence": 0.675, "acousticness": 0.405, "speechiness": 0.441, "instrumentalness": 0.01}, "Pukar": {"danceability": 0.607, "energy": 0.49, "valence": 0.493, "acousticness": 0.214, "speechiness": 0.049, "instrumentalness": 0.0}, "Thenali": {"danceability": 0.628, "energy": 0.441, "valence": 0.421, "acousticness": 0.267, "speechiness": 0.131, "instrumentalness": 0.001}, "Paarthale Paravasam": {"danceability": 0.677, "energy": 0.506, "valence": 0.599, "acousticness": 0.234, "speechiness": 0.068, "instrumentalness": 0.032}, "Zubeidaa": {"danceability": 0.509, "energy": 0.408, "valence": 0.398, "acousticness": 0.506, "speechiness": 0.056, "instrumentalness": 0.002}, "The Legend of Bhagat Singh": {"danceability": 0.566, "energy": 0.518, "valence": 0.475, "acousticness": 0.556, "speechiness": 0.06, "instrumentalness": 0.0}, "Rockstar": {"danceability": 0.536, "energy": 0.528, "valence": 0.505, "acousticness": 0.513, "speechiness": 0.066, "instrumentalness": 0.123}, "Lagaan": {"danceability": 0.511, "energy": 0.379, "valence": 0.378, "acousticness": 0.524, "speechiness": 0.125, "instrumentalness": 0.061}}, "globalAvg": {"danceability": 0.639, "energy": 0.467, "valence": 0.517, "acousticness": 0.33, "speechiness": 0.129, "instrumentalness": 0.057}, "axes": ["danceability", "energy", "valence", "acousticness", "speechiness", "instrumentalness"], "axisLabels": ["Danceability", "Energy", "Valence", "Acousticness", "Speechiness", "Instrumentalness"]};
+
+const svg = document.getElementById('chart');
+const W = 600, H = 500;
+const cx = W / 2, cy = H / 2 + 10;
+const R = 190;  // max radar radius
+const axes = DATA.axes;
+const N = axes.length;
+
+function svgEl(tag, attrs) {
+  const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const [k, v] of Object.entries(attrs || {})) el.setAttribute(k, v);
+  return el;
+}
+
+// Angle for each axis (starting from top, going clockwise)
+function angle(i) {
+  return -Math.PI / 2 + (2 * Math.PI * i) / N;
+}
+
+function axisPoint(i, value) {
+  const a = angle(i);
+  return {
+    x: cx + Math.cos(a) * R * value,
+    y: cy + Math.sin(a) * R * value,
+  };
+}
+
+// --- Draw static grid ---
+const gridGroup = svgEl('g');
+svg.appendChild(gridGroup);
+
+// Concentric rings
+for (let level = 0.2; level <= 1.0; level += 0.2) {
+  let points = [];
+  for (let i = 0; i < N; i++) {
+    const p = axisPoint(i, level);
+    points.push(`${p.x},${p.y}`);
+  }
+  gridGroup.appendChild(svgEl('polygon', {
+    points: points.join(' '),
+    fill: 'none',
+    stroke: 'rgba(255,255,255,0.06)',
+    'stroke-width': 1,
+  }));
+  // Level label on first axis
+  const lp = axisPoint(0, level);
+  const label = svgEl('text', {
+    x: lp.x + 4, y: lp.y - 4,
+    fill: '#444', 'font-size': '9px',
+    'font-family': 'Segoe UI, system-ui, sans-serif',
+  });
+  label.textContent = level.toFixed(1);
+  gridGroup.appendChild(label);
+}
+
+// Axis lines + labels
+for (let i = 0; i < N; i++) {
+  const p = axisPoint(i, 1.0);
+  gridGroup.appendChild(svgEl('line', {
+    x1: cx, y1: cy, x2: p.x, y2: p.y,
+    stroke: 'rgba(255,255,255,0.1)', 'stroke-width': 1,
+  }));
+  // Label
+  const lp = axisPoint(i, 1.15);
+  const label = svgEl('text', {
+    x: lp.x, y: lp.y,
+    'text-anchor': 'middle', 'dominant-baseline': 'middle',
+    fill: '#888', 'font-size': '12px', 'font-weight': '600',
+    'font-family': 'Segoe UI, system-ui, sans-serif',
+  });
+  label.textContent = DATA.axisLabels[i];
+  gridGroup.appendChild(label);
+}
+
+// --- Global average polygon (always visible, dim) ---
+let globalPoints = [];
+for (let i = 0; i < N; i++) {
+  const p = axisPoint(i, DATA.globalAvg[axes[i]]);
+  globalPoints.push(`${p.x},${p.y}`);
+}
+const globalPoly = svgEl('polygon', {
+  points: globalPoints.join(' '),
+  fill: 'rgba(255,255,255,0.03)',
+  stroke: 'rgba(255,255,255,0.15)',
+  'stroke-width': 1,
+  'stroke-dasharray': '4,4',
+});
+svg.appendChild(globalPoly);
+
+// Global avg label
+const gaLabel = svgEl('text', {
+  x: W - 10, y: H - 10,
+  'text-anchor': 'end', fill: '#555', 'font-size': '10px',
+  'font-family': 'Segoe UI, system-ui, sans-serif',
+});
+gaLabel.textContent = 'Dashed = overall average';
+svg.appendChild(gaLabel);
+
+// --- Album polygon (animated) ---
+const albumPoly = svgEl('polygon', {
+  points: '',
+  fill: 'rgba(240,196,108,0.12)',
+  stroke: '#f0c46c',
+  'stroke-width': 2,
+});
+svg.appendChild(albumPoly);
+
+// Dots on vertices
+const vertexDots = [];
+for (let i = 0; i < N; i++) {
+  const dot = svgEl('circle', {
+    cx: cx, cy: cy, r: 4,
+    fill: '#f0c46c', stroke: '#fff', 'stroke-width': 1,
+  });
+  svg.appendChild(dot);
+  vertexDots.push(dot);
+}
+
+// Value labels on vertices
+const valueLabels = [];
+for (let i = 0; i < N; i++) {
+  const label = svgEl('text', {
+    x: cx, y: cy,
+    'text-anchor': 'middle', fill: '#f0c46c', 'font-size': '11px',
+    'font-weight': '700',
+    'font-family': 'Segoe UI, system-ui, sans-serif',
+  });
+  svg.appendChild(label);
+  valueLabels.push(label);
+}
+
+// --- State ---
+let currentIdx = 0;
+let playing = false;
+let playInterval = null;
+
+// Current displayed values (for animation)
+let currentValues = axes.map(() => 0);
+
+function setAlbum(idx, animate = true) {
+  currentIdx = idx;
+  const album = DATA.albums[idx];
+  const avgs = DATA.albumAvgs[album];
+  const year = DATA.albumYears[album] || '?';
+  const count = DATA.albumTrackCounts[album];
+
+  document.getElementById('album-name').textContent = album;
+  document.getElementById('album-meta').textContent = `${year} · ${count} tracks`;
+  document.getElementById('prev-btn').disabled = idx === 0;
+  document.getElementById('next-btn').disabled = idx === DATA.albums.length - 1;
+
+  // Update album list highlight
+  document.querySelectorAll('.album-item').forEach((el, i) => {
+    el.classList.toggle('active', i === idx);
+  });
+  // Scroll active into view
+  const activeEl = document.querySelector('.album-item.active');
+  if (activeEl) activeEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+
+  const targetValues = axes.map(ax => avgs[ax]);
+
+  if (animate) {
+    animateTo(targetValues);
+  } else {
+    currentValues = targetValues;
+    renderPolygon();
+  }
+}
+
+function animateTo(targetValues) {
+  const startValues = [...currentValues];
+  const duration = 400;
+  const startTime = performance.now();
+
+  function tick(now) {
+    const t = Math.min((now - startTime) / duration, 1);
+    const ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    currentValues = axes.map((_, i) => startValues[i] + (targetValues[i] - startValues[i]) * ease);
+    renderPolygon();
+    if (t < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+function renderPolygon() {
+  let points = [];
+  for (let i = 0; i < N; i++) {
+    const p = axisPoint(i, currentValues[i]);
+    points.push(`${p.x},${p.y}`);
+    vertexDots[i].setAttribute('cx', p.x);
+    vertexDots[i].setAttribute('cy', p.y);
+    // Value label offset outward
+    const lp = axisPoint(i, currentValues[i] + 0.08);
+    valueLabels[i].setAttribute('x', lp.x);
+    valueLabels[i].setAttribute('y', lp.y);
+    valueLabels[i].textContent = currentValues[i].toFixed(2);
+  }
+  albumPoly.setAttribute('points', points.join(' '));
+}
+
+function navigate(dir) {
+  const next = currentIdx + dir;
+  if (next >= 0 && next < DATA.albums.length) {
+    setAlbum(next);
+  }
+}
+
+function togglePlay() {
+  playing = !playing;
+  const btn = document.getElementById('play-btn');
+  if (playing) {
+    btn.innerHTML = '&#9632; Stop';
+    playInterval = setInterval(() => {
+      if (currentIdx < DATA.albums.length - 1) {
+        setAlbum(currentIdx + 1);
+      } else {
+        togglePlay();  // stop at end
+      }
+    }, 1500);
+  } else {
+    btn.innerHTML = '&#9654; Play';
+    clearInterval(playInterval);
+  }
+}
+
+// --- Album list sidebar ---
+const listEl = document.getElementById('album-list');
+listEl.innerHTML = '<h3>Albums</h3>';
+DATA.albums.forEach((a, i) => {
+  const item = document.createElement('div');
+  item.className = 'album-item';
+  const year = DATA.albumYears[a] || '?';
+  item.textContent = `${a} (${year})`;
+  item.addEventListener('click', () => setAlbum(i));
+  listEl.appendChild(item);
+});
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowLeft') navigate(-1);
+  if (e.key === 'ArrowRight') navigate(1);
+  if (e.key === ' ') { e.preventDefault(); togglePlay(); }
+});
+
+// Init
+setAlbum(0, false);
+</script>
+</body>
+</html>
