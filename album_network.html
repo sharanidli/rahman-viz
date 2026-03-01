@@ -14970,9 +14970,16 @@ function showTooltip(ev, n) {
     if (e.target === n.id) connectedIds.add(e.source);
   });
   nodeEls.forEach(ne => {
-    const dim = !connectedIds.has(ne.data.id);
-    ne.circle.setAttribute('opacity', dim ? 0.2 : 0.95);
-    ne.glow.setAttribute('opacity', dim ? 0.02 : 0.12);
+    const isHovered = ne.data.id === n.id;
+    const isConnected = connectedIds.has(ne.data.id);
+    const dim = !isConnected;
+    ne.circle.setAttribute('opacity', dim ? 0.06 : isHovered ? 1 : 0.7);
+    ne.glow.setAttribute('opacity', dim ? 0 : isHovered ? 0.25 : 0.06);
+    // Scale up hovered node
+    if (isHovered) {
+      ne.circle.setAttribute('r', ne.data.radius * 1.3);
+      ne.glow.setAttribute('r', (ne.data.radius + 8) * 1.3);
+    }
   });
 
   let html = `<div class="tt-album" style="color:${langColors[n.primary_language]}">${n.id}</div>`;
@@ -15021,7 +15028,9 @@ function hideTooltip() {
   edgeEls.forEach(e => e.line.setAttribute('stroke', 'rgba(255,255,255,0.15)'));
   nodeEls.forEach(ne => {
     ne.circle.setAttribute('opacity', 0.9);
+    ne.circle.setAttribute('r', ne.data.radius);
     ne.glow.setAttribute('opacity', 0.08);
+    ne.glow.setAttribute('r', ne.data.radius + 8);
   });
 }
 
