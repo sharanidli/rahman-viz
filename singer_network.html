@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AR Rahman — Singer Network</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0a1a;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    overflow: hidden;
+  }
+  #header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+    padding: 16px 24px;
+    background: linear-gradient(180deg, rgba(10,10,26,0.95) 0%, rgba(10,10,26,0) 100%);
+    pointer-events: none;
+  }
+  #header h1 { font-size: 22px; font-weight: 700; color: #fff; }
+  #header p { font-size: 13px; color: #888; margin-top: 4px; }
+
+  svg { display: block; }
+
+  #tooltip {
+    position: fixed; pointer-events: none;
+    background: rgba(20, 20, 40, 0.96);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px; padding: 14px 18px;
+    font-size: 13px; line-height: 1.5;
+    max-width: 320px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    display: none; z-index: 100;
+    backdrop-filter: blur(8px);
+  }
+  #tooltip .tt-name { font-size: 16px; font-weight: 700; margin-bottom: 4px; color: #f0c46c; }
+  #tooltip .tt-meta { color: #aaa; font-size: 12px; margin-bottom: 6px; }
+  #tooltip .tt-section { color: #888; font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.5px; margin-top: 8px; margin-bottom: 2px; }
+
+  #edge-tooltip {
+    position: fixed; pointer-events: none;
+    background: rgba(20, 20, 40, 0.96);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px; padding: 10px 14px;
+    font-size: 12px; line-height: 1.5;
+    max-width: 280px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    display: none; z-index: 100;
+    backdrop-filter: blur(8px);
+  }
+
+  #instructions {
+    position: fixed; bottom: 20px; right: 20px; z-index: 10;
+    color: #555; font-size: 11px; text-align: right;
+  }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <h1>AR Rahman — Singer Network</h1>
+  <p>Singers who appear on the same track are connected &middot; Hover for details</p>
+</div>
+
+<div id="tooltip"></div>
+<div id="edge-tooltip"></div>
+
+<div id="instructions">
+  Node size = number of tracks &middot; Edge thickness = tracks shared
+</div>
+
+<svg id="network"></svg>
+
+<script>
+const DATA = {"nodes": [{"id": "A. R. Rahman", "tracks": 26, "album_count": 9, "albums": ["Yoddha", "Thiruda Thiruda", "Kaadhalan", "Bombay", "Rangeela", "Kadhal Desam", "Love Birds", "Daud", "Rockstar"], "x": 0.0191, "y": 0.0494}, {"id": "Abhijeet Bhattacharya", "tracks": 2, "album_count": 2, "albums": ["Yoddha", "Minsara Kanavu"], "x": 0.142, "y": 0.8841}, {"id": "Annupamaa", "tracks": 9, "album_count": 4, "albums": ["Thiruda Thiruda", "Pudhiya Mugam", "Rangeela", "Bombay"], "x": 0.1988, "y": 0.1917}, {"id": "Anto", "tracks": 2, "album_count": 1, "albums": ["Mr. Romeo"], "x": 0.2013, "y": 0.6431}, {"id": "Anupama", "tracks": 6, "album_count": 4, "albums": ["May Maadham", "Super Police", "Bombay", "Kadhal Desam"], "x": -0.0214, "y": 0.4834}, {"id": "Anuradha Sriram", "tracks": 8, "album_count": 3, "albums": ["Bombay", "Indira", "Minsara Kanavu"], "x": 0.0105, "y": 0.1664}, {"id": "Apache Indian", "tracks": 3, "album_count": 1, "albums": ["Love Birds"], "x": 0.2814, "y": -0.373}, {"id": "Arvind Swamy", "tracks": 2, "album_count": 1, "albums": ["Iruvar"], "x": -0.9821, "y": 0.2261}, {"id": "Asha Bhosle", "tracks": 4, "album_count": 3, "albums": ["Rangeela", "Iruvar", "Daud"], "x": -0.4672, "y": 0.1643}, {"id": "Aslam Mustafa", "tracks": 5, "album_count": 2, "albums": ["Love Birds", "Kadhal Desam"], "x": -0.3243, "y": 0.3092}, {"id": "Bharathiraja", "tracks": 3, "album_count": 2, "albums": ["Karuththamma", "Anthimanthaarai"], "x": -0.3038, "y": 0.8978}, {"id": "Bombay Jayashri", "tracks": 2, "album_count": 1, "albums": ["Iruvar"], "x": 0.7852, "y": -0.2701}, {"id": "Caroline", "tracks": 2, "album_count": 1, "albums": ["Thiruda Thiruda"], "x": 0.3359, "y": 0.0245}, {"id": "Chandran", "tracks": 2, "album_count": 1, "albums": ["Mr. Romeo"], "x": 0.2557, "y": 0.5206}, {"id": "Chorus", "tracks": 3, "album_count": 2, "albums": ["Bombay", "Mr. Romeo"], "x": 0.2984, "y": -0.6911}, {"id": "Dominique Cerejo", "tracks": 3, "album_count": 2, "albums": ["Kadhal Desam", "Iruvar"], "x": 0.1311, "y": -0.3455}, {"id": "G. V. Prakash Kumar", "tracks": 15, "album_count": 7, "albums": ["Uzhavan", "Gentleman", "Thiruda Thiruda", "May Maadham", "Muthu", "Bombay", "Indira"], "x": -0.1052, "y": -0.1698}, {"id": "Ganga Sreenivasan", "tracks": 2, "album_count": 1, "albums": ["Bombay"], "x": 0.1527, "y": 0.2859}, {"id": "Ganga)", "tracks": 3, "album_count": 1, "albums": ["Bombay"], "x": -0.1898, "y": -0.1811}, {"id": "Hariharan", "tracks": 36, "album_count": 12, "albums": ["Roja", "Kaadhalan", "Bombay", "Indira", "Muthu", "Rangeela", "Indian", "Kadhal Desam", "Love Birds", "Mr. Romeo", "Iruvar", "Minsara Kanavu"], "x": -0.2602, "y": -0.1119}, {"id": "Harini", "tracks": 4, "album_count": 2, "albums": ["Indira", "Iruvar"], "x": -0.8713, "y": 0.4896}, {"id": "Hema Sardesai", "tracks": 2, "album_count": 1, "albums": ["Minsara Kanavu"], "x": 0.3955, "y": 0.4385}, {"id": "Ila Arun", "tracks": 4, "album_count": 2, "albums": ["Muthu", "Mr. Romeo"], "x": 0.4278, "y": -0.6404}, {"id": "Jolly Mukherjee", "tracks": 2, "album_count": 1, "albums": ["Yoddha"], "x": 0.2158, "y": 0.8831}, {"id": "K. J. Yesudas", "tracks": 9, "album_count": 4, "albums": ["Yoddha", "Uzhavan", "Duet", "Indian"], "x": 0.3443, "y": 0.2682}, {"id": "K. J. Yesudas & Asha Bhosle", "tracks": 2, "album_count": 1, "albums": ["Daud"], "x": -0.1007, "y": -0.745}, {"id": "K. S. Chithra", "tracks": 57, "album_count": 20, "albums": ["Roja", "Yoddha", "Uzhavan", "Thiruda Thiruda", "Nippu Ravva", "Kizhakku Cheemayile", "May Maadham", "Pavithra", "Duet", "Super Police", "Pudhiya Mannargal", "Karuththamma", "Gangmaster", "Muthu", "Rangeela", "Bombay", "Indira", "Love Birds", "Daud", "Minsara Kanavu"], "x": 0.002, "y": -0.1055}, {"id": "K. S. Chitra", "tracks": 2, "album_count": 1, "albums": ["Love Birds"], "x": -0.7214, "y": -0.203}, {"id": "K.S. Chithra", "tracks": 2, "album_count": 1, "albums": ["Duet"], "x": 0.4935, "y": 0.4358}, {"id": "KK", "tracks": 6, "album_count": 2, "albums": ["Kadhal Desam", "Minsara Kanavu"], "x": -0.2171, "y": 0.3322}, {"id": "Kalyani Menon", "tracks": 2, "album_count": 2, "albums": ["Pudhiya Mannargal", "Muthu"], "x": -0.1425, "y": -0.4659}, {"id": "Kavita Krishnamurthy", "tracks": 5, "album_count": 4, "albums": ["Yoddha", "Bombay", "Mr. Romeo", "Rockstar"], "x": -0.3989, "y": -0.5118}, {"id": "Leon James (composer)", "tracks": 2, "album_count": 1, "albums": ["Kaadhalan"], "x": -0.232, "y": 0.5151}, {"id": "Malaysia Vasudevan", "tracks": 5, "album_count": 4, "albums": ["Kizhakku Cheemayile", "Karuththamma", "Mr. Romeo", "Minsara Kanavu"], "x": -0.0908, "y": 0.4428}, {"id": "Malgudi Subha", "tracks": 10, "album_count": 5, "albums": ["Yoddha", "Pudhiya Mugam", "Gentleman", "Vandicholai Chinraasu", "Minsara Kanavu"], "x": 0.2551, "y": -0.2272}, {"id": "Mano", "tracks": 43, "album_count": 15, "albums": ["Roja", "Kizhakku Cheemayile", "Thiruda Thiruda", "Kaadhalan", "Super Police", "Pavithra", "Gangmaster", "Pudhiya Mannargal", "Muthu", "Indira", "Rangeela", "Kadhal Desam", "Love Birds", "Iruvar", "Minsara Kanavu"], "x": 0.0933, "y": -0.1875}, {"id": "Minmini", "tracks": 16, "album_count": 8, "albums": ["Roja", "Pudhiya Mugam", "Gentleman", "Thiruda Thiruda", "Kaadhalan", "Pudhiya Mannargal", "Gangmaster", "Karuththamma"], "x": 0.2814, "y": -0.0609}, {"id": "Mohit Chauhan", "tracks": 9, "album_count": 1, "albums": ["Rockstar"], "x": 0.4792, "y": 0.2838}, {"id": "Nirmala Seshadri", "tracks": 3, "album_count": 1, "albums": ["Indian"], "x": 0.6162, "y": 0.5705}, {"id": "Noel James", "tracks": 13, "album_count": 5, "albums": ["Thiruda Thiruda", "May Maadham", "Bombay", "Kadhal Desam", "Mr. Romeo"], "x": 0.0574, "y": 0.3303}, {"id": "O. S. Arun", "tracks": 2, "album_count": 1, "albums": ["Kadhal Desam"], "x": 0.5224, "y": -0.5413}, {"id": "P. Jayachandran", "tracks": 5, "album_count": 5, "albums": ["Kizhakku Cheemayile", "Kaadhalan", "May Maadham", "Vandicholai Chinraasu", "Karuththamma"], "x": -0.2095, "y": -0.6968}, {"id": "P. Susheela", "tracks": 3, "album_count": 3, "albums": ["Pudhiya Mugam", "Duet", "Indian"], "x": 0.3803, "y": -0.7316}, {"id": "P. Unnikrishnan", "tracks": 10, "album_count": 8, "albums": ["Kaadhalan", "May Maadham", "Pavithra", "Karuththamma", "Rangeela", "Love Birds", "Iruvar", "Minsara Kanavu"], "x": 0.3907, "y": -0.1163}, {"id": "Pallavi", "tracks": 2, "album_count": 1, "albums": ["Bombay"], "x": -0.0862, "y": 0.6362}, {"id": "Remo Fernandes", "tracks": 4, "album_count": 2, "albums": ["Bombay", "Daud"], "x": 0.1876, "y": 0.049}, {"id": "Renuka", "tracks": 2, "album_count": 1, "albums": ["Bombay"], "x": 0.1423, "y": 0.3573}, {"id": "Reshmi", "tracks": 3, "album_count": 1, "albums": ["Bombay"], "x": -0.2492, "y": -0.163}, {"id": "S. Janaki", "tracks": 10, "album_count": 5, "albums": ["Gentleman", "Kizhakku Cheemayile", "Kaadhalan", "Super Police", "Rangeela"], "x": 0.1317, "y": -0.4519}, {"id": "S. P. Balasubrahmanyam", "tracks": 84, "album_count": 24, "albums": ["Roja", "Yoddha", "Pudhiya Mugam", "Uzhavan", "Gentleman", "Thiruda Thiruda", "Nippu Ravva", "Kizhakku Cheemayile", "May Maadham", "Duet", "Super Police", "Pudhiya Mannargal", "Vandicholai Chinraasu", "Kaadhalan", "Gangmaster", "Muthu", "Rangeela", "Indira", "Mr. Romeo", "Kadhal Desam", "Love Birds", "Indian", "Iruvar", "Minsara Kanavu"], "x": 0.14, "y": -0.244}, {"id": "S.P.B. Pallavi", "tracks": 3, "album_count": 1, "albums": ["Kaadhalan"], "x": 0.0843, "y": -0.5669}, {"id": "Sadhana Sargam", "tracks": 4, "album_count": 3, "albums": ["Indian", "Mr. Romeo", "Minsara Kanavu"], "x": 0.0821, "y": -0.3889}, {"id": "Sandhya Jayakrishna", "tracks": 2, "album_count": 1, "albums": ["Iruvar"], "x": -0.8119, "y": -0.5758}, {"id": "Shahul Hameed", "tracks": 15, "album_count": 9, "albums": ["Uzhavan", "Gentleman", "Kizhakku Cheemayile", "Thiruda Thiruda", "Kaadhalan", "May Maadham", "Pavithra", "Vandicholai Chinraasu", "Karuththamma"], "x": -0.112, "y": -0.1209}, {"id": "Shankar Mahadevan", "tracks": 3, "album_count": 3, "albums": ["Kaadhalan", "Bombay", "Minsara Kanavu"], "x": -0.0852, "y": 0.2792}, {"id": "Sharadha", "tracks": 2, "album_count": 1, "albums": ["Bombay"], "x": -0.283, "y": -0.4093}, {"id": "Shubha", "tracks": 2, "album_count": 1, "albums": ["Bombay"], "x": 0.0142, "y": 0.6548}, {"id": "Shweta Shetty", "tracks": 2, "album_count": 1, "albums": ["Roja"], "x": -0.9253, "y": -0.3788}, {"id": "Sivanesan", "tracks": 2, "album_count": 1, "albums": ["Bombay"], "x": -0.0065, "y": 0.3404}, {"id": "Sonu Nigam", "tracks": 3, "album_count": 2, "albums": ["Kadhal Desam", "Mr. Romeo"], "x": 0.39, "y": 0.1226}, {"id": "Sonu Nigam & Neeraj Vora", "tracks": 2, "album_count": 1, "albums": ["Daud"], "x": -1.0, "y": -0.1071}, {"id": "Srinivas", "tracks": 18, "album_count": 7, "albums": ["Gentleman", "Thiruda Thiruda", "May Maadham", "Bombay", "Kadhal Desam", "Mr. Romeo", "Minsara Kanavu"], "x": 0.0673, "y": 0.2746}, {"id": "Storms", "tracks": 2, "album_count": 1, "albums": ["Kadhal Desam"], "x": 0.1125, "y": 0.514}, {"id": "Sujatha Mohan", "tracks": 53, "album_count": 21, "albums": ["Roja", "Yoddha", "Pudhiya Mugam", "Uzhavan", "Gentleman", "Thiruda Thiruda", "Kizhakku Cheemayile", "Duet", "Pudhiya Mannargal", "Vandicholai Chinraasu", "Karuththamma", "Kaadhalan", "Gangmaster", "Rangeela", "Bombay", "Indira", "Mr. Romeo", "Love Birds", "Indian", "Daud", "Minsara Kanavu"], "x": 0.0752, "y": -0.0258}, {"id": "Sunanda", "tracks": 2, "album_count": 2, "albums": ["Kizhakku Cheemayile", "Kaadhalan"], "x": -0.6287, "y": -0.4852}, {"id": "Sunandha", "tracks": 2, "album_count": 1, "albums": ["Kaadhalan"], "x": 0.7263, "y": 0.1425}, {"id": "Suresh Peters", "tracks": 15, "album_count": 5, "albums": ["Gentleman", "Thiruda Thiruda", "Kaadhalan", "Super Police", "Bombay"], "x": -0.0694, "y": 0.0997}, {"id": "Suresh Wadkar", "tracks": 2, "album_count": 1, "albums": ["Roja"], "x": -0.6158, "y": 0.1331}, {"id": "Swarnalatha", "tracks": 30, "album_count": 13, "albums": ["Uzhavan", "Gentleman", "May Maadham", "Pavithra", "Gangmaster", "Vandicholai Chinraasu", "Karuththamma", "Bombay", "Indira", "Indian", "Anthimanthaarai", "Mr. Romeo", "Daud"], "x": 0.0764, "y": -0.1244}, {"id": "T. K. Kala", "tracks": 3, "album_count": 3, "albums": ["Kizhakku Cheemayile", "Duet", "Karuththamma"], "x": -0.4659, "y": -0.296}, {"id": "T. L. Maharajan", "tracks": 2, "album_count": 2, "albums": ["Pudhiya Mannargal", "Indira"], "x": 0.5499, "y": -0.2234}, {"id": "Theni Kunjarammal", "tracks": 3, "album_count": 3, "albums": ["Kaadhalan", "Karuththamma", "Muthu"], "x": -0.4173, "y": -0.0445}, {"id": "Udit Narayan", "tracks": 14, "album_count": 8, "albums": ["Thiruda Thiruda", "Kaadhalan", "Muthu", "Bombay", "Indira", "Rangeela", "Love Birds", "Mr. Romeo"], "x": -0.0686, "y": -0.35}, {"id": "Unni Krishnan", "tracks": 4, "album_count": 1, "albums": ["Kadhal Desam"], "x": 0.1232, "y": -0.6669}, {"id": "Unni Menon", "tracks": 10, "album_count": 6, "albums": ["Roja", "Pudhiya Mugam", "Thiruda Thiruda", "Karuththamma", "Daud", "Minsara Kanavu"], "x": -0.0966, "y": 0.0057}, {"id": "Unnikrishnan", "tracks": 2, "album_count": 2, "albums": ["Anthimanthaarai", "Love Birds"], "x": 0.739, "y": 0.0473}, {"id": "Uttara Kelkar", "tracks": 2, "album_count": 1, "albums": ["Roja"], "x": 0.6594, "y": -0.5648}, {"id": "chorus", "tracks": 3, "album_count": 2, "albums": ["May Maadham", "Bombay"], "x": -0.2575, "y": 0.1139}, {"id": "chorus (Sujatha Mohan", "tracks": 3, "album_count": 1, "albums": ["Bombay"], "x": -0.2509, "y": -0.0431}], "edges": [{"source": "A. R. Rahman", "target": "Suresh Peters", "weight": 5, "albums": ["Bombay", "Kaadhalan"]}, {"source": "A. R. Rahman", "target": "Swarnalatha", "weight": 3, "albums": ["Bombay"]}, {"source": "Suresh Peters", "target": "Swarnalatha", "weight": 3, "albums": ["Bombay"]}, {"source": "A. R. Rahman", "target": "Ganga)", "weight": 3, "albums": ["Bombay"]}, {"source": "A. R. Rahman", "target": "K. S. Chithra", "weight": 3, "albums": ["Bombay"]}, {"source": "A. R. Rahman", "target": "Reshmi", "weight": 3, "albums": ["Bombay"]}, {"source": "A. R. Rahman", "target": "chorus (Sujatha Mohan", "weight": 3, "albums": ["Bombay"]}, {"source": "Ganga)", "target": "K. S. Chithra", "weight": 3, "albums": ["Bombay"]}, {"source": "Ganga)", "target": "Reshmi", "weight": 3, "albums": ["Bombay"]}, {"source": "Ganga)", "target": "chorus (Sujatha Mohan", "weight": 3, "albums": ["Bombay"]}, {"source": "K. S. Chithra", "target": "Reshmi", "weight": 3, "albums": ["Bombay"]}, {"source": "K. S. Chithra", "target": "chorus (Sujatha Mohan", "weight": 3, "albums": ["Bombay"]}, {"source": "Reshmi", "target": "chorus (Sujatha Mohan", "weight": 3, "albums": ["Bombay"]}, {"source": "G. V. Prakash Kumar", "target": "Hariharan", "weight": 2, "albums": ["Bombay"]}, {"source": "G. V. Prakash Kumar", "target": "Swarnalatha", "weight": 2, "albums": ["Bombay"]}, {"source": "Hariharan", "target": "Swarnalatha", "weight": 2, "albums": ["Bombay"]}, {"source": "Annupamaa", "target": "Noel James", "weight": 1, "albums": ["Bombay"]}, {"source": "Anuradha Sriram", "target": "Sujatha Mohan", "weight": 5, "albums": ["Bombay", "Indira"]}, {"source": "Anuradha Sriram", "target": "chorus", "weight": 1, "albums": ["Bombay"]}, {"source": "Sujatha Mohan", "target": "chorus", "weight": 2, "albums": ["Bombay"]}, {"source": "Noel James", "target": "Srinivas", "weight": 8, "albums": ["Bombay", "Kadhal Desam", "Mr. Romeo"]}, {"source": "Noel James", "target": "Sujatha Mohan", "weight": 3, "albums": ["Bombay"]}, {"source": "Srinivas", "target": "Sujatha Mohan", "weight": 3, "albums": ["Bombay"]}, {"source": "A. R. Rahman", "target": "Remo Fernandes", "weight": 3, "albums": ["Bombay"]}, {"source": "Remo Fernandes", "target": "Suresh Peters", "weight": 2, "albums": ["Bombay"]}, {"source": "Remo Fernandes", "target": "Swarnalatha", "weight": 2, "albums": ["Bombay"]}, {"source": "Hariharan", "target": "Kavita Krishnamurthy", "weight": 1, "albums": ["Bombay"]}, {"source": "G. V. Prakash Kumar", "target": "Kavita Krishnamurthy", "weight": 1, "albums": ["Bombay"]}, {"source": "G. V. Prakash Kumar", "target": "Sharadha", "weight": 2, "albums": ["Bombay"]}, {"source": "G. V. Prakash Kumar", "target": "Udit Narayan", "weight": 2, "albums": ["Bombay", "Muthu"]}, {"source": "Kavita Krishnamurthy", "target": "Sharadha", "weight": 1, "albums": ["Bombay"]}, {"source": "Kavita Krishnamurthy", "target": "Udit Narayan", "weight": 1, "albums": ["Bombay"]}, {"source": "Sharadha", "target": "Udit Narayan", "weight": 1, "albums": ["Bombay"]}, {"source": "Anupama", "target": "Noel James", "weight": 4, "albums": ["Bombay", "Kadhal Desam"]}, {"source": "Anupama", "target": "Pallavi", "weight": 2, "albums": ["Bombay"]}, {"source": "Anupama", "target": "Shubha", "weight": 2, "albums": ["Bombay"]}, {"source": "Anupama", "target": "Srinivas", "weight": 3, "albums": ["Bombay", "Kadhal Desam"]}, {"source": "Noel James", "target": "Pallavi", "weight": 2, "albums": ["Bombay"]}, {"source": "Noel James", "target": "Shubha", "weight": 2, "albums": ["Bombay"]}, {"source": "Pallavi", "target": "Shubha", "weight": 2, "albums": ["Bombay"]}, {"source": "Pallavi", "target": "Srinivas", "weight": 2, "albums": ["Bombay"]}, {"source": "Shubha", "target": "Srinivas", "weight": 2, "albums": ["Bombay"]}, {"source": "Chorus", "target": "Sujatha Mohan", "weight": 1, "albums": ["Bombay"]}, {"source": "Anuradha Sriram", "target": "Ganga Sreenivasan", "weight": 2, "albums": ["Bombay"]}, {"source": "Anuradha Sriram", "target": "Noel James", "weight": 2, "albums": ["Bombay"]}, {"source": "Anuradha Sriram", "target": "Renuka", "weight": 2, "albums": ["Bombay"]}, {"source": "Anuradha Sriram", "target": "Sivanesan", "weight": 2, "albums": ["Bombay"]}, {"source": "Anuradha Sriram", "target": "Srinivas", "weight": 2, "albums": ["Bombay"]}, {"source": "Ganga Sreenivasan", "target": "Noel James", "weight": 2, "albums": ["Bombay"]}, {"source": "Ganga Sreenivasan", "target": "Renuka", "weight": 2, "albums": ["Bombay"]}, {"source": "Ganga Sreenivasan", "target": "Sivanesan", "weight": 2, "albums": ["Bombay"]}, {"source": "Ganga Sreenivasan", "target": "Srinivas", "weight": 2, "albums": ["Bombay"]}, {"source": "Ganga Sreenivasan", "target": "Sujatha Mohan", "weight": 2, "albums": ["Bombay"]}, {"source": "Noel James", "target": "Renuka", "weight": 2, "albums": ["Bombay"]}, {"source": "Noel James", "target": "Sivanesan", "weight": 2, "albums": ["Bombay"]}, {"source": "Renuka", "target": "Sivanesan", "weight": 2, "albums": ["Bombay"]}, {"source": "Renuka", "target": "Srinivas", "weight": 2, "albums": ["Bombay"]}, {"source": "Renuka", "target": "Sujatha Mohan", "weight": 2, "albums": ["Bombay"]}, {"source": "Sivanesan", "target": "Srinivas", "weight": 2, "albums": ["Bombay"]}, {"source": "Sivanesan", "target": "Sujatha Mohan", "weight": 2, "albums": ["Bombay"]}, {"source": "Hariharan", "target": "K. S. Chithra", "weight": 3, "albums": ["Bombay", "Indira", "Love Birds"]}, {"source": "Hariharan", "target": "Sharadha", "weight": 1, "albums": ["Bombay"]}, {"source": "Sharadha", "target": "Swarnalatha", "weight": 1, "albums": ["Bombay"]}, {"source": "Anuradha Sriram", "target": "Shankar Mahadevan", "weight": 1, "albums": ["Bombay"]}, {"source": "Ganga Sreenivasan", "target": "Shankar Mahadevan", "weight": 1, "albums": ["Bombay"]}, {"source": "Noel James", "target": "Shankar Mahadevan", "weight": 1, "albums": ["Bombay"]}, {"source": "Renuka", "target": "Shankar Mahadevan", "weight": 1, "albums": ["Bombay"]}, {"source": "Shankar Mahadevan", "target": "Sivanesan", "weight": 1, "albums": ["Bombay"]}, {"source": "Shankar Mahadevan", "target": "Srinivas", "weight": 2, "albums": ["Bombay", "Minsara Kanavu"]}, {"source": "Shankar Mahadevan", "target": "Sujatha Mohan", "weight": 1, "albums": ["Bombay"]}, {"source": "Asha Bhosle", "target": "Sujatha Mohan", "weight": 1, "albums": ["Daud"]}, {"source": "Asha Bhosle", "target": "Unni Menon", "weight": 1, "albums": ["Daud"]}, {"source": "Sujatha Mohan", "target": "Unni Menon", "weight": 6, "albums": ["Daud", "Karuththamma", "Pudhiya Mugam", "Roja"]}, {"source": "K. J. Yesudas & Asha Bhosle", "target": "Sujatha Mohan", "weight": 1, "albums": ["Daud"]}, {"source": "K. S. Chithra", "target": "S. P. Balasubrahmanyam", "weight": 19, "albums": ["Duet", "Gangmaster", "Indira", "Muthu", "Nippu Ravva", "Roja", "Super Police", "Thiruda Thiruda", "Uzhavan", "Yoddha"]}, {"source": "P. Susheela", "target": "S. P. Balasubrahmanyam", "weight": 2, "albums": ["Duet", "Indian"]}, {"source": "S. P. Balasubrahmanyam", "target": "T. K. Kala", "weight": 1, "albums": ["Duet"]}, {"source": "K.S. Chithra", "target": "S. P. Balasubrahmanyam", "weight": 1, "albums": ["Duet"]}, {"source": "K. S. Chithra", "target": "Mano", "weight": 11, "albums": ["Gangmaster", "Pudhiya Mannargal", "Super Police", "Thiruda Thiruda"]}, {"source": "Mano", "target": "Sujatha Mohan", "weight": 4, "albums": ["Gangmaster", "Kizhakku Cheemayile", "Thiruda Thiruda"]}, {"source": "Mano", "target": "Minmini", "weight": 2, "albums": ["Gangmaster"]}, {"source": "Mano", "target": "Swarnalatha", "weight": 3, "albums": ["Gangmaster", "Indira"]}, {"source": "S. P. Balasubrahmanyam", "target": "Sujatha Mohan", "weight": 11, "albums": ["Gentleman", "Indian", "Love Birds", "Mr. Romeo", "Roja", "Vandicholai Chinraasu"]}, {"source": "Shahul Hameed", "target": "Swarnalatha", "weight": 3, "albums": ["Gentleman", "May Maadham"]}, {"source": "G. V. Prakash Kumar", "target": "Suresh Peters", "weight": 2, "albums": ["Gentleman"]}, {"source": "Minmini", "target": "Srinivas", "weight": 2, "albums": ["Gentleman"]}, {"source": "Minmini", "target": "S. Janaki", "weight": 1, "albums": ["Gentleman"]}, {"source": "Minmini", "target": "S. P. Balasubrahmanyam", "weight": 2, "albums": ["Gentleman", "Pudhiya Mannargal"]}, {"source": "Minmini", "target": "Sujatha Mohan", "weight": 2, "albums": ["Gentleman", "Thiruda Thiruda"]}, {"source": "S. Janaki", "target": "S. P. Balasubrahmanyam", "weight": 6, "albums": ["Gentleman", "Kaadhalan", "Super Police"]}, {"source": "S. Janaki", "target": "Sujatha Mohan", "weight": 1, "albums": ["Gentleman"]}, {"source": "Malgudi Subha", "target": "Shahul Hameed", "weight": 1, "albums": ["Gentleman"]}, {"source": "Malgudi Subha", "target": "Swarnalatha", "weight": 3, "albums": ["Gentleman", "Vandicholai Chinraasu"]}, {"source": "S. P. Balasubrahmanyam", "target": "Swarnalatha", "weight": 6, "albums": ["Indian", "Mr. Romeo", "Vandicholai Chinraasu"]}, {"source": "K. J. Yesudas", "target": "Nirmala Seshadri", "weight": 3, "albums": ["Indian"]}, {"source": "S. P. Balasubrahmanyam", "target": "Sadhana Sargam", "weight": 2, "albums": ["Indian", "Mr. Romeo"]}, {"source": "Anuradha Sriram", "target": "G. V. Prakash Kumar", "weight": 2, "albums": ["Indira"]}, {"source": "G. V. Prakash Kumar", "target": "Sujatha Mohan", "weight": 3, "albums": ["Indira", "Uzhavan"]}, {"source": "Swarnalatha", "target": "T. L. Maharajan", "weight": 1, "albums": ["Indira"]}, {"source": "Mano", "target": "Udit Narayan", "weight": 3, "albums": ["Indira", "Thiruda Thiruda"]}, {"source": "Bombay Jayashri", "target": "P. Unnikrishnan", "weight": 2, "albums": ["Iruvar"]}, {"source": "Dominique Cerejo", "target": "S. P. Balasubrahmanyam", "weight": 2, "albums": ["Iruvar", "Kadhal Desam"]}, {"source": "P. Unnikrishnan", "target": "Sujatha Mohan", "weight": 2, "albums": ["Kaadhalan"]}, {"source": "S. P. Balasubrahmanyam", "target": "S.P.B. Pallavi", "weight": 3, "albums": ["Kaadhalan"]}, {"source": "S. P. Balasubrahmanyam", "target": "Udit Narayan", "weight": 3, "albums": ["Kaadhalan"]}, {"source": "S.P.B. Pallavi", "target": "Udit Narayan", "weight": 3, "albums": ["Kaadhalan"]}, {"source": "A. R. Rahman", "target": "Shahul Hameed", "weight": 2, "albums": ["Kaadhalan"]}, {"source": "Shahul Hameed", "target": "Suresh Peters", "weight": 4, "albums": ["Kaadhalan"]}, {"source": "Shahul Hameed", "target": "Theni Kunjarammal", "weight": 1, "albums": ["Kaadhalan"]}, {"source": "Suresh Peters", "target": "Theni Kunjarammal", "weight": 1, "albums": ["Kaadhalan"]}, {"source": "Minmini", "target": "Sunandha", "weight": 2, "albums": ["Kaadhalan"]}, {"source": "Leon James (composer)", "target": "Suresh Peters", "weight": 1, "albums": ["Kaadhalan"]}, {"source": "A. R. Rahman", "target": "Leon James (composer)", "weight": 1, "albums": ["Kaadhalan"]}, {"source": "A. R. Rahman", "target": "Shankar Mahadevan", "weight": 1, "albums": ["Kaadhalan"]}, {"source": "Leon James (composer)", "target": "Shankar Mahadevan", "weight": 1, "albums": ["Kaadhalan"]}, {"source": "O. S. Arun", "target": "S. P. Balasubrahmanyam", "weight": 2, "albums": ["Kadhal Desam"]}, {"source": "A. R. Rahman", "target": "Anupama", "weight": 1, "albums": ["Kadhal Desam"]}, {"source": "A. R. Rahman", "target": "Noel James", "weight": 2, "albums": ["Kadhal Desam", "Thiruda Thiruda"]}, {"source": "A. R. Rahman", "target": "Storms", "weight": 1, "albums": ["Kadhal Desam"]}, {"source": "Anupama", "target": "Storms", "weight": 1, "albums": ["Kadhal Desam"]}, {"source": "Noel James", "target": "Storms", "weight": 2, "albums": ["Kadhal Desam"]}, {"source": "A. R. Rahman", "target": "Aslam Mustafa", "weight": 1, "albums": ["Kadhal Desam"]}, {"source": "A. R. Rahman", "target": "Hariharan", "weight": 1, "albums": ["Kadhal Desam"]}, {"source": "Aslam Mustafa", "target": "Hariharan", "weight": 2, "albums": ["Kadhal Desam"]}, {"source": "Dominique Cerejo", "target": "Mano", "weight": 1, "albums": ["Kadhal Desam"]}, {"source": "Dominique Cerejo", "target": "Unni Krishnan", "weight": 1, "albums": ["Kadhal Desam"]}, {"source": "Mano", "target": "Unni Krishnan", "weight": 2, "albums": ["Kadhal Desam"]}, {"source": "Anupama", "target": "KK", "weight": 1, "albums": ["Kadhal Desam"]}, {"source": "KK", "target": "Noel James", "weight": 2, "albums": ["Kadhal Desam"]}, {"source": "KK", "target": "Srinivas", "weight": 1, "albums": ["Kadhal Desam"]}, {"source": "Hariharan", "target": "KK", "weight": 2, "albums": ["Kadhal Desam"]}, {"source": "KK", "target": "Storms", "weight": 1, "albums": ["Kadhal Desam"]}, {"source": "Aslam Mustafa", "target": "KK", "weight": 1, "albums": ["Kadhal Desam"]}, {"source": "Dominique Cerejo", "target": "Sonu Nigam", "weight": 1, "albums": ["Kadhal Desam"]}, {"source": "S. P. Balasubrahmanyam", "target": "Sonu Nigam", "weight": 1, "albums": ["Kadhal Desam"]}, {"source": "K. S. Chithra", "target": "P. Unnikrishnan", "weight": 3, "albums": ["Karuththamma", "May Maadham", "Minsara Kanavu"]}, {"source": "Minmini", "target": "Shahul Hameed", "weight": 2, "albums": ["Karuththamma", "Thiruda Thiruda"]}, {"source": "Bharathiraja", "target": "Malaysia Vasudevan", "weight": 1, "albums": ["Karuththamma"]}, {"source": "T. K. Kala", "target": "Theni Kunjarammal", "weight": 1, "albums": ["Karuththamma"]}, {"source": "Shahul Hameed", "target": "Sunanda", "weight": 1, "albums": ["Kizhakku Cheemayile"]}, {"source": "Shahul Hameed", "target": "T. K. Kala", "weight": 1, "albums": ["Kizhakku Cheemayile"]}, {"source": "Sunanda", "target": "T. K. Kala", "weight": 1, "albums": ["Kizhakku Cheemayile"]}, {"source": "K. S. Chithra", "target": "Malaysia Vasudevan", "weight": 2, "albums": ["Kizhakku Cheemayile"]}, {"source": "P. Jayachandran", "target": "S. Janaki", "weight": 1, "albums": ["Kizhakku Cheemayile"]}, {"source": "Hariharan", "target": "K. S. Chitra", "weight": 2, "albums": ["Love Birds"]}, {"source": "A. R. Rahman", "target": "Apache Indian", "weight": 2, "albums": ["Love Birds"]}, {"source": "Sujatha Mohan", "target": "Unnikrishnan", "weight": 1, "albums": ["Love Birds"]}, {"source": "G. V. Prakash Kumar", "target": "Noel James", "weight": 1, "albums": ["May Maadham"]}, {"source": "K. S. Chithra", "target": "P. Jayachandran", "weight": 1, "albums": ["May Maadham"]}, {"source": "K. S. Chithra", "target": "chorus", "weight": 1, "albums": ["May Maadham"]}, {"source": "K. S. Chithra", "target": "Srinivas", "weight": 3, "albums": ["Minsara Kanavu"]}, {"source": "K. S. Chithra", "target": "Unni Menon", "weight": 3, "albums": ["Minsara Kanavu", "Thiruda Thiruda"]}, {"source": "Srinivas", "target": "Unni Menon", "weight": 1, "albums": ["Minsara Kanavu"]}, {"source": "Malgudi Subha", "target": "S. P. Balasubrahmanyam", "weight": 4, "albums": ["Minsara Kanavu", "Vandicholai Chinraasu"]}, {"source": "P. Unnikrishnan", "target": "Srinivas", "weight": 1, "albums": ["Minsara Kanavu"]}, {"source": "Hariharan", "target": "Sadhana Sargam", "weight": 2, "albums": ["Minsara Kanavu"]}, {"source": "Hema Sardesai", "target": "Malaysia Vasudevan", "weight": 1, "albums": ["Minsara Kanavu"]}, {"source": "K. S. Chithra", "target": "Shankar Mahadevan", "weight": 1, "albums": ["Minsara Kanavu"]}, {"source": "Abhijeet Bhattacharya", "target": "Hema Sardesai", "weight": 1, "albums": ["Minsara Kanavu"]}, {"source": "Hariharan", "target": "Udit Narayan", "weight": 2, "albums": ["Mr. Romeo"]}, {"source": "Anto", "target": "Chandran", "weight": 2, "albums": ["Mr. Romeo"]}, {"source": "Anto", "target": "Noel James", "weight": 2, "albums": ["Mr. Romeo"]}, {"source": "Anto", "target": "Srinivas", "weight": 2, "albums": ["Mr. Romeo"]}, {"source": "Chandran", "target": "Noel James", "weight": 2, "albums": ["Mr. Romeo"]}, {"source": "Chandran", "target": "Srinivas", "weight": 2, "albums": ["Mr. Romeo"]}, {"source": "Sadhana Sargam", "target": "Swarnalatha", "weight": 1, "albums": ["Mr. Romeo"]}, {"source": "Chorus", "target": "Ila Arun", "weight": 2, "albums": ["Mr. Romeo"]}, {"source": "Sujatha Mohan", "target": "Swarnalatha", "weight": 1, "albums": ["Mr. Romeo"]}, {"source": "Malaysia Vasudevan", "target": "Srinivas", "weight": 1, "albums": ["Mr. Romeo"]}, {"source": "G. V. Prakash Kumar", "target": "K. S. Chithra", "weight": 2, "albums": ["Muthu", "Uzhavan"]}, {"source": "G. V. Prakash Kumar", "target": "Kalyani Menon", "weight": 1, "albums": ["Muthu"]}, {"source": "K. S. Chithra", "target": "Kalyani Menon", "weight": 1, "albums": ["Muthu"]}, {"source": "K. S. Chithra", "target": "Udit Narayan", "weight": 4, "albums": ["Muthu", "Rangeela", "Thiruda Thiruda"]}, {"source": "Kalyani Menon", "target": "Udit Narayan", "weight": 1, "albums": ["Muthu"]}, {"source": "S. P. Balasubrahmanyam", "target": "Theni Kunjarammal", "weight": 1, "albums": ["Muthu"]}, {"source": "Ila Arun", "target": "S. P. Balasubrahmanyam", "weight": 2, "albums": ["Muthu"]}, {"source": "K. S. Chithra", "target": "Shahul Hameed", "weight": 1, "albums": ["Pavithra"]}, {"source": "Sujatha Mohan", "target": "T. L. Maharajan", "weight": 1, "albums": ["Pudhiya Mannargal"]}, {"source": "Kalyani Menon", "target": "Sujatha Mohan", "weight": 1, "albums": ["Pudhiya Mannargal"]}, {"source": "Annupamaa", "target": "S. P. Balasubrahmanyam", "weight": 1, "albums": ["Pudhiya Mugam"]}, {"source": "Malgudi Subha", "target": "Minmini", "weight": 1, "albums": ["Pudhiya Mugam"]}, {"source": "A. R. Rahman", "target": "Annupamaa", "weight": 2, "albums": ["Rangeela"]}, {"source": "A. R. Rahman", "target": "Mohit Chauhan", "weight": 2, "albums": ["Rockstar"]}, {"source": "Sujatha Mohan", "target": "Suresh Wadkar", "weight": 1, "albums": ["Roja"]}, {"source": "Anupama", "target": "Suresh Peters", "weight": 1, "albums": ["Super Police"]}, {"source": "Caroline", "target": "Mano", "weight": 2, "albums": ["Thiruda Thiruda"]}, {"source": "Caroline", "target": "Sujatha Mohan", "weight": 1, "albums": ["Thiruda Thiruda"]}, {"source": "Annupamaa", "target": "Suresh Peters", "weight": 1, "albums": ["Thiruda Thiruda"]}, {"source": "Mano", "target": "Unni Menon", "weight": 2, "albums": ["Thiruda Thiruda"]}, {"source": "A. R. Rahman", "target": "Caroline", "weight": 1, "albums": ["Thiruda Thiruda"]}, {"source": "A. R. Rahman", "target": "Mano", "weight": 1, "albums": ["Thiruda Thiruda"]}, {"source": "Caroline", "target": "Noel James", "weight": 1, "albums": ["Thiruda Thiruda"]}, {"source": "Mano", "target": "Noel James", "weight": 1, "albums": ["Thiruda Thiruda"]}, {"source": "Shahul Hameed", "target": "Sujatha Mohan", "weight": 2, "albums": ["Thiruda Thiruda", "Uzhavan"]}, {"source": "Srinivas", "target": "Suresh Peters", "weight": 3, "albums": ["Thiruda Thiruda"]}, {"source": "G. V. Prakash Kumar", "target": "Shahul Hameed", "weight": 1, "albums": ["Uzhavan"]}, {"source": "K. J. Yesudas", "target": "K. S. Chithra", "weight": 1, "albums": ["Uzhavan"]}, {"source": "K. J. Yesudas", "target": "Swarnalatha", "weight": 1, "albums": ["Uzhavan"]}, {"source": "K. J. Yesudas", "target": "Sujatha Mohan", "weight": 2, "albums": ["Yoddha"]}, {"source": "A. R. Rahman", "target": "Malgudi Subha", "weight": 1, "albums": ["Yoddha"]}]};
+
+const width = window.innerWidth;
+const height = window.innerHeight;
+
+const svg = document.getElementById('network');
+svg.setAttribute('width', width);
+svg.setAttribute('height', height);
+
+function svgEl(tag, attrs) {
+  const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const [k, v] of Object.entries(attrs || {})) el.setAttribute(k, v);
+  return el;
+}
+
+// --- Map pre-computed positions to screen ---
+const pad = 80;
+const usableW = width - pad * 2;
+const usableH = height - pad * 2;
+
+const xs = DATA.nodes.map(n => n.x);
+const ys = DATA.nodes.map(n => n.y);
+const minX = Math.min(...xs), maxX = Math.max(...xs);
+const minY = Math.min(...ys), maxY = Math.max(...ys);
+const rangeX = maxX - minX || 1;
+const rangeY = maxY - minY || 1;
+
+// Scale uniformly to preserve aspect ratio
+const scale = Math.min(usableW / rangeX, usableH / rangeY);
+const offsetX = (width - rangeX * scale) / 2;
+const offsetY = (height - rangeY * scale) / 2;
+
+const maxTracks = Math.max(...DATA.nodes.map(n => n.tracks));
+
+const nodes = DATA.nodes.map(n => ({
+  ...n,
+  x: offsetX + (n.x - minX) * scale,
+  y: offsetY + (n.y - minY) * scale,
+  radius: 4 + Math.sqrt(n.tracks / maxTracks) * 22,
+}));
+
+const nodeMap = {};
+nodes.forEach(n => nodeMap[n.id] = n);
+
+const edges = DATA.edges.map(e => ({
+  ...e,
+  sourceNode: nodeMap[e.source],
+  targetNode: nodeMap[e.target],
+}));
+
+const maxWeight = Math.max(...edges.map(e => e.weight));
+
+// SVG groups
+const edgeGroup = svgEl('g');
+const nodeGroup = svgEl('g');
+svg.appendChild(edgeGroup);
+svg.appendChild(nodeGroup);
+
+// Edges
+const edgeEls = edges.map(e => {
+  const line = svgEl('line', {
+    stroke: 'rgba(255,255,255,0.1)',
+    'stroke-width': 0.5 + (e.weight / maxWeight) * 5,
+  });
+  edgeGroup.appendChild(line);
+
+  const hitLine = svgEl('line', {
+    stroke: 'transparent',
+    'stroke-width': 14,
+    style: 'cursor: pointer',
+  });
+  edgeGroup.appendChild(hitLine);
+
+  hitLine.addEventListener('mouseenter', (ev) => showEdgeTooltip(ev, e));
+  hitLine.addEventListener('mousemove', (ev) => moveEdgeTooltip(ev));
+  hitLine.addEventListener('mouseleave', hideEdgeTooltip);
+
+  return { line, hitLine, data: e };
+});
+
+// Color by track count — warm gradient
+function nodeColor(tracks) {
+  const t = Math.sqrt(tracks / maxTracks);
+  // From cool blue-gray (few tracks) to warm gold (many tracks)
+  const r = Math.round(100 + t * 150);
+  const g = Math.round(120 + t * 76);
+  const b = Math.round(180 - t * 80);
+  return `rgb(${r},${g},${b})`;
+}
+
+// Nodes
+const nodeEls = nodes.map(n => {
+  const g = svgEl('g');
+  const color = nodeColor(n.tracks);
+
+  const glow = svgEl('circle', {
+    r: n.radius + 6,
+    fill: color,
+    opacity: 0.06,
+  });
+  g.appendChild(glow);
+
+  const circle = svgEl('circle', {
+    r: n.radius,
+    fill: color,
+    stroke: 'rgba(255,255,255,0.3)',
+    'stroke-width': 1,
+    opacity: 0.9,
+  });
+  g.appendChild(circle);
+
+  // Only label singers with 4+ tracks (to avoid clutter)
+  if (n.tracks >= 4) {
+    const text = svgEl('text', {
+      'text-anchor': 'middle',
+      dy: n.radius + 14,
+      fill: '#bbb',
+      'font-size': n.tracks >= 10 ? '11px' : '9px',
+      'font-weight': n.tracks >= 10 ? '600' : '400',
+      'font-family': 'Segoe UI, system-ui, sans-serif',
+      'pointer-events': 'none',
+    });
+    text.textContent = n.id;
+    g.appendChild(text);
+  }
+
+  g.setAttribute('transform', `translate(${n.x},${n.y})`);
+  nodeGroup.appendChild(g);
+
+  g.addEventListener('mouseenter', (ev) => showTooltip(ev, n));
+  g.addEventListener('mousemove', (ev) => moveTooltip(ev));
+  g.addEventListener('mouseleave', hideTooltip);
+
+  return { g, glow, circle, data: n };
+});
+
+// Render edges
+edgeEls.forEach(e => {
+  const s = e.data.sourceNode;
+  const t = e.data.targetNode;
+  e.line.setAttribute('x1', s.x); e.line.setAttribute('y1', s.y);
+  e.line.setAttribute('x2', t.x); e.line.setAttribute('y2', t.y);
+  e.hitLine.setAttribute('x1', s.x); e.hitLine.setAttribute('y1', s.y);
+  e.hitLine.setAttribute('x2', t.x); e.hitLine.setAttribute('y2', t.y);
+});
+
+// --- Tooltips ---
+
+const tooltip = document.getElementById('tooltip');
+const edgeTooltip = document.getElementById('edge-tooltip');
+
+function showTooltip(ev, n) {
+  // Highlight connections
+  const connectedIds = new Set([n.id]);
+  edgeEls.forEach(e => {
+    const connected = e.data.source === n.id || e.data.target === n.id;
+    e.line.setAttribute('stroke', connected ? 'rgba(240,196,108,0.5)' : 'rgba(255,255,255,0.03)');
+    if (connected) {
+      if (e.data.source === n.id) connectedIds.add(e.data.target);
+      else connectedIds.add(e.data.source);
+    }
+  });
+  nodeEls.forEach(ne => {
+    const dim = !connectedIds.has(ne.data.id);
+    ne.circle.setAttribute('opacity', dim ? 0.15 : 0.95);
+    ne.glow.setAttribute('opacity', dim ? 0.01 : 0.1);
+  });
+
+  let html = `<div class="tt-name">${n.id}</div>`;
+  html += `<div class="tt-meta">${n.tracks} track${n.tracks > 1 ? 's' : ''} across ${n.album_count} album${n.album_count > 1 ? 's' : ''}</div>`;
+  html += `<div class="tt-section">Albums</div>`;
+  html += `<div style="color:#ccc">${n.albums.join(', ')}</div>`;
+
+  // Co-singers
+  const cosingers = edges.filter(e => e.source === n.id || e.target === n.id)
+    .map(e => ({ name: e.source === n.id ? e.target : e.source, weight: e.weight, albums: e.albums }))
+    .sort((a, b) => b.weight - a.weight);
+  if (cosingers.length) {
+    html += `<div class="tt-section">Duets with (${cosingers.length})</div>`;
+    cosingers.slice(0, 8).forEach(c => {
+      html += `<div style="color:#aaa; font-size:12px">${c.name}: ${c.weight} track${c.weight > 1 ? 's' : ''}</div>`;
+    });
+    if (cosingers.length > 8) html += `<div style="color:#666; font-size:11px">+ ${cosingers.length - 8} more</div>`;
+  }
+
+  tooltip.innerHTML = html;
+  tooltip.style.display = 'block';
+  moveTooltip(ev);
+}
+
+function moveTooltip(ev) {
+  let x = ev.clientX + 16, y = ev.clientY + 16;
+  if (x + 320 > width) x = ev.clientX - 330;
+  if (y + 300 > height) y = ev.clientY - 300;
+  tooltip.style.left = x + 'px';
+  tooltip.style.top = y + 'px';
+}
+
+function hideTooltip() {
+  tooltip.style.display = 'none';
+  edgeEls.forEach(e => e.line.setAttribute('stroke', 'rgba(255,255,255,0.1)'));
+  nodeEls.forEach(ne => {
+    ne.circle.setAttribute('opacity', 0.9);
+    ne.glow.setAttribute('opacity', 0.06);
+  });
+}
+
+function showEdgeTooltip(ev, e) {
+  let html = `<div style="font-weight:700; color:#f0c46c; margin-bottom:4px">${e.source} &amp; ${e.target}</div>`;
+  html += `<div style="color:#aaa">${e.weight} track${e.weight > 1 ? 's' : ''} together</div>`;
+  html += `<div style="color:#ccc; margin-top:4px">Albums: ${e.albums.join(', ')}</div>`;
+  edgeTooltip.innerHTML = html;
+  edgeTooltip.style.display = 'block';
+
+  edgeEls.forEach(ee => {
+    const isThis = ee.data === e;
+    ee.line.setAttribute('stroke', isThis ? 'rgba(240,196,108,0.7)' : 'rgba(255,255,255,0.03)');
+  });
+  moveEdgeTooltip(ev);
+}
+
+function moveEdgeTooltip(ev) {
+  let x = ev.clientX + 12, y = ev.clientY + 12;
+  if (x + 280 > width) x = ev.clientX - 290;
+  edgeTooltip.style.left = x + 'px';
+  edgeTooltip.style.top = y + 'px';
+}
+
+function hideEdgeTooltip() {
+  edgeTooltip.style.display = 'none';
+  edgeEls.forEach(e => e.line.setAttribute('stroke', 'rgba(255,255,255,0.1)'));
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AR Rahman — Data Visualized</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0a1a;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  header {
+    text-align: center;
+    padding: 60px 24px 40px;
+    max-width: 700px;
+  }
+  header h1 {
+    font-size: 36px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #e8575a, #f0c46c, #5bb8d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+  }
+  header p {
+    font-size: 16px;
+    color: #888;
+    line-height: 1.6;
+  }
+  header .stats {
+    margin-top: 20px;
+    display: flex;
+    gap: 32px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .stat {
+    text-align: center;
+  }
+  .stat-num {
+    font-size: 28px;
+    font-weight: 700;
+    color: #f0c46c;
+  }
+  .stat-label {
+    font-size: 12px;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 0 24px 60px;
+    max-width: 900px;
+    width: 100%;
+  }
+
+  .card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 28px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s ease;
+    display: block;
+  }
+  .card:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+  }
+  .card-icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+    display: block;
+  }
+  .card h2 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #fff;
+  }
+  .card p {
+    font-size: 13px;
+    color: #888;
+    line-height: 1.5;
+  }
+  .card .card-meta {
+    margin-top: 12px;
+    font-size: 11px;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  footer {
+    padding: 30px;
+    text-align: center;
+    color: #444;
+    font-size: 12px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    width: 100%;
+    max-width: 900px;
+  }
+  footer a { color: #666; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>AR Rahman — Data Visualized</h1>
+  <p>
+    Interactive explorations of AR Rahman's discography: who sings with whom,
+    how albums connect through shared collaborators, and what his music sounds like
+    through the lens of audio data.
+  </p>
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num">31</div>
+      <div class="stat-label">Albums</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">277</div>
+      <div class="stat-label">Tracks</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">116</div>
+      <div class="stat-label">Singers</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">1992–2011</div>
+      <div class="stat-label">Years Covered</div>
+    </div>
+  </div>
+</header>
+
+<div class="grid">
+  <a class="card" href="album_network.html">
+    <span class="card-icon">&#11044;&#8212;&#11044;</span>
+    <h2>Album Network</h2>
+    <p>
+      Each album is a node. Albums that share singers are connected, with
+      thicker edges meaning more singers in common. See how Rahman's early
+      Tamil films form a tight cluster while Rockstar floats alone.
+    </p>
+    <div class="card-meta">Network graph &middot; 31 albums &middot; Hover for details</div>
+  </a>
+
+  <a class="card" href="singer_network.html">
+    <span class="card-icon">&#9673; &#9673; &#9673;</span>
+    <h2>Singer Network</h2>
+    <p>
+      Singers who appear on the same track are linked. SPB sits at the center
+      of everything, connected to nearly every other vocalist. See who Rahman's
+      core collaborators are and how they cluster.
+    </p>
+    <div class="card-meta">Network graph &middot; 53 singers &middot; Hover for details</div>
+  </a>
+
+  <a class="card" href="mood_map.html">
+    <span class="card-icon">&#9679; &#9675; &#9679;</span>
+    <h2>Audio Mood Map</h2>
+    <p>
+      Every song plotted on an energy-vs-valence chart using Spotify audio
+      features. See which albums are melancholic vs. euphoric, calm vs. intense.
+      Click albums in the sidebar to filter.
+    </p>
+    <div class="card-meta">Scatter plot &middot; 130 tracks &middot; Click to filter albums</div>
+  </a>
+
+  <a class="card" href="collaborator_timeline.html">
+    <span class="card-icon">&#9476;&#9679;&#9476;&#9679;&#9476;</span>
+    <h2>Collaborator Timeline</h2>
+    <p>
+      Who sang on which album, chronologically. Each row is a singer, each
+      column an album. Dot size shows how many tracks they contributed.
+      Watch SPB dominate the early years.
+    </p>
+    <div class="card-meta">Timeline &middot; 25 singers &times; 30 albums &middot; Hover for details</div>
+  </a>
+</div>
+
+<footer>
+  Data scraped from Wikipedia and Spotify (via ReccoBeats).
+  Visualizations built with vanilla JS and SVG.
+</footer>
+
+</body>
+</html>

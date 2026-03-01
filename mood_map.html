@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AR Rahman — Audio Mood Map</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0a1a;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    overflow: hidden;
+  }
+  #header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+    padding: 16px 24px;
+    background: linear-gradient(180deg, rgba(10,10,26,0.95) 0%, rgba(10,10,26,0) 100%);
+    pointer-events: none;
+  }
+  #header h1 { font-size: 22px; font-weight: 700; color: #fff; }
+  #header p { font-size: 13px; color: #888; margin-top: 4px; }
+
+  svg { display: block; }
+
+  #tooltip {
+    position: fixed; pointer-events: none;
+    background: rgba(20, 20, 40, 0.96);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px; padding: 14px 18px;
+    font-size: 13px; line-height: 1.6;
+    max-width: 300px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    display: none; z-index: 100;
+    backdrop-filter: blur(8px);
+  }
+  #tooltip .tt-title { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+  #tooltip .tt-album { font-size: 12px; color: #aaa; margin-bottom: 8px; }
+  #tooltip .tt-row { display: flex; justify-content: space-between; gap: 16px; }
+  #tooltip .tt-label { color: #888; }
+  #tooltip .tt-val { color: #ddd; font-weight: 600; }
+
+  /* Album legend — scrollable sidebar */
+  #legend {
+    position: fixed; right: 20px; top: 70px; bottom: 20px; z-index: 10;
+    width: 180px; overflow-y: auto;
+    background: rgba(20, 20, 40, 0.85);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px; padding: 12px;
+    backdrop-filter: blur(8px);
+    font-size: 11px;
+  }
+  #legend h3 { font-size: 11px; text-transform: uppercase; color: #888;
+    letter-spacing: 0.5px; margin-bottom: 8px; }
+  .legend-item {
+    display: flex; align-items: center; margin-bottom: 3px;
+    cursor: pointer; padding: 2px 4px; border-radius: 4px;
+  }
+  .legend-item:hover { background: rgba(255,255,255,0.05); }
+  .legend-item.dimmed { opacity: 0.3; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; margin-right: 8px; flex-shrink: 0; }
+
+  /* Axis labels */
+  .axis-label {
+    position: fixed; color: #555; font-size: 12px; z-index: 5;
+  }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <h1>AR Rahman — Audio Mood Map</h1>
+  <p>Each dot is a song &middot; X = Valence (sad to happy) &middot; Y = Energy (calm to intense) &middot; Click albums to filter</p>
+</div>
+
+<div id="tooltip"></div>
+<div id="legend"></div>
+
+<svg id="chart"></svg>
+
+<script>
+const DATA = {"tracks": [{"title": "Bombay Theme", "album": "Bombay", "year": 1995, "energy": 0.177, "valence": 0.04, "danceability": 0.152, "acousticness": 0.41, "tempo": 81.2, "loudness": -15.4}, {"title": "Kannalane", "album": "Bombay", "year": 1995, "energy": 0.587, "valence": 0.562, "danceability": 0.615, "acousticness": 0.629, "tempo": 127.0, "loudness": -6.4}, {"title": "Andha Arabi Kadaloram", "album": "Bombay", "year": 1995, "energy": 0.841, "valence": 0.807, "danceability": 0.78, "acousticness": 0.049, "tempo": 95.0, "loudness": -5.2}, {"title": "Uyire Uyire", "album": "Bombay", "year": 1995, "energy": 0.384, "valence": 0.423, "danceability": 0.505, "acousticness": 0.213, "tempo": 100.6, "loudness": -7.4}, {"title": "Kuchi Kuchi Rakkamma", "album": "Bombay", "year": 1995, "energy": 0.762, "valence": 0.82, "danceability": 0.651, "acousticness": 0.184, "tempo": 176.2, "loudness": -6.4}, {"title": "Poovukku Enna Poottu", "album": "Bombay", "year": 1995, "energy": 0.905, "valence": 0.798, "danceability": 0.794, "acousticness": 0.13, "tempo": 124.0, "loudness": -5.6}, {"title": "Daud", "album": "Daud", "year": 1997, "energy": 0.596, "valence": 0.331, "danceability": 0.771, "acousticness": 0.066, "tempo": 125.0, "loudness": -10.6}, {"title": "Daud - Bhangra", "album": "Daud", "year": 1997, "energy": 0.516, "valence": 0.374, "danceability": 0.732, "acousticness": 0.086, "tempo": 125.0, "loudness": -15.7}, {"title": "O Bhavre", "album": "Daud", "year": 1997, "energy": 0.433, "valence": 0.745, "danceability": 0.715, "acousticness": 0.029, "tempo": 100.0, "loudness": -16.9}, {"title": "O Bhavre - Remix", "album": "Daud", "year": 1997, "energy": 0.673, "valence": 0.777, "danceability": 0.818, "acousticness": 0.03, "tempo": 100.2, "loudness": -11.0}, {"title": "O! Sai Yaiye", "album": "Daud", "year": 1997, "energy": 0.435, "valence": 0.591, "danceability": 0.835, "acousticness": 0.002, "tempo": 93.0, "loudness": -14.5}, {"title": "Shabba Shabba", "album": "Daud", "year": 1997, "energy": 0.425, "valence": 0.725, "danceability": 0.836, "acousticness": 0.19, "tempo": 100.0, "loudness": -15.7}, {"title": "The Thump Of Daud - Instrumental", "album": "Daud", "year": 1997, "energy": 0.343, "valence": 0.453, "danceability": 0.725, "acousticness": 0.003, "tempo": 180.1, "loudness": -15.9}, {"title": "Yeh Jaan", "album": "Daud", "year": 1997, "energy": 0.336, "valence": 0.169, "danceability": 0.748, "acousticness": 0.419, "tempo": 113.0, "loudness": -15.5}, {"title": "Zehreela Pyar", "album": "Daud", "year": 1997, "energy": 0.181, "valence": 0.218, "danceability": 0.801, "acousticness": 0.233, "tempo": 114.8, "loudness": -18.0}, {"title": "Kodite Kolatam", "album": "Duet", "year": 1994, "energy": 0.476, "valence": 0.802, "danceability": 0.786, "acousticness": 0.825, "tempo": 67.2, "loudness": -13.5}, {"title": "Kalame Kammaga Sage", "album": "Duet", "year": 1994, "energy": 0.585, "valence": 0.94, "danceability": 0.737, "acousticness": 0.904, "tempo": 112.1, "loudness": -14.3}, {"title": "Anjali Anjali", "album": "Duet", "year": 1994, "energy": 0.372, "valence": 0.422, "danceability": 0.444, "acousticness": 0.862, "tempo": 88.7, "loudness": -13.8}, {"title": "Nepade Geetham", "album": "Duet", "year": 1994, "energy": 0.424, "valence": 0.332, "danceability": 0.568, "acousticness": 0.962, "tempo": 99.9, "loudness": -13.8}, {"title": "Gauti Vanki", "album": "Duet", "year": 1994, "energy": 0.595, "valence": 0.732, "danceability": 0.631, "acousticness": 0.814, "tempo": 116.2, "loudness": -12.2}, {"title": "Vendimabhu Therumeeda", "album": "Duet", "year": 1994, "energy": 0.454, "valence": 0.552, "danceability": 0.627, "acousticness": 0.798, "tempo": 102.8, "loudness": -13.9}, {"title": "Neenecheli Neenecheli", "album": "Duet", "year": 1994, "energy": 0.241, "valence": 0.171, "danceability": 0.264, "acousticness": 0.927, "tempo": 80.9, "loudness": -15.1}, {"title": "Anjali Anjali - Sad Version", "album": "Duet", "year": 1994, "energy": 0.357, "valence": 0.402, "danceability": 0.46, "acousticness": 0.815, "tempo": 87.9, "loudness": -14.1}, {"title": "Bombay Theme Intro", "album": "Fire", "year": 1996, "energy": 0.122, "valence": 0.043, "danceability": 0.186, "acousticness": 0.209, "tempo": 81.1, "loudness": -19.1}, {"title": "Radha & Sita Love Theme", "album": "Fire", "year": 1996, "energy": 0.156, "valence": 0.033, "danceability": 0.188, "acousticness": 0.798, "tempo": 89.7, "loudness": -22.0}, {"title": "Sita's Theme", "album": "Fire", "year": 1996, "energy": 0.108, "valence": 0.038, "danceability": 0.516, "acousticness": 0.004, "tempo": 172.3, "loudness": -29.1}, {"title": "Radha's Theme !", "album": "Fire", "year": 1996, "energy": 0.079, "valence": 0.035, "danceability": 0.181, "acousticness": 0.337, "tempo": 85.8, "loudness": -22.9}, {"title": "Andha Arabic Kadal", "album": "Fire", "year": 1996, "energy": 0.418, "valence": 0.777, "danceability": 0.84, "acousticness": 0.023, "tempo": 95.0, "loudness": -16.4}, {"title": "Mundu's Fantasy Part1", "album": "Fire", "year": 1996, "energy": 0.115, "valence": 0.034, "danceability": 0.285, "acousticness": 0.236, "tempo": 80.4, "loudness": -23.1}, {"title": "Mundu's Fantasy Part2", "album": "Fire", "year": 1996, "energy": 0.38, "valence": 0.078, "danceability": 0.497, "acousticness": 0.416, "tempo": 125.9, "loudness": -19.8}, {"title": "Desire Night", "album": "Fire", "year": 1996, "energy": 0.144, "valence": 0.03, "danceability": 0.144, "acousticness": 0.4, "tempo": 180.6, "loudness": -24.8}, {"title": "Bangles Theme", "album": "Fire", "year": 1996, "energy": 0.173, "valence": 0.093, "danceability": 0.431, "acousticness": 0.112, "tempo": 168.3, "loudness": -20.2}, {"title": "Ramayan", "album": "Fire", "year": 1996, "energy": 0.283, "valence": 0.547, "danceability": 0.465, "acousticness": 0.698, "tempo": 82.4, "loudness": -22.1}, {"title": "Allah Hu", "album": "Fire", "year": 1996, "energy": 0.596, "valence": 0.046, "danceability": 0.397, "acousticness": 0.654, "tempo": 123.7, "loudness": -22.2}, {"title": "Rahda's Confession", "album": "Fire", "year": 1996, "energy": 0.036, "valence": 0.12, "danceability": 0.12, "acousticness": 0.457, "tempo": 88.3, "loudness": -25.6}, {"title": "Passion", "album": "Fire", "year": 1996, "energy": 0.161, "valence": 0.125, "danceability": 0.664, "acousticness": 0.838, "tempo": 113.0, "loudness": -19.7}, {"title": "Bombay Theme Finale & Radha's Soul", "album": "Fire", "year": 1996, "energy": 0.121, "valence": 0.037, "danceability": 0.17, "acousticness": 0.134, "tempo": 80.1, "loudness": -18.3}, {"title": "Julie's Theme", "album": "Fire", "year": 1996, "energy": 0.2, "valence": 0.617, "danceability": 0.643, "acousticness": 0.262, "tempo": 181.9, "loudness": -21.3}, {"title": "Chinatown", "album": "Fire", "year": 1996, "energy": 0.051, "valence": 0.397, "danceability": 0.76, "acousticness": 0.617, "tempo": 88.0, "loudness": -25.0}, {"title": "Akadanu Naanga", "album": "Indian", "year": 1996, "energy": 0.728, "valence": 0.629, "danceability": 0.815, "acousticness": 0.155, "tempo": 88.0, "loudness": -10.4}, {"title": "Maya Machindra", "album": "Indian", "year": 1996, "energy": 0.552, "valence": 0.653, "danceability": 0.795, "acousticness": 0.075, "tempo": 100.0, "loudness": -13.3}, {"title": "Pachai Kiligal (From \"Indian\")", "album": "Indian", "year": 1996, "energy": 0.339, "valence": 0.878, "danceability": 0.747, "acousticness": 0.27, "tempo": 104.0, "loudness": -14.4}, {"title": "Telephone Manipol (From \"Indian\")", "album": "Indian", "year": 1996, "energy": 0.539, "valence": 0.556, "danceability": 0.804, "acousticness": 0.021, "tempo": 93.0, "loudness": -13.1}, {"title": "Kappaleri Poyaachu (From \"Indian\")", "album": "Indian", "year": 1996, "energy": 0.58, "valence": 0.186, "danceability": 0.635, "acousticness": 0.259, "tempo": 115.0, "loudness": -10.8}, {"title": "Ennai Kaanavillaiye", "album": "Kadhal Desam", "year": 1996, "energy": 0.511, "valence": 0.411, "danceability": 0.68, "acousticness": 0.048, "tempo": 93.0, "loudness": -12.8}, {"title": "Hello Doctor", "album": "Kadhal Desam", "year": 1996, "energy": 0.903, "valence": 0.498, "danceability": 0.784, "acousticness": 0.008, "tempo": 129.1, "loudness": -11.3}, {"title": "Kalluri Salai", "album": "Kadhal Desam", "year": 1996, "energy": 0.471, "valence": 0.459, "danceability": 0.74, "acousticness": 0.023, "tempo": 131.0, "loudness": -14.2}, {"title": "Mustafa Mustafa", "album": "Kadhal Desam", "year": 1996, "energy": 0.294, "valence": 0.733, "danceability": 0.805, "acousticness": 0.042, "tempo": 95.0, "loudness": -16.6}, {"title": "Thendrale", "album": "Kadhal Desam", "year": 1996, "energy": 0.061, "valence": 0.064, "danceability": 0.254, "acousticness": 0.786, "tempo": 200.9, "loudness": -21.9}, {"title": "O Vennila", "album": "Kadhal Desam", "year": 1996, "energy": 0.526, "valence": 0.435, "danceability": 0.731, "acousticness": 0.109, "tempo": 120.0, "loudness": -12.4}, {"title": "Come On Come On", "album": "Love Birds", "year": 1996, "energy": 0.359, "valence": 0.642, "danceability": 0.864, "acousticness": 0.011, "tempo": 147.0, "loudness": -18.7}, {"title": "Malargaley", "album": "Love Birds", "year": 1996, "energy": 0.138, "valence": 0.158, "danceability": 0.481, "acousticness": 0.32, "tempo": 87.4, "loudness": -21.0}, {"title": "Naalai Ulagam", "album": "Love Birds", "year": 1996, "energy": 0.212, "valence": 0.055, "danceability": 0.289, "acousticness": 0.707, "tempo": 91.9, "loudness": -16.8}, {"title": "No Problem", "album": "Love Birds", "year": 1996, "energy": 0.475, "valence": 0.504, "danceability": 0.914, "acousticness": 0.022, "tempo": 104.0, "loudness": -16.3}, {"title": "Samba Samba", "album": "Love Birds", "year": 1996, "energy": 0.481, "valence": 0.317, "danceability": 0.834, "acousticness": 0.052, "tempo": 135.1, "loudness": -15.8}, {"title": "Poo Pookkum Osai Adhai", "album": "Minsara Kanavu", "year": 1997, "energy": 0.581, "valence": 0.727, "danceability": 0.842, "acousticness": 0.038, "tempo": 100.0, "loudness": -13.3}, {"title": "Huu Huu Lalala-Manamadurai", "album": "Minsara Kanavu", "year": 1997, "energy": 0.545, "valence": 0.651, "danceability": 0.755, "acousticness": 0.04, "tempo": 93.0, "loudness": -11.0}, {"title": "Anbendru Mazhaieley Agilangal", "album": "Minsara Kanavu", "year": 1997, "energy": 0.061, "valence": 0.034, "danceability": 0.439, "acousticness": 0.148, "tempo": 132.5, "loudness": -21.4}, {"title": "Thanga Thamari Magale", "album": "Minsara Kanavu", "year": 1997, "energy": 0.478, "valence": 0.864, "danceability": 0.73, "acousticness": 0.069, "tempo": 172.1, "loudness": -11.5}, {"title": "Strawberry Kanne Vinveli Penne", "album": "Minsara Kanavu", "year": 1997, "energy": 0.289, "valence": 0.367, "danceability": 0.462, "acousticness": 0.611, "tempo": 65.5, "loudness": -13.1}, {"title": "Vennilave Vennilave Vinnai", "album": "Minsara Kanavu", "year": 1997, "energy": 0.32, "valence": 0.639, "danceability": 0.634, "acousticness": 0.412, "tempo": 91.0, "loudness": -12.3}, {"title": "Eduda Antha Sooriya", "album": "Pudhiya Mannargal", "year": 1994, "energy": 0.504, "valence": 0.639, "danceability": 0.796, "acousticness": 0.05, "tempo": 133.0, "loudness": -11.9}, {"title": "Vaanil Yeni", "album": "Pudhiya Mannargal", "year": 1994, "energy": 0.678, "valence": 0.485, "danceability": 0.888, "acousticness": 0.049, "tempo": 104.0, "loudness": -13.5}, {"title": "Nee Kattum Selai", "album": "Pudhiya Mannargal", "year": 1994, "energy": 0.322, "valence": 0.842, "danceability": 0.802, "acousticness": 0.156, "tempo": 66.5, "loudness": -15.7}, {"title": "Onnu Rendu Moonuda", "album": "Pudhiya Mannargal", "year": 1994, "energy": 0.411, "valence": 0.697, "danceability": 0.895, "acousticness": 0.124, "tempo": 138.0, "loudness": -11.9}, {"title": "Vaadi Saathukodi", "album": "Pudhiya Mannargal", "year": 1994, "energy": 0.44, "valence": 0.932, "danceability": 0.788, "acousticness": 0.179, "tempo": 91.0, "loudness": -15.3}, {"title": "Netru Illatha Maatram", "album": "Pudhiya Mugam", "year": 1993, "energy": 0.299, "valence": 0.418, "danceability": 0.614, "acousticness": 0.684, "tempo": 88.0, "loudness": -16.2}, {"title": "Sambo Sambo", "album": "Pudhiya Mugam", "year": 1993, "energy": 0.261, "valence": 0.864, "danceability": 0.918, "acousticness": 0.258, "tempo": 105.0, "loudness": -17.6}, {"title": "Kannukku Mai Azhagu - Male", "album": "Pudhiya Mugam", "year": 1993, "energy": 0.286, "valence": 0.468, "danceability": 0.579, "acousticness": 0.824, "tempo": 81.4, "loudness": -17.7}, {"title": "Ithuthan Vaazhkai Embada", "album": "Pudhiya Mugam", "year": 1993, "energy": 0.148, "valence": 0.193, "danceability": 0.373, "acousticness": 0.891, "tempo": 141.7, "loudness": -19.7}, {"title": "Kannukku Mai Azhagu - Female", "album": "Pudhiya Mugam", "year": 1993, "energy": 0.366, "valence": 0.412, "danceability": 0.582, "acousticness": 0.876, "tempo": 81.4, "loudness": -14.7}, {"title": "July Matham", "album": "Pudhiya Mugam", "year": 1993, "energy": 0.356, "valence": 0.759, "danceability": 0.846, "acousticness": 0.556, "tempo": 100.0, "loudness": -17.4}, {"title": "Hai Rama", "album": "Rangeela", "year": 1995, "energy": 0.395, "valence": 0.464, "danceability": 0.48, "acousticness": 0.317, "tempo": 84.7, "loudness": -11.0}, {"title": "Kya Kare Kya Na Kare", "album": "Rangeela", "year": 1995, "energy": 0.656, "valence": 0.537, "danceability": 0.847, "acousticness": 0.039, "tempo": 113.0, "loudness": -8.4}, {"title": "Mangta Hai Kya", "album": "Rangeela", "year": 1995, "energy": 0.603, "valence": 0.869, "danceability": 0.806, "acousticness": 0.067, "tempo": 130.0, "loudness": -6.9}, {"title": "Pyaar Yeh Jaane Kaise", "album": "Rangeela", "year": 1995, "energy": 0.37, "valence": 0.182, "danceability": 0.533, "acousticness": 0.384, "tempo": 97.2, "loudness": -7.8}, {"title": "Rangeela Re", "album": "Rangeela", "year": 1995, "energy": 0.717, "valence": 0.725, "danceability": 0.916, "acousticness": 0.005, "tempo": 113.0, "loudness": -6.6}, {"title": "Spirit Of Rangeela - Instrumental", "album": "Rangeela", "year": 1995, "energy": 0.692, "valence": 0.907, "danceability": 0.781, "acousticness": 0.028, "tempo": 129.9, "loudness": -9.2}, {"title": "Tanha Tanha Yahan Pe Jeena", "album": "Rangeela", "year": 1995, "energy": 0.896, "valence": 0.375, "danceability": 0.609, "acousticness": 0.062, "tempo": 189.8, "loudness": -6.0}, {"title": "Yaaron Sun Lo Zara", "album": "Rangeela", "year": 1995, "energy": 0.554, "valence": 0.604, "danceability": 0.777, "acousticness": 0.216, "tempo": 144.9, "loudness": -7.9}, {"title": "Hai Rama - Remix", "album": "Rangeela", "year": 1995, "energy": 0.54, "valence": 0.633, "danceability": 0.777, "acousticness": 0.159, "tempo": 127.0, "loudness": -10.0}, {"title": "Phir Se Ud Chala", "album": "Rockstar", "year": 2011, "energy": 0.656, "valence": 0.453, "danceability": 0.647, "acousticness": 0.657, "tempo": 120.0, "loudness": -8.6}, {"title": "Jo Bhi Main", "album": "Rockstar", "year": 2011, "energy": 0.565, "valence": 0.394, "danceability": 0.558, "acousticness": 0.58, "tempo": 136.0, "loudness": -7.6}, {"title": "Katiya Karun", "album": "Rockstar", "year": 2011, "energy": 0.705, "valence": 0.928, "danceability": 0.644, "acousticness": 0.627, "tempo": 176.0, "loudness": -8.3}, {"title": "Kun Faya Kun", "album": "Rockstar", "year": 2011, "energy": 0.378, "valence": 0.575, "danceability": 0.362, "acousticness": 0.679, "tempo": 87.5, "loudness": -11.0}, {"title": "Sheher Mein", "album": "Rockstar", "year": 2011, "energy": 0.658, "valence": 0.805, "danceability": 0.793, "acousticness": 0.386, "tempo": 91.0, "loudness": -9.1}, {"title": "Haawa Haawa", "album": "Rockstar", "year": 2011, "energy": 0.695, "valence": 0.882, "danceability": 0.739, "acousticness": 0.465, "tempo": 145.0, "loudness": -7.1}, {"title": "Aur Ho", "album": "Rockstar", "year": 2011, "energy": 0.373, "valence": 0.157, "danceability": 0.437, "acousticness": 0.215, "tempo": 77.0, "loudness": -8.4}, {"title": "Tango For Taj", "album": "Rockstar", "year": 2011, "energy": 0.312, "valence": 0.646, "danceability": 0.632, "acousticness": 0.322, "tempo": 132.0, "loudness": -10.2}, {"title": "Tum Ko", "album": "Rockstar", "year": 2011, "energy": 0.416, "valence": 0.17, "danceability": 0.355, "acousticness": 0.7, "tempo": 172.0, "loudness": -10.4}, {"title": "The Dichotomy Of Fame", "album": "Rockstar", "year": 2011, "energy": 0.377, "valence": 0.4, "danceability": 0.508, "acousticness": 0.436, "tempo": 90.9, "loudness": -11.3}, {"title": "Nadaan Parinde", "album": "Rockstar", "year": 2011, "energy": 0.741, "valence": 0.492, "danceability": 0.507, "acousticness": 0.414, "tempo": 132.9, "loudness": -7.5}, {"title": "Tum Ho", "album": "Rockstar", "year": 2011, "energy": 0.47, "valence": 0.167, "danceability": 0.356, "acousticness": 0.518, "tempo": 93.9, "loudness": -8.9}, {"title": "Saadda Haq", "album": "Rockstar", "year": 2011, "energy": 0.882, "valence": 0.627, "danceability": 0.554, "acousticness": 0.091, "tempo": 97.0, "loudness": -5.0}, {"title": "Meeting Place", "album": "Rockstar", "year": 2011, "energy": 0.009, "valence": 0.031, "danceability": 0.268, "acousticness": 0.969, "tempo": 52.2, "loudness": -22.7}, {"title": "Jaagran (Rockstar)", "album": "Rockstar", "year": 2011, "energy": 0.678, "valence": 0.842, "danceability": 0.679, "acousticness": 0.634, "tempo": 88.0, "loudness": -6.9}, {"title": "Chhoti Si Aasha - Version, 1", "album": "", "year": null, "energy": 0.245, "valence": 0.524, "danceability": 0.639, "acousticness": 0.128, "tempo": 172.1, "loudness": -15.2}, {"title": "Rukmani Rukmani", "album": "", "year": null, "energy": 0.539, "valence": 0.645, "danceability": 0.66, "acousticness": 0.085, "tempo": 167.1, "loudness": -15.8}, {"title": "Roja - Version, 1", "album": "", "year": null, "energy": 0.319, "valence": 0.431, "danceability": 0.63, "acousticness": 0.504, "tempo": 91.0, "loudness": -17.1}, {"title": "Yeh Haseen Vadiyan Yeh Khula Aasman", "album": "", "year": null, "energy": 0.295, "valence": 0.107, "danceability": 0.64, "acousticness": 0.425, "tempo": 121.9, "loudness": -16.4}, {"title": "Roja - Version, 2", "album": "", "year": null, "energy": 0.255, "valence": 0.45, "danceability": 0.642, "acousticness": 0.45, "tempo": 91.0, "loudness": -18.6}, {"title": "Chhoti Si Aasha - Version, 2", "album": "", "year": null, "energy": 0.122, "valence": 0.732, "danceability": 0.528, "acousticness": 0.481, "tempo": 172.1, "loudness": -20.4}, {"title": "Bharat Humko Jaan Se Pyara Hai", "album": "", "year": null, "energy": 0.235, "valence": 0.337, "danceability": 0.516, "acousticness": 0.432, "tempo": 84.2, "loudness": -13.2}, {"title": "Chhoti Si Aasha - Instrumental", "album": "", "year": null, "energy": 0.292, "valence": 0.684, "danceability": 0.624, "acousticness": 0.31, "tempo": 171.5, "loudness": -13.6}, {"title": "Rukmani Rukmani - Instrumental", "album": "", "year": null, "energy": 0.682, "valence": 0.505, "danceability": 0.708, "acousticness": 0.069, "tempo": 84.3, "loudness": -11.9}, {"title": "Roja - Instrumental", "album": "", "year": null, "energy": 0.38, "valence": 0.399, "danceability": 0.583, "acousticness": 0.304, "tempo": 91.2, "loudness": -12.1}, {"title": "Yeh Haseen Vadiyan Yeh Khula Aasman - Instrumental", "album": "", "year": null, "energy": 0.369, "valence": 0.323, "danceability": 0.675, "acousticness": 0.582, "tempo": 122.0, "loudness": -11.7}, {"title": "Bharat Humko Jaan Se Pyara Hai - Instrumental", "album": "", "year": null, "energy": 0.302, "valence": 0.214, "danceability": 0.473, "acousticness": 0.403, "tempo": 84.7, "loudness": -11.1}, {"title": "Manmatha Nee Yaarada", "album": "Super Police", "year": 1994, "energy": 0.336, "valence": 0.387, "danceability": 0.763, "acousticness": 0.004, "tempo": 121.0, "loudness": -15.9}, {"title": "Mama Love Pannuga", "album": "Super Police", "year": 1994, "energy": 0.281, "valence": 0.503, "danceability": 0.778, "acousticness": 0.225, "tempo": 144.8, "loudness": -17.0}, {"title": "Chinna Kuttiyo Singariyo", "album": "Super Police", "year": 1994, "energy": 0.429, "valence": 0.904, "danceability": 0.917, "acousticness": 0.29, "tempo": 115.0, "loudness": -13.5}, {"title": "Pakka Gentleman", "album": "Super Police", "year": 1994, "energy": 0.72, "valence": 0.676, "danceability": 0.806, "acousticness": 0.136, "tempo": 95.0, "loudness": -14.1}, {"title": "Muthamma Muthamma", "album": "Super Police", "year": 1994, "energy": 0.408, "valence": 0.549, "danceability": 0.931, "acousticness": 0.152, "tempo": 104.0, "loudness": -18.5}, {"title": "Kannum Kannum", "album": "Thiruda Thiruda", "year": 1993, "energy": 0.353, "valence": 0.764, "danceability": 0.824, "acousticness": 0.279, "tempo": 83.4, "loudness": -14.9}, {"title": "Rasathi", "album": "Thiruda Thiruda", "year": 1993, "energy": 0.141, "valence": 0.399, "danceability": 0.424, "acousticness": 0.755, "tempo": 130.9, "loudness": -20.1}, {"title": "Konjam Nilavu", "album": "Thiruda Thiruda", "year": 1993, "energy": 0.441, "valence": 0.556, "danceability": 0.762, "acousticness": 0.241, "tempo": 104.1, "loudness": -17.9}, {"title": "Veerapandi Kotayyile", "album": "Thiruda Thiruda", "year": 1993, "energy": 0.248, "valence": 0.335, "danceability": 0.835, "acousticness": 0.192, "tempo": 126.8, "loudness": -18.1}, {"title": "Putham Puthu Bhoomi", "album": "Thiruda Thiruda", "year": 1993, "energy": 0.406, "valence": 0.515, "danceability": 0.398, "acousticness": 0.282, "tempo": 126.7, "loudness": -15.7}, {"title": "Thee Thee", "album": "Thiruda Thiruda", "year": 1993, "energy": 0.256, "valence": 0.768, "danceability": 0.802, "acousticness": 0.35, "tempo": 133.1, "loudness": -19.3}, {"title": "Kaathu Kaathu", "album": "Uzhavan", "year": 1993, "energy": 0.208, "valence": 0.436, "danceability": 0.759, "acousticness": 0.546, "tempo": 120.0, "loudness": -15.7}, {"title": "Pennala Pennala", "album": "Uzhavan", "year": 1993, "energy": 0.338, "valence": 0.632, "danceability": 0.708, "acousticness": 0.484, "tempo": 134.9, "loudness": -14.8}, {"title": "Raa Kozhi Rendu (From \"Uzhavan\")", "album": "Uzhavan", "year": 1993, "energy": 0.34, "valence": 0.521, "danceability": 0.767, "acousticness": 0.346, "tempo": 119.9, "loudness": -14.0}, {"title": "Ennatha Ponnatha", "album": "Uzhavan", "year": 1993, "energy": 0.145, "valence": 0.063, "danceability": 0.525, "acousticness": 0.755, "tempo": 95.1, "loudness": -15.0}, {"title": "Kanngalil Enna Iramo", "album": "Uzhavan", "year": 1993, "energy": 0.228, "valence": 0.443, "danceability": 0.621, "acousticness": 0.828, "tempo": 133.0, "loudness": -16.9}, {"title": "Maari Mazhai Peiyuth", "album": "Uzhavan", "year": 1993, "energy": 0.323, "valence": 0.518, "danceability": 0.518, "acousticness": 0.374, "tempo": 66.9, "loudness": -14.5}, {"title": "Senthamizh Naatu Thamizhachiye", "album": "Vandicholai Chinraasu", "year": 1994, "energy": 0.32, "valence": 0.846, "danceability": 0.771, "acousticness": 0.109, "tempo": 154.0, "loudness": -16.4}, {"title": "Chitthirai Nilavu", "album": "Vandicholai Chinraasu", "year": 1994, "energy": 0.375, "valence": 0.398, "danceability": 0.411, "acousticness": 0.418, "tempo": 167.6, "loudness": -13.8}, {"title": "Ye Muthu Pappa", "album": "Vandicholai Chinraasu", "year": 1994, "energy": 0.499, "valence": 0.898, "danceability": 0.88, "acousticness": 0.105, "tempo": 145.0, "loudness": -15.6}, {"title": "Edhu Sugam Sugam Adhu Veendum Veendum", "album": "Vandicholai Chinraasu", "year": 1994, "energy": 0.265, "valence": 0.567, "danceability": 0.677, "acousticness": 0.738, "tempo": 81.4, "loudness": -13.5}, {"title": "Barota Barota", "album": "Vandicholai Chinraasu", "year": 1994, "energy": 0.452, "valence": 0.912, "danceability": 0.893, "acousticness": 0.338, "tempo": 140.0, "loudness": -11.2}], "albums": ["Pudhiya Mugam", "Uzhavan", "Thiruda Thiruda", "Duet", "Vandicholai Chinraasu", "Super Police", "Pudhiya Mannargal", "Bombay", "Rangeela", "Fire", "Indian", "Kadhal Desam", "Love Birds", "Daud", "Minsara Kanavu", "Rockstar", ""], "albumColors": {"Pudhiya Mugam": "hsl(0, 65%, 55%)", "Uzhavan": "hsl(21, 65%, 55%)", "Thiruda Thiruda": "hsl(42, 65%, 55%)", "Duet": "hsl(64, 65%, 55%)", "Vandicholai Chinraasu": "hsl(85, 65%, 55%)", "Super Police": "hsl(106, 65%, 55%)", "Pudhiya Mannargal": "hsl(127, 65%, 55%)", "Bombay": "hsl(148, 65%, 55%)", "Rangeela": "hsl(169, 65%, 55%)", "Fire": "hsl(191, 65%, 55%)", "Indian": "hsl(212, 65%, 55%)", "Kadhal Desam": "hsl(233, 65%, 55%)", "Love Birds": "hsl(254, 65%, 55%)", "Daud": "hsl(275, 65%, 55%)", "Minsara Kanavu": "hsl(296, 65%, 55%)", "Rockstar": "hsl(318, 65%, 55%)", "": "hsl(339, 65%, 55%)"}, "albumYears": {"Pudhiya Mugam": 1993, "Uzhavan": 1993, "Thiruda Thiruda": 1993, "Duet": 1994, "Vandicholai Chinraasu": 1994, "Super Police": 1994, "Pudhiya Mannargal": 1994, "Bombay": 1995, "Rangeela": 1995, "Fire": 1996, "Indian": 1996, "Kadhal Desam": 1996, "Love Birds": 1996, "Daud": 1997, "Minsara Kanavu": 1997, "Rockstar": 2011, "": null}};
+
+const width = window.innerWidth;
+const height = window.innerHeight;
+const margin = { top: 80, right: 220, bottom: 60, left: 70 };
+const plotW = width - margin.left - margin.right;
+const plotH = height - margin.top - margin.bottom;
+
+const svg = document.getElementById('chart');
+svg.setAttribute('width', width);
+svg.setAttribute('height', height);
+
+function svgEl(tag, attrs) {
+  const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const [k, v] of Object.entries(attrs || {})) el.setAttribute(k, v);
+  return el;
+}
+
+// --- Axes ---
+
+// Grid lines
+for (let v = 0; v <= 1; v += 0.2) {
+  const x = margin.left + v * plotW;
+  const y = margin.top + (1 - v) * plotH;
+  // Vertical grid
+  svg.appendChild(svgEl('line', {
+    x1: x, y1: margin.top, x2: x, y2: margin.top + plotH,
+    stroke: 'rgba(255,255,255,0.06)', 'stroke-width': 1,
+  }));
+  // Horizontal grid
+  svg.appendChild(svgEl('line', {
+    x1: margin.left, y1: y, x2: margin.left + plotW, y2: y,
+    stroke: 'rgba(255,255,255,0.06)', 'stroke-width': 1,
+  }));
+  // X tick labels
+  const xt = svgEl('text', {
+    x: x, y: margin.top + plotH + 20,
+    'text-anchor': 'middle', fill: '#555', 'font-size': '11px',
+    'font-family': 'Segoe UI, system-ui, sans-serif',
+  });
+  xt.textContent = v.toFixed(1);
+  svg.appendChild(xt);
+  // Y tick labels
+  const yt = svgEl('text', {
+    x: margin.left - 12, y: y + 4,
+    'text-anchor': 'end', fill: '#555', 'font-size': '11px',
+    'font-family': 'Segoe UI, system-ui, sans-serif',
+  });
+  yt.textContent = v.toFixed(1);
+  svg.appendChild(yt);
+}
+
+// Axis labels
+const xLabel = svgEl('text', {
+  x: margin.left + plotW / 2, y: height - 12,
+  'text-anchor': 'middle', fill: '#777', 'font-size': '13px',
+  'font-family': 'Segoe UI, system-ui, sans-serif',
+});
+xLabel.textContent = 'Valence (sad \u2190 \u2192 happy)';
+svg.appendChild(xLabel);
+
+const yLabel = svgEl('text', {
+  x: 18, y: margin.top + plotH / 2,
+  'text-anchor': 'middle', fill: '#777', 'font-size': '13px',
+  'font-family': 'Segoe UI, system-ui, sans-serif',
+  transform: `rotate(-90, 18, ${margin.top + plotH / 2})`,
+});
+yLabel.textContent = 'Energy (calm \u2190 \u2192 intense)';
+svg.appendChild(yLabel);
+
+// Quadrant labels
+const quadrants = [
+  { x: 0.15, y: 0.85, text: 'Intense + Sad', sub: '(Angry, Turbulent)' },
+  { x: 0.85, y: 0.85, text: 'Intense + Happy', sub: '(Euphoric, Danceable)' },
+  { x: 0.15, y: 0.15, text: 'Calm + Sad', sub: '(Melancholic, Sombre)' },
+  { x: 0.85, y: 0.15, text: 'Calm + Happy', sub: '(Peaceful, Serene)' },
+];
+quadrants.forEach(q => {
+  const qx = margin.left + q.x * plotW;
+  const qy = margin.top + (1 - q.y) * plotH;
+  const t1 = svgEl('text', {
+    x: qx, y: qy, 'text-anchor': 'middle', fill: 'rgba(255,255,255,0.08)',
+    'font-size': '14px', 'font-weight': '700',
+    'font-family': 'Segoe UI, system-ui, sans-serif',
+  });
+  t1.textContent = q.text;
+  svg.appendChild(t1);
+  const t2 = svgEl('text', {
+    x: qx, y: qy + 18, 'text-anchor': 'middle', fill: 'rgba(255,255,255,0.05)',
+    'font-size': '11px',
+    'font-family': 'Segoe UI, system-ui, sans-serif',
+  });
+  t2.textContent = q.sub;
+  svg.appendChild(t2);
+});
+
+// --- Plot dots ---
+
+const dotGroup = svgEl('g');
+svg.appendChild(dotGroup);
+
+const dotEls = DATA.tracks.map(t => {
+  const cx = margin.left + t.valence * plotW;
+  const cy = margin.top + (1 - t.energy) * plotH;
+  const color = DATA.albumColors[t.album] || '#888';
+
+  const circle = svgEl('circle', {
+    cx: cx, cy: cy, r: 6,
+    fill: color, opacity: 0.8,
+    stroke: 'rgba(255,255,255,0.2)', 'stroke-width': 0.5,
+  });
+  dotGroup.appendChild(circle);
+
+  circle.addEventListener('mouseenter', (ev) => showTooltip(ev, t, color));
+  circle.addEventListener('mousemove', moveTooltip);
+  circle.addEventListener('mouseleave', hideTooltip);
+
+  return { circle, data: t, color };
+});
+
+// --- Legend with album filtering ---
+
+const legend = document.getElementById('legend');
+let activeAlbums = new Set(DATA.albums);
+
+legend.innerHTML = '<h3>Albums (click to filter)</h3>';
+DATA.albums.forEach(a => {
+  const item = document.createElement('div');
+  item.className = 'legend-item';
+  const year = DATA.albumYears[a] || '?';
+  item.innerHTML = `<div class="legend-dot" style="background:${DATA.albumColors[a]}"></div>${a} (${year})`;
+  item.addEventListener('click', () => toggleAlbum(a, item));
+  legend.appendChild(item);
+});
+
+function toggleAlbum(album, el) {
+  if (activeAlbums.has(album)) {
+    activeAlbums.delete(album);
+    el.classList.add('dimmed');
+  } else {
+    activeAlbums.add(album);
+    el.classList.remove('dimmed');
+  }
+  dotEls.forEach(d => {
+    const visible = activeAlbums.has(d.data.album);
+    d.circle.setAttribute('opacity', visible ? 0.8 : 0.04);
+    d.circle.setAttribute('r', visible ? 6 : 3);
+  });
+}
+
+// --- Tooltip ---
+
+const tooltip = document.getElementById('tooltip');
+
+function showTooltip(ev, t, color) {
+  const year = DATA.albumYears[t.album] || '?';
+  let html = `<div class="tt-title" style="color:${color}">${t.title}</div>`;
+  html += `<div class="tt-album">${t.album} (${year})</div>`;
+  html += `<div class="tt-row"><span class="tt-label">Energy</span><span class="tt-val">${t.energy}</span></div>`;
+  html += `<div class="tt-row"><span class="tt-label">Valence</span><span class="tt-val">${t.valence}</span></div>`;
+  html += `<div class="tt-row"><span class="tt-label">Danceability</span><span class="tt-val">${t.danceability}</span></div>`;
+  html += `<div class="tt-row"><span class="tt-label">Acousticness</span><span class="tt-val">${t.acousticness}</span></div>`;
+  html += `<div class="tt-row"><span class="tt-label">Tempo</span><span class="tt-val">${t.tempo} BPM</span></div>`;
+  html += `<div class="tt-row"><span class="tt-label">Loudness</span><span class="tt-val">${t.loudness} dB</span></div>`;
+  tooltip.innerHTML = html;
+  tooltip.style.display = 'block';
+
+  // Highlight same album
+  dotEls.forEach(d => {
+    if (activeAlbums.has(d.data.album)) {
+      d.circle.setAttribute('opacity', d.data.album === t.album ? 0.95 : 0.2);
+    }
+  });
+  moveTooltip(ev);
+}
+
+function moveTooltip(ev) {
+  let x = ev.clientX + 16, y = ev.clientY + 16;
+  if (x + 300 > width) x = ev.clientX - 310;
+  if (y + 250 > height) y = ev.clientY - 250;
+  tooltip.style.left = x + 'px';
+  tooltip.style.top = y + 'px';
+}
+
+function hideTooltip() {
+  tooltip.style.display = 'none';
+  dotEls.forEach(d => {
+    d.circle.setAttribute('opacity', activeAlbums.has(d.data.album) ? 0.8 : 0.04);
+  });
+}
+</script>
+</body>
+</html>

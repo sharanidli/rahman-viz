@@ -1,0 +1,5353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AR Rahman — Album Network</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0a1a;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    overflow: hidden;
+  }
+  #header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+    padding: 16px 24px;
+    background: linear-gradient(180deg, rgba(10,10,26,0.95) 0%, rgba(10,10,26,0) 100%);
+    pointer-events: none;
+  }
+  #header h1 { font-size: 22px; font-weight: 700; color: #fff; }
+  #header p { font-size: 13px; color: #888; margin-top: 4px; }
+
+  svg { display: block; }
+
+  /* Tooltip */
+  #tooltip {
+    position: fixed;
+    pointer-events: none;
+    background: rgba(20, 20, 40, 0.96);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 13px;
+    line-height: 1.5;
+    max-width: 320px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    display: none;
+    z-index: 100;
+    backdrop-filter: blur(8px);
+  }
+  #tooltip .tt-album { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  #tooltip .tt-meta { color: #aaa; font-size: 12px; margin-bottom: 8px; }
+  #tooltip .tt-section { color: #888; font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.5px; margin-top: 8px; margin-bottom: 2px; }
+  #tooltip .tt-singers { color: #ccc; }
+
+  /* Edge tooltip */
+  #edge-tooltip {
+    position: fixed;
+    pointer-events: none;
+    background: rgba(20, 20, 40, 0.96);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 12px;
+    line-height: 1.5;
+    max-width: 280px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    display: none;
+    z-index: 100;
+    backdrop-filter: blur(8px);
+  }
+
+  /* Legend */
+  #legend {
+    position: fixed; bottom: 20px; left: 20px; z-index: 10;
+    background: rgba(20, 20, 40, 0.85);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 12px;
+    backdrop-filter: blur(8px);
+  }
+  #legend h3 { font-size: 11px; text-transform: uppercase; color: #888;
+    letter-spacing: 0.5px; margin-bottom: 8px; }
+  .legend-item { display: flex; align-items: center; margin-bottom: 4px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; margin-right: 8px;
+    border: 1px solid rgba(255,255,255,0.3); }
+
+  /* Instructions */
+  #instructions {
+    position: fixed; bottom: 20px; right: 20px; z-index: 10;
+    color: #555; font-size: 11px; text-align: right;
+  }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <h1>AR Rahman — Album Network</h1>
+  <p>Shared singers between albums &middot; Hover over nodes and edges for details</p>
+</div>
+
+<div id="tooltip"></div>
+<div id="edge-tooltip"></div>
+
+<div id="legend">
+  <h3>Primary Language</h3>
+  <div class="legend-item"><div class="legend-dot" style="background:#e8575a"></div>Tamil</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#5bb8d4"></div>Hindi</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#e8b83d"></div>Telugu</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#6dc78a"></div>Malayalam</div>
+</div>
+
+<div id="instructions">
+  Node size = number of singers &middot; Edge thickness = shared singers
+</div>
+
+<svg id="network"></svg>
+
+<script>
+const DATA = {
+  "nodes": [
+    {
+      "id": "Roja",
+      "year": 1992,
+      "director": "Mani Ratnam",
+      "hero": "Arvind Swamy",
+      "heroine": "Madhubala",
+      "primary_language": "Tamil",
+      "languages": [
+        "Hindi",
+        "Malayalam",
+        "Marathi",
+        "Tamil",
+        "Telugu"
+      ],
+      "singers": [
+        "Anupama Deshpande",
+        "Baba Sehgal",
+        "Biju Narayanan",
+        "G. Venugopal",
+        "Hariharan",
+        "K. S. Chithra",
+        "Mano",
+        "Minmini",
+        "Ravindra Sathe",
+        "S. P. Balasubrahmanyam",
+        "Shweta Shetty",
+        "Sudesh Bhonsle",
+        "Sujatha Mohan",
+        "Suresh Wadkar",
+        "Unni Menon",
+        "Uttara Kelkar"
+      ],
+      "singer_count": 16,
+      "track_count": 32,
+      "x": 0.0836,
+      "y": 0.1697
+    },
+    {
+      "id": "Yoddha",
+      "year": 1992,
+      "director": "Sangeeth Sivan",
+      "hero": "Mohanlal",
+      "heroine": "Jagathy Sreekumar",
+      "primary_language": "Malayalam",
+      "languages": [
+        "Track listing"
+      ],
+      "singers": [
+        "A. R. Rahman",
+        "Abhijeet Bhattacharya",
+        "Alka Yagnik",
+        "Jolly Mukherjee",
+        "K. J. Yesudas",
+        "K. S. Chithra",
+        "Kavita Krishnamurthy",
+        "Kumar Sanu",
+        "M. G. Sreekumar",
+        "Malgudi Subha",
+        "Poornima Shrestha",
+        "S. P. Balasubrahmanyam",
+        "S. P. Sailaja",
+        "Sujatha Mohan",
+        "Sushma Shrestha"
+      ],
+      "singer_count": 15,
+      "track_count": 16,
+      "x": 0.0065,
+      "y": -0.3186
+    },
+    {
+      "id": "Gentleman",
+      "year": 1993,
+      "director": "Shankar",
+      "hero": "Arjun",
+      "heroine": "Madhubala",
+      "primary_language": "Tamil",
+      "languages": [
+        "Tamil",
+        "Telugu"
+      ],
+      "singers": [
+        "G. V. Prakash Kumar",
+        "Malgudi Subha",
+        "Minmini",
+        "S. Janaki",
+        "S. P. Balasubrahmanyam",
+        "Shahul Hameed",
+        "Srinivas",
+        "Sujatha Mohan",
+        "Suresh Peters",
+        "Swarnalatha"
+      ],
+      "singer_count": 10,
+      "track_count": 10,
+      "x": -0.267,
+      "y": 0.0185
+    },
+    {
+      "id": "Kizhakku Cheemayile",
+      "year": 1993,
+      "director": "Bharathiraja",
+      "hero": "Vijayakumar",
+      "heroine": "Radhika",
+      "primary_language": "Tamil",
+      "languages": [
+        "Tamil"
+      ],
+      "singers": [
+        "B. S. Sasirekha",
+        "K. S. Chithra",
+        "Malaysia Vasudevan",
+        "Mano",
+        "P. Jayachandran",
+        "S. Janaki",
+        "S. P. Balasubrahmanyam",
+        "Shahul Hameed",
+        "Sujatha Mohan",
+        "Sunanda",
+        "T. K. Kala"
+      ],
+      "singer_count": 11,
+      "track_count": 6,
+      "x": -0.2387,
+      "y": -0.1981
+    },
+    {
+      "id": "Nippu Ravva",
+      "year": 1993,
+      "director": "A. Kodandarami Reddy",
+      "hero": "Nandamuri Balakrishna",
+      "heroine": "Vijayashanti",
+      "primary_language": "Telugu",
+      "languages": [
+        "Tamil"
+      ],
+      "singers": [
+        "Chitra",
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam"
+      ],
+      "singer_count": 3,
+      "track_count": 6,
+      "x": 0.4583,
+      "y": -0.2439
+    },
+    {
+      "id": "Pudhiya Mugam",
+      "year": 1993,
+      "director": "Suresh Chandra Menon",
+      "hero": "| music = A. R. Rahman",
+      "heroine": "",
+      "primary_language": "Tamil",
+      "languages": [
+        "Tamil"
+      ],
+      "singers": [
+        "&nbsp;\u2013",
+        "Annupamaa",
+        "Malgudi Subha",
+        "Minmini",
+        "P. Susheela",
+        "S. P. Balasubrahmanyam",
+        "Sujatha",
+        "Sujatha Mohan",
+        "Unni Menon"
+      ],
+      "singer_count": 9,
+      "track_count": 7,
+      "x": -0.339,
+      "y": 0.3229
+    },
+    {
+      "id": "Thiruda Thiruda",
+      "year": 1993,
+      "director": "Mani Ratnam",
+      "hero": "Prashanth",
+      "heroine": "Anand",
+      "primary_language": "Tamil",
+      "languages": [
+        "Hindi",
+        "Tamil",
+        "Telugu"
+      ],
+      "singers": [
+        "A. R. Rahman",
+        "Annupamaa",
+        "Caroline",
+        "G. V. Prakash Kumar",
+        "Ganga Sitharasu",
+        "K. S. Chithra",
+        "Mano",
+        "Minmini",
+        "Noel James",
+        "S. P. Balasubrahmanyam",
+        "Shahul Hameed",
+        "Srinivas",
+        "Sujatha",
+        "Sujatha Mohan",
+        "Suresh Peters",
+        "Udit Narayan",
+        "Unni Menon"
+      ],
+      "singer_count": 17,
+      "track_count": 23,
+      "x": -0.0912,
+      "y": -0.0796
+    },
+    {
+      "id": "Uzhavan",
+      "year": 1993,
+      "director": "Kathir",
+      "hero": "Prabhu",
+      "heroine": "Bhanupriya",
+      "primary_language": "Tamil",
+      "languages": [
+        "Tamil"
+      ],
+      "singers": [
+        "G. V. Prakash Kumar",
+        "K. J. Yesudas",
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam",
+        "Shahul Hameed",
+        "Sujatha Mohan",
+        "Swarnalatha"
+      ],
+      "singer_count": 7,
+      "track_count": 6,
+      "x": -0.3621,
+      "y": -0.0745
+    },
+    {
+      "id": "Duet",
+      "year": 1994,
+      "director": "K. Balachander",
+      "hero": "Prabhu",
+      "heroine": "Ramesh Aravind",
+      "primary_language": "Tamil",
+      "languages": [
+        "Hindi",
+        "Tamil"
+      ],
+      "singers": [
+        "&nbsp;\u2014",
+        "G Venugopal",
+        "K. J. Yesudas",
+        "K. S. Chithra",
+        "K.S. Chithra",
+        "Nabarun Ghosh",
+        "Noell James",
+        "P. Susheela",
+        "Prabhu",
+        "Prabhu (actor)",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan",
+        "T. K. Kala",
+        "V. V. Prasanna"
+      ],
+      "singer_count": 14,
+      "track_count": 24,
+      "x": -0.3493,
+      "y": 0.1703
+    },
+    {
+      "id": "Gangmaster",
+      "year": 1994,
+      "director": "B. Gopal",
+      "hero": "| music = A. R. Rahman",
+      "heroine": "",
+      "primary_language": "Telugu",
+      "languages": [
+        "Tamil",
+        "Telugu"
+      ],
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "Minmini",
+        "S. P. Balasubrahmanyam",
+        "Sujatha",
+        "Swarnalatha"
+      ],
+      "singer_count": 6,
+      "track_count": 12,
+      "x": -0.0816,
+      "y": 0.2591
+    },
+    {
+      "id": "Kaadhalan",
+      "year": 1994,
+      "director": "Shankar",
+      "hero": "Prabhu Deva",
+      "heroine": "Nagma",
+      "primary_language": "Tamil",
+      "languages": [
+        "Hindi",
+        "Tamil",
+        "Telugu"
+      ],
+      "singers": [
+        "A. R. Rahman",
+        "Hariharan",
+        "Leon James (composer)",
+        "Mano",
+        "Minmini",
+        "P Jayachandran",
+        "P. Jayachandran",
+        "P. Unnikrishnan",
+        "S. Janaki",
+        "S. P. Balasubrahmanyam",
+        "S.P.B. Pallavi",
+        "Shahul Hameed",
+        "Shankar Mahadevan",
+        "Sujatha Mohan",
+        "Sunanda",
+        "Sunandha",
+        "Suresh Peters",
+        "Theni Kunjaramma",
+        "Theni Kunjarammal",
+        "Udit Narayan"
+      ],
+      "singer_count": 20,
+      "track_count": 27,
+      "x": 0.1144,
+      "y": -0.1704
+    },
+    {
+      "id": "Karuththamma",
+      "year": 1994,
+      "director": "Bharathiraja",
+      "hero": "Raja",
+      "heroine": "Rajashree",
+      "primary_language": "Tamil",
+      "languages": [
+        "Tamil"
+      ],
+      "singers": [
+        "Bharathiraja",
+        "Deepan Chakravarthy",
+        "K. S. Chithra",
+        "Malaysia Vasudevan",
+        "Minmini",
+        "P. Jayachandran",
+        "P. Unnikrishnan",
+        "Shahul Hameed",
+        "Sujatha Mohan",
+        "Swarnalatha",
+        "T. K. Kala",
+        "Theni Kunjarammal",
+        "Unni Menon"
+      ],
+      "singer_count": 13,
+      "track_count": 7,
+      "x": -0.4289,
+      "y": 0.0788
+    },
+    {
+      "id": "May Maadham",
+      "year": 1994,
+      "director": "Balu",
+      "hero": "Vineeth",
+      "heroine": "Sonali Kulkarni",
+      "primary_language": "Tamil",
+      "languages": [
+        "Tamil",
+        "Telugu"
+      ],
+      "singers": [
+        "A. R. Rahman (backing vocals)",
+        "Anupama",
+        "Choir",
+        "G. V. Prakash Kumar",
+        "G. V. Prakash Kumar and Manorama (Tamil actress)",
+        "Gopal Rao",
+        "K. S. Chithra",
+        "Noel James",
+        "P. Jayachandran",
+        "P. Unnikrishnan",
+        "S. P. Balasubrahmanyam",
+        "Shahul Hameed",
+        "Shobha Shankar",
+        "Srinivas",
+        "Suneeta Rao",
+        "Swarnalatha",
+        "T. K. Kala and G. V. Prakash Kumar",
+        "chorus"
+      ],
+      "singer_count": 18,
+      "track_count": 11,
+      "x": -0.1587,
+      "y": 0.1179
+    },
+    {
+      "id": "Pavithra",
+      "year": 1994,
+      "director": "K. Subash",
+      "hero": "Radhika",
+      "heroine": "Nassar",
+      "primary_language": "Tamil",
+      "languages": [
+        "Tamil"
+      ],
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "P. Unnikrishnan",
+        "Shahul Hameed",
+        "Swarnalatha"
+      ],
+      "singer_count": 5,
+      "track_count": 5,
+      "x": -0.4339,
+      "y": -0.2495
+    },
+    {
+      "id": "Pudhiya Mannargal",
+      "year": 1994,
+      "director": "Vikraman",
+      "hero": "Vikram",
+      "heroine": "Mohini",
+      "primary_language": "Tamil",
+      "languages": [
+        "Tamil"
+      ],
+      "singers": [
+        "K. S. Chithra",
+        "Kalyani Menon",
+        "Mano",
+        "Minmini",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan",
+        "T. L. Maharajan"
+      ],
+      "singer_count": 7,
+      "track_count": 5,
+      "x": -0.1997,
+      "y": -0.3271
+    },
+    {
+      "id": "Super Police",
+      "year": 1994,
+      "director": "K. Murali Mohana Rao",
+      "hero": "Venkatesh",
+      "heroine": "Nagma",
+      "primary_language": "Telugu",
+      "languages": [
+        "Telugu"
+      ],
+      "singers": [
+        "Anupama",
+        "K. S. Chithra",
+        "Mano",
+        "S. Janaki",
+        "S. P. Balasubrahmanyam",
+        "Suresh Peters"
+      ],
+      "singer_count": 6,
+      "track_count": 5,
+      "x": -0.0808,
+      "y": -0.4844
+    },
+    {
+      "id": "Vandicholai Chinraasu",
+      "year": 1994,
+      "director": "Manoj Kumar",
+      "hero": "Sathyaraj",
+      "heroine": "Sukanya",
+      "primary_language": "Tamil",
+      "languages": [
+        "Tamil",
+        "Telugu"
+      ],
+      "singers": [
+        "Malgudi Subha",
+        "P. Jayachandran",
+        "S. Janaki S. P. Balasubrahmanyam",
+        "S. P. Balasubrahmanyam",
+        "Shahul Hameed",
+        "Sujatha",
+        "Sujatha Mohan",
+        "Swarnalatha",
+        "Vani Jayaram S. P. Balasubrahmanyam"
+      ],
+      "singer_count": 9,
+      "track_count": 11,
+      "x": -0.192,
+      "y": 0.3834
+    },
+    {
+      "id": "Bombay",
+      "year": 1995,
+      "director": "Mani Ratnam",
+      "hero": "Arvind Swamy",
+      "heroine": "Manisha Koirala",
+      "primary_language": "Tamil",
+      "languages": [
+        "Hindi",
+        "Tamil",
+        "Telugu"
+      ],
+      "singers": [
+        "A. R. Rahman",
+        "Annupamaa",
+        "Anupama",
+        "Anuradha Sriram",
+        "Bombay Saradha",
+        "Chorus",
+        "G. V. Prakash Kumar",
+        "Ganga Sreenivasan",
+        "Ganga)",
+        "Hariharan",
+        "Instrumental",
+        "K. S. Chithra",
+        "K.S.Chithra",
+        "Kavita Krishnamurthy",
+        "Noel James",
+        "Pallavi",
+        "Remo Fernandes",
+        "Renuka",
+        "Reshmi",
+        "Shankar Mahadevan",
+        "Sharadha",
+        "Shubha",
+        "Shweta Mohan",
+        "Sivanesan",
+        "Srinivas",
+        "Sujatha Mohan",
+        "Sunandha (humming)",
+        "Suresh Peters",
+        "Suresh Peters & Swarnalatha",
+        "Swarnalatha",
+        "Udit Narayan",
+        "chorus",
+        "chorus (Sujatha Mohan"
+      ],
+      "singer_count": 33,
+      "track_count": 25,
+      "x": 0.2166,
+      "y": 0.0704
+    },
+    {
+      "id": "Indira",
+      "year": 1995,
+      "director": "Suhasini Maniratnam",
+      "hero": "Arvind Swamy",
+      "heroine": "Anu Hasan",
+      "primary_language": "Tamil",
+      "languages": [
+        "Hindi",
+        "Tamil"
+      ],
+      "singers": [
+        "Anuradha Sriram",
+        "G. V. Prakash Kumar",
+        "Hariharan",
+        "Harini",
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam",
+        "Sirkazhi G. Sivachidambaram",
+        "Sujatha Mohan",
+        "Swarnalatha",
+        "T. L. Maharajan",
+        "Udit Narayan"
+      ],
+      "singer_count": 12,
+      "track_count": 13,
+      "x": -0.0235,
+      "y": 0.0654
+    },
+    {
+      "id": "Muthu",
+      "year": 1995,
+      "director": "K. S. Ravikumar",
+      "hero": "{{plainlist| *Rajinikanth *Meena *Sarath Babu",
+      "heroine": "",
+      "primary_language": "Tamil",
+      "languages": [
+        "Hindi",
+        "Tamil",
+        "Telugu"
+      ],
+      "singers": [
+        "&nbsp;\u2014",
+        "Febi Mani",
+        "G. V. Prakash Kumar",
+        "Hariharan",
+        "Ila Arun",
+        "K. S. Chithra",
+        "Kalyani Menon",
+        "Mano",
+        "S. P. Balasubrahmanyam",
+        "Theni Kunjarammal",
+        "Udit Narayan"
+      ],
+      "singer_count": 11,
+      "track_count": 19,
+      "x": 0.1374,
+      "y": -0.3686
+    },
+    {
+      "id": "Rangeela",
+      "year": 1995,
+      "director": "Ram Gopal Varma",
+      "hero": "Jackie Shroff",
+      "heroine": "Aamir Khan",
+      "primary_language": "Hindi",
+      "languages": [
+        "Hindi",
+        "Tamil",
+        "Telugu"
+      ],
+      "singers": [
+        "A. R. Rahman",
+        "A.R. Rahman & Shweta Shetty",
+        "Annupamaa",
+        "Asha Bhosle",
+        "Asha Bhosle & Aditya Narayan",
+        "Hariharan",
+        "Instrumental",
+        "K. S. Chithra",
+        "Mano",
+        "P. Unnikrishnan",
+        "S. Janaki",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan",
+        "Suresh Wadkar & Kavita Krishnamurthy",
+        "Udit Narayan"
+      ],
+      "singer_count": 15,
+      "track_count": 22,
+      "x": 0.0042,
+      "y": -0.1627
+    },
+    {
+      "id": "Anthimanthaarai",
+      "year": 1996,
+      "director": "Bharathiraja",
+      "hero": "Vijayakumar",
+      "heroine": "Jayasudha",
+      "primary_language": "Tamil",
+      "languages": [
+        "Tamil"
+      ],
+      "singers": [
+        "Bharathiraja",
+        "Instrumental",
+        "Sumangali",
+        "Swarnalatha",
+        "Unnikrishnan"
+      ],
+      "singer_count": 5,
+      "track_count": 9,
+      "x": -0.3828,
+      "y": 0.8239
+    },
+    {
+      "id": "Indian",
+      "year": 1996,
+      "director": "Shankar",
+      "hero": "{{plainlist| * Kamal Haasan * Manisha Koirala * Urmila Matondkar * Sukanya",
+      "heroine": "",
+      "primary_language": "Tamil",
+      "languages": [
+        "Hindi",
+        "Tamil",
+        "Telugu"
+      ],
+      "singers": [
+        "Hariharan",
+        "K. J. Yesudas",
+        "Nirmala Seshadri",
+        "P. Susheela",
+        "S. P. Balasubrahmanyam",
+        "Sadhana Sargam",
+        "Suchitra Krishnamurthy",
+        "Sujatha Mohan",
+        "Swarnalatha"
+      ],
+      "singer_count": 9,
+      "track_count": 16,
+      "x": 0.0355,
+      "y": 0.4025
+    },
+    {
+      "id": "Kadhal Desam",
+      "year": 1996,
+      "director": "Kathir",
+      "hero": "",
+      "heroine": "",
+      "primary_language": "Tamil",
+      "languages": [
+        "Hindi",
+        "Tamil",
+        "Telugu"
+      ],
+      "singers": [
+        "A. R. Rahman",
+        "Anupama",
+        "Aslam Mustafa",
+        "Dominique Cerejo",
+        "Hariharan",
+        "KK",
+        "Mano",
+        "Noel James",
+        "O. S. Arun",
+        "Rafee",
+        "S. P. Balasubrahmanyam",
+        "S.P. Balasubrahmanyam",
+        "Sonu Nigam",
+        "Srinivas",
+        "Storms",
+        "Unni Krishnan"
+      ],
+      "singer_count": 16,
+      "track_count": 18,
+      "x": 0.3207,
+      "y": -0.3049
+    },
+    {
+      "id": "Love Birds",
+      "year": 1996,
+      "director": "P. Vasu",
+      "hero": "",
+      "heroine": "",
+      "primary_language": "Tamil",
+      "languages": [
+        "Hindi",
+        "Tamil",
+        "Telugu"
+      ],
+      "singers": [
+        "A. R. Rahman",
+        "Apache Indian",
+        "Aslam Mustafa",
+        "Hariharan",
+        "K. S. Chithra",
+        "K. S. Chitra",
+        "Mano",
+        "P. Unnikrishnan",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan",
+        "Udit Narayan",
+        "Unnikrishnan"
+      ],
+      "singer_count": 12,
+      "track_count": 15,
+      "x": 0.2379,
+      "y": -0.0825
+    },
+    {
+      "id": "Mr. Romeo",
+      "year": 1996,
+      "director": "K. S. Ravi",
+      "hero": "",
+      "heroine": "",
+      "primary_language": "Hindi",
+      "languages": [
+        "Hindi",
+        "Telugu"
+      ],
+      "singers": [
+        "Anto",
+        "Chandran",
+        "Chorus",
+        "Hariharan",
+        "Ila Arun",
+        "Kavita Krishnamurthy",
+        "Malaysia Vasudevan",
+        "Noel James",
+        "Raqeeb Alam",
+        "S. P. Balasubrahmanyam",
+        "Sadhana Sargam",
+        "Sangeetha",
+        "Sonu Nigam",
+        "Srinivas",
+        "Sujatha Mohan",
+        "Swarnalatha",
+        "Udit Narayan"
+      ],
+      "singer_count": 17,
+      "track_count": 12,
+      "x": 0.2802,
+      "y": 0.1915
+    },
+    {
+      "id": "Daud",
+      "year": 1997,
+      "director": "Ram Gopal Varma",
+      "hero": "Sanjay Dutt",
+      "heroine": "Urmila Matondkar",
+      "primary_language": "Hindi",
+      "languages": [
+        "Hindi",
+        "Tamil",
+        "Telugu"
+      ],
+      "singers": [
+        "A. R. Rahman",
+        "Asha Bhosle",
+        "Asha Bhosle & Dheena Chandra Dhas",
+        "Asha Bhosle & S. P. Balasubrahmanyam",
+        "Deena Chandra Das",
+        "K. J. Yesudas & Asha Bhosle",
+        "K. S. Chithra",
+        "K. S. Chithra & Deena Chandra Das",
+        "K. S. Chithra & P. Unni Krishnan",
+        "K. S. Chithra & P. Unnikrishnan",
+        "Kavita Krishnamurthy & Vinod Rathod",
+        "Mano & Remo Fernandes",
+        "Ranu Mukherjee",
+        "Ranu Mukherjee(Movie version)",
+        "Remo Fernandes",
+        "S. P. Balasubrahmanyam & Asha Bhosle",
+        "S. P. Balasubrahmanyam & Srinivas Murthy",
+        "S. P. Balasubrahmanyam & Srinivasa Murthy",
+        "Sonu Nigam & Neeraj Vora",
+        "Sujatha Mohan",
+        "Swarnalatha",
+        "Swarnalatha & S. P. Balasubrahmanyam",
+        "Swarnalatha (Original version)",
+        "Unni Menon",
+        "Usha Uthup",
+        "Vandemataram Srinivas & Remo Fernandes"
+      ],
+      "singer_count": 26,
+      "track_count": 23,
+      "x": 0.1971,
+      "y": 0.3515
+    },
+    {
+      "id": "Iruvar",
+      "year": 1997,
+      "director": "Mani Ratnam",
+      "hero": "Mohanlal",
+      "heroine": "Prakash Raj",
+      "primary_language": "Tamil",
+      "languages": [
+        "Tamil",
+        "Telugu"
+      ],
+      "singers": [
+        "Arvind Swamy",
+        "Asha Bhosle",
+        "Bombay Jayashri",
+        "Dominique Cerejo",
+        "Hariharan",
+        "Harini",
+        "Mano",
+        "P. Unnikrishnan",
+        "S. P. Balasubrahmanyam",
+        "Sandhya Jayakrishna"
+      ],
+      "singer_count": 10,
+      "track_count": 16,
+      "x": 0.4545,
+      "y": 0.0026
+    },
+    {
+      "id": "Minsara Kanavu",
+      "year": 1997,
+      "director": "Rajiv Menon",
+      "hero": "{{Plainlist| * Arvind Swamy * Prabhu Deva * Kajol",
+      "heroine": "",
+      "primary_language": "Tamil",
+      "languages": [
+        "Hindi",
+        "Tamil",
+        "Telugu"
+      ],
+      "singers": [
+        "Abhijeet Bhattacharya",
+        "Anuradha Sriram",
+        "Hariharan",
+        "Hema Sardesai",
+        "K. S. Chithra",
+        "KK",
+        "Malaysia Vasudevan",
+        "Malgudi Subha",
+        "Mano",
+        "P. Unnikrishnan",
+        "S. P. Balasubrahmanyam",
+        "Sadhana Sargam",
+        "Shankar Mahadevan",
+        "Srinivas",
+        "Sujatha Mohan",
+        "Unni Menon"
+      ],
+      "singer_count": 16,
+      "track_count": 19,
+      "x": 0.0822,
+      "y": -0.0124
+    },
+    {
+      "id": "Rockstar",
+      "year": 2011,
+      "director": "Imtiaz Ali",
+      "hero": "Ranbir Kapoor",
+      "heroine": "Nargis Fakhri",
+      "primary_language": "Hindi",
+      "languages": [
+        "Controversy"
+      ],
+      "singers": [
+        "(Additional Vocals: Sapna Awasthi)",
+        "(Additional Vocals: Viviane Chaix",
+        "(Choral Vocal Arrangements by Clinton Cerejo)",
+        "A. R. Rahman",
+        "Alma Ferovic",
+        "Balesh (Shehnai)",
+        "Harshdeep Kaur",
+        "Javed Ali",
+        "Kabuli (Guitars)",
+        "Karthik",
+        "Kavita Krishnamurthy",
+        "Mohit Chauhan",
+        "Nizami Bandhu",
+        "Orianthi (Guitars)",
+        "Pop Shalini",
+        "Ranbir Kapoor (Narration)",
+        "SuVi",
+        "Suzanne D'Mello",
+        "Tanvi Shah"
+      ],
+      "singer_count": 19,
+      "track_count": 14,
+      "x": 1.0,
+      "y": -0.3511
+    }
+  ],
+  "edges": [
+    {
+      "source": "Roja",
+      "target": "Yoddha",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Roja",
+      "target": "Gentleman",
+      "weight": 3,
+      "singers": [
+        "Minmini",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Roja",
+      "target": "Kizhakku Cheemayile",
+      "weight": 4,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Roja",
+      "target": "Nippu Ravva",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Roja",
+      "target": "Pudhiya Mugam",
+      "weight": 4,
+      "singers": [
+        "Minmini",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan",
+        "Unni Menon"
+      ]
+    },
+    {
+      "source": "Roja",
+      "target": "Thiruda Thiruda",
+      "weight": 6,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "Minmini",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan",
+        "Unni Menon"
+      ]
+    },
+    {
+      "source": "Roja",
+      "target": "Uzhavan",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Roja",
+      "target": "Duet",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Roja",
+      "target": "Gangmaster",
+      "weight": 4,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "Minmini",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Roja",
+      "target": "Kaadhalan",
+      "weight": 5,
+      "singers": [
+        "Hariharan",
+        "Mano",
+        "Minmini",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Roja",
+      "target": "Karuththamma",
+      "weight": 4,
+      "singers": [
+        "K. S. Chithra",
+        "Minmini",
+        "Sujatha Mohan",
+        "Unni Menon"
+      ]
+    },
+    {
+      "source": "Roja",
+      "target": "May Maadham",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Roja",
+      "target": "Pavithra",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "Mano"
+      ]
+    },
+    {
+      "source": "Roja",
+      "target": "Pudhiya Mannargal",
+      "weight": 5,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "Minmini",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Roja",
+      "target": "Super Police",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Roja",
+      "target": "Vandicholai Chinraasu",
+      "weight": 2,
+      "singers": [
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Roja",
+      "target": "Bombay",
+      "weight": 3,
+      "singers": [
+        "Hariharan",
+        "K. S. Chithra",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Roja",
+      "target": "Indira",
+      "weight": 5,
+      "singers": [
+        "Hariharan",
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Roja",
+      "target": "Muthu",
+      "weight": 4,
+      "singers": [
+        "Hariharan",
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Roja",
+      "target": "Rangeela",
+      "weight": 5,
+      "singers": [
+        "Hariharan",
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Roja",
+      "target": "Indian",
+      "weight": 3,
+      "singers": [
+        "Hariharan",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Roja",
+      "target": "Kadhal Desam",
+      "weight": 3,
+      "singers": [
+        "Hariharan",
+        "Mano",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Roja",
+      "target": "Love Birds",
+      "weight": 5,
+      "singers": [
+        "Hariharan",
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Roja",
+      "target": "Mr. Romeo",
+      "weight": 3,
+      "singers": [
+        "Hariharan",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Roja",
+      "target": "Daud",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "Sujatha Mohan",
+        "Unni Menon"
+      ]
+    },
+    {
+      "source": "Roja",
+      "target": "Iruvar",
+      "weight": 3,
+      "singers": [
+        "Hariharan",
+        "Mano",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Roja",
+      "target": "Minsara Kanavu",
+      "weight": 6,
+      "singers": [
+        "Hariharan",
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan",
+        "Unni Menon"
+      ]
+    },
+    {
+      "source": "Yoddha",
+      "target": "Gentleman",
+      "weight": 3,
+      "singers": [
+        "Malgudi Subha",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Yoddha",
+      "target": "Kizhakku Cheemayile",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Yoddha",
+      "target": "Nippu Ravva",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Yoddha",
+      "target": "Pudhiya Mugam",
+      "weight": 3,
+      "singers": [
+        "Malgudi Subha",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Yoddha",
+      "target": "Thiruda Thiruda",
+      "weight": 4,
+      "singers": [
+        "A. R. Rahman",
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Yoddha",
+      "target": "Uzhavan",
+      "weight": 4,
+      "singers": [
+        "K. J. Yesudas",
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Yoddha",
+      "target": "Duet",
+      "weight": 4,
+      "singers": [
+        "K. J. Yesudas",
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Yoddha",
+      "target": "Gangmaster",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Yoddha",
+      "target": "Kaadhalan",
+      "weight": 3,
+      "singers": [
+        "A. R. Rahman",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Yoddha",
+      "target": "Karuththamma",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Yoddha",
+      "target": "May Maadham",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Yoddha",
+      "target": "Pavithra",
+      "weight": 1,
+      "singers": [
+        "K. S. Chithra"
+      ]
+    },
+    {
+      "source": "Yoddha",
+      "target": "Pudhiya Mannargal",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Yoddha",
+      "target": "Super Police",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Yoddha",
+      "target": "Vandicholai Chinraasu",
+      "weight": 3,
+      "singers": [
+        "Malgudi Subha",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Yoddha",
+      "target": "Bombay",
+      "weight": 4,
+      "singers": [
+        "A. R. Rahman",
+        "K. S. Chithra",
+        "Kavita Krishnamurthy",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Yoddha",
+      "target": "Indira",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Yoddha",
+      "target": "Muthu",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Yoddha",
+      "target": "Rangeela",
+      "weight": 4,
+      "singers": [
+        "A. R. Rahman",
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Yoddha",
+      "target": "Indian",
+      "weight": 3,
+      "singers": [
+        "K. J. Yesudas",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Yoddha",
+      "target": "Kadhal Desam",
+      "weight": 2,
+      "singers": [
+        "A. R. Rahman",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Yoddha",
+      "target": "Love Birds",
+      "weight": 4,
+      "singers": [
+        "A. R. Rahman",
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Yoddha",
+      "target": "Mr. Romeo",
+      "weight": 3,
+      "singers": [
+        "Kavita Krishnamurthy",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Yoddha",
+      "target": "Daud",
+      "weight": 3,
+      "singers": [
+        "A. R. Rahman",
+        "K. S. Chithra",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Yoddha",
+      "target": "Iruvar",
+      "weight": 1,
+      "singers": [
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Yoddha",
+      "target": "Minsara Kanavu",
+      "weight": 5,
+      "singers": [
+        "Abhijeet Bhattacharya",
+        "K. S. Chithra",
+        "Malgudi Subha",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Yoddha",
+      "target": "Rockstar",
+      "weight": 2,
+      "singers": [
+        "A. R. Rahman",
+        "Kavita Krishnamurthy"
+      ]
+    },
+    {
+      "source": "Gentleman",
+      "target": "Kizhakku Cheemayile",
+      "weight": 4,
+      "singers": [
+        "S. Janaki",
+        "S. P. Balasubrahmanyam",
+        "Shahul Hameed",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Gentleman",
+      "target": "Nippu Ravva",
+      "weight": 1,
+      "singers": [
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Gentleman",
+      "target": "Pudhiya Mugam",
+      "weight": 4,
+      "singers": [
+        "Malgudi Subha",
+        "Minmini",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Gentleman",
+      "target": "Thiruda Thiruda",
+      "weight": 7,
+      "singers": [
+        "G. V. Prakash Kumar",
+        "Minmini",
+        "S. P. Balasubrahmanyam",
+        "Shahul Hameed",
+        "Srinivas",
+        "Sujatha Mohan",
+        "Suresh Peters"
+      ]
+    },
+    {
+      "source": "Gentleman",
+      "target": "Uzhavan",
+      "weight": 5,
+      "singers": [
+        "G. V. Prakash Kumar",
+        "S. P. Balasubrahmanyam",
+        "Shahul Hameed",
+        "Sujatha Mohan",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Gentleman",
+      "target": "Duet",
+      "weight": 2,
+      "singers": [
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Gentleman",
+      "target": "Gangmaster",
+      "weight": 3,
+      "singers": [
+        "Minmini",
+        "S. P. Balasubrahmanyam",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Gentleman",
+      "target": "Kaadhalan",
+      "weight": 6,
+      "singers": [
+        "Minmini",
+        "S. Janaki",
+        "S. P. Balasubrahmanyam",
+        "Shahul Hameed",
+        "Sujatha Mohan",
+        "Suresh Peters"
+      ]
+    },
+    {
+      "source": "Gentleman",
+      "target": "Karuththamma",
+      "weight": 4,
+      "singers": [
+        "Minmini",
+        "Shahul Hameed",
+        "Sujatha Mohan",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Gentleman",
+      "target": "May Maadham",
+      "weight": 5,
+      "singers": [
+        "G. V. Prakash Kumar",
+        "S. P. Balasubrahmanyam",
+        "Shahul Hameed",
+        "Srinivas",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Gentleman",
+      "target": "Pavithra",
+      "weight": 2,
+      "singers": [
+        "Shahul Hameed",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Gentleman",
+      "target": "Pudhiya Mannargal",
+      "weight": 3,
+      "singers": [
+        "Minmini",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Gentleman",
+      "target": "Super Police",
+      "weight": 3,
+      "singers": [
+        "S. Janaki",
+        "S. P. Balasubrahmanyam",
+        "Suresh Peters"
+      ]
+    },
+    {
+      "source": "Gentleman",
+      "target": "Vandicholai Chinraasu",
+      "weight": 5,
+      "singers": [
+        "Malgudi Subha",
+        "S. P. Balasubrahmanyam",
+        "Shahul Hameed",
+        "Sujatha Mohan",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Gentleman",
+      "target": "Bombay",
+      "weight": 5,
+      "singers": [
+        "G. V. Prakash Kumar",
+        "Srinivas",
+        "Sujatha Mohan",
+        "Suresh Peters",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Gentleman",
+      "target": "Indira",
+      "weight": 4,
+      "singers": [
+        "G. V. Prakash Kumar",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Gentleman",
+      "target": "Muthu",
+      "weight": 2,
+      "singers": [
+        "G. V. Prakash Kumar",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Gentleman",
+      "target": "Rangeela",
+      "weight": 3,
+      "singers": [
+        "S. Janaki",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Gentleman",
+      "target": "Anthimanthaarai",
+      "weight": 1,
+      "singers": [
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Gentleman",
+      "target": "Indian",
+      "weight": 3,
+      "singers": [
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Gentleman",
+      "target": "Kadhal Desam",
+      "weight": 2,
+      "singers": [
+        "S. P. Balasubrahmanyam",
+        "Srinivas"
+      ]
+    },
+    {
+      "source": "Gentleman",
+      "target": "Love Birds",
+      "weight": 2,
+      "singers": [
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Gentleman",
+      "target": "Mr. Romeo",
+      "weight": 4,
+      "singers": [
+        "S. P. Balasubrahmanyam",
+        "Srinivas",
+        "Sujatha Mohan",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Gentleman",
+      "target": "Daud",
+      "weight": 2,
+      "singers": [
+        "Sujatha Mohan",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Gentleman",
+      "target": "Iruvar",
+      "weight": 1,
+      "singers": [
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Gentleman",
+      "target": "Minsara Kanavu",
+      "weight": 4,
+      "singers": [
+        "Malgudi Subha",
+        "S. P. Balasubrahmanyam",
+        "Srinivas",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Kizhakku Cheemayile",
+      "target": "Nippu Ravva",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Kizhakku Cheemayile",
+      "target": "Pudhiya Mugam",
+      "weight": 2,
+      "singers": [
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Kizhakku Cheemayile",
+      "target": "Thiruda Thiruda",
+      "weight": 5,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam",
+        "Shahul Hameed",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Kizhakku Cheemayile",
+      "target": "Uzhavan",
+      "weight": 4,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam",
+        "Shahul Hameed",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Kizhakku Cheemayile",
+      "target": "Duet",
+      "weight": 4,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan",
+        "T. K. Kala"
+      ]
+    },
+    {
+      "source": "Kizhakku Cheemayile",
+      "target": "Gangmaster",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Kizhakku Cheemayile",
+      "target": "Kaadhalan",
+      "weight": 7,
+      "singers": [
+        "Mano",
+        "P. Jayachandran",
+        "S. Janaki",
+        "S. P. Balasubrahmanyam",
+        "Shahul Hameed",
+        "Sujatha Mohan",
+        "Sunanda"
+      ]
+    },
+    {
+      "source": "Kizhakku Cheemayile",
+      "target": "Karuththamma",
+      "weight": 6,
+      "singers": [
+        "K. S. Chithra",
+        "Malaysia Vasudevan",
+        "P. Jayachandran",
+        "Shahul Hameed",
+        "Sujatha Mohan",
+        "T. K. Kala"
+      ]
+    },
+    {
+      "source": "Kizhakku Cheemayile",
+      "target": "May Maadham",
+      "weight": 4,
+      "singers": [
+        "K. S. Chithra",
+        "P. Jayachandran",
+        "S. P. Balasubrahmanyam",
+        "Shahul Hameed"
+      ]
+    },
+    {
+      "source": "Kizhakku Cheemayile",
+      "target": "Pavithra",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "Shahul Hameed"
+      ]
+    },
+    {
+      "source": "Kizhakku Cheemayile",
+      "target": "Pudhiya Mannargal",
+      "weight": 4,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Kizhakku Cheemayile",
+      "target": "Super Police",
+      "weight": 4,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "S. Janaki",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Kizhakku Cheemayile",
+      "target": "Vandicholai Chinraasu",
+      "weight": 4,
+      "singers": [
+        "P. Jayachandran",
+        "S. P. Balasubrahmanyam",
+        "Shahul Hameed",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Kizhakku Cheemayile",
+      "target": "Bombay",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Kizhakku Cheemayile",
+      "target": "Indira",
+      "weight": 4,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Kizhakku Cheemayile",
+      "target": "Muthu",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Kizhakku Cheemayile",
+      "target": "Rangeela",
+      "weight": 5,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "S. Janaki",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Kizhakku Cheemayile",
+      "target": "Indian",
+      "weight": 2,
+      "singers": [
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Kizhakku Cheemayile",
+      "target": "Kadhal Desam",
+      "weight": 2,
+      "singers": [
+        "Mano",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Kizhakku Cheemayile",
+      "target": "Love Birds",
+      "weight": 4,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Kizhakku Cheemayile",
+      "target": "Mr. Romeo",
+      "weight": 3,
+      "singers": [
+        "Malaysia Vasudevan",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Kizhakku Cheemayile",
+      "target": "Daud",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Kizhakku Cheemayile",
+      "target": "Iruvar",
+      "weight": 2,
+      "singers": [
+        "Mano",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Kizhakku Cheemayile",
+      "target": "Minsara Kanavu",
+      "weight": 5,
+      "singers": [
+        "K. S. Chithra",
+        "Malaysia Vasudevan",
+        "Mano",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Nippu Ravva",
+      "target": "Pudhiya Mugam",
+      "weight": 1,
+      "singers": [
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Nippu Ravva",
+      "target": "Thiruda Thiruda",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Nippu Ravva",
+      "target": "Uzhavan",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Nippu Ravva",
+      "target": "Duet",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Nippu Ravva",
+      "target": "Gangmaster",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Nippu Ravva",
+      "target": "Kaadhalan",
+      "weight": 1,
+      "singers": [
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Nippu Ravva",
+      "target": "Karuththamma",
+      "weight": 1,
+      "singers": [
+        "K. S. Chithra"
+      ]
+    },
+    {
+      "source": "Nippu Ravva",
+      "target": "May Maadham",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Nippu Ravva",
+      "target": "Pavithra",
+      "weight": 1,
+      "singers": [
+        "K. S. Chithra"
+      ]
+    },
+    {
+      "source": "Nippu Ravva",
+      "target": "Pudhiya Mannargal",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Nippu Ravva",
+      "target": "Super Police",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Nippu Ravva",
+      "target": "Vandicholai Chinraasu",
+      "weight": 1,
+      "singers": [
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Nippu Ravva",
+      "target": "Bombay",
+      "weight": 1,
+      "singers": [
+        "K. S. Chithra"
+      ]
+    },
+    {
+      "source": "Nippu Ravva",
+      "target": "Indira",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Nippu Ravva",
+      "target": "Muthu",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Nippu Ravva",
+      "target": "Rangeela",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Nippu Ravva",
+      "target": "Indian",
+      "weight": 1,
+      "singers": [
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Nippu Ravva",
+      "target": "Kadhal Desam",
+      "weight": 1,
+      "singers": [
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Nippu Ravva",
+      "target": "Love Birds",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Nippu Ravva",
+      "target": "Mr. Romeo",
+      "weight": 1,
+      "singers": [
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Nippu Ravva",
+      "target": "Daud",
+      "weight": 1,
+      "singers": [
+        "K. S. Chithra"
+      ]
+    },
+    {
+      "source": "Nippu Ravva",
+      "target": "Iruvar",
+      "weight": 1,
+      "singers": [
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Nippu Ravva",
+      "target": "Minsara Kanavu",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Pudhiya Mugam",
+      "target": "Thiruda Thiruda",
+      "weight": 6,
+      "singers": [
+        "Annupamaa",
+        "Minmini",
+        "S. P. Balasubrahmanyam",
+        "Sujatha",
+        "Sujatha Mohan",
+        "Unni Menon"
+      ]
+    },
+    {
+      "source": "Pudhiya Mugam",
+      "target": "Uzhavan",
+      "weight": 2,
+      "singers": [
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Pudhiya Mugam",
+      "target": "Duet",
+      "weight": 3,
+      "singers": [
+        "P. Susheela",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Pudhiya Mugam",
+      "target": "Gangmaster",
+      "weight": 3,
+      "singers": [
+        "Minmini",
+        "S. P. Balasubrahmanyam",
+        "Sujatha"
+      ]
+    },
+    {
+      "source": "Pudhiya Mugam",
+      "target": "Kaadhalan",
+      "weight": 3,
+      "singers": [
+        "Minmini",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Pudhiya Mugam",
+      "target": "Karuththamma",
+      "weight": 3,
+      "singers": [
+        "Minmini",
+        "Sujatha Mohan",
+        "Unni Menon"
+      ]
+    },
+    {
+      "source": "Pudhiya Mugam",
+      "target": "May Maadham",
+      "weight": 1,
+      "singers": [
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Pudhiya Mugam",
+      "target": "Pudhiya Mannargal",
+      "weight": 3,
+      "singers": [
+        "Minmini",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Pudhiya Mugam",
+      "target": "Super Police",
+      "weight": 1,
+      "singers": [
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Pudhiya Mugam",
+      "target": "Vandicholai Chinraasu",
+      "weight": 4,
+      "singers": [
+        "Malgudi Subha",
+        "S. P. Balasubrahmanyam",
+        "Sujatha",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Pudhiya Mugam",
+      "target": "Bombay",
+      "weight": 2,
+      "singers": [
+        "Annupamaa",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Pudhiya Mugam",
+      "target": "Indira",
+      "weight": 2,
+      "singers": [
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Pudhiya Mugam",
+      "target": "Muthu",
+      "weight": 1,
+      "singers": [
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Pudhiya Mugam",
+      "target": "Rangeela",
+      "weight": 3,
+      "singers": [
+        "Annupamaa",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Pudhiya Mugam",
+      "target": "Indian",
+      "weight": 3,
+      "singers": [
+        "P. Susheela",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Pudhiya Mugam",
+      "target": "Kadhal Desam",
+      "weight": 1,
+      "singers": [
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Pudhiya Mugam",
+      "target": "Love Birds",
+      "weight": 2,
+      "singers": [
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Pudhiya Mugam",
+      "target": "Mr. Romeo",
+      "weight": 2,
+      "singers": [
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Pudhiya Mugam",
+      "target": "Daud",
+      "weight": 2,
+      "singers": [
+        "Sujatha Mohan",
+        "Unni Menon"
+      ]
+    },
+    {
+      "source": "Pudhiya Mugam",
+      "target": "Iruvar",
+      "weight": 1,
+      "singers": [
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Pudhiya Mugam",
+      "target": "Minsara Kanavu",
+      "weight": 4,
+      "singers": [
+        "Malgudi Subha",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan",
+        "Unni Menon"
+      ]
+    },
+    {
+      "source": "Thiruda Thiruda",
+      "target": "Uzhavan",
+      "weight": 5,
+      "singers": [
+        "G. V. Prakash Kumar",
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam",
+        "Shahul Hameed",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Thiruda Thiruda",
+      "target": "Duet",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Thiruda Thiruda",
+      "target": "Gangmaster",
+      "weight": 5,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "Minmini",
+        "S. P. Balasubrahmanyam",
+        "Sujatha"
+      ]
+    },
+    {
+      "source": "Thiruda Thiruda",
+      "target": "Kaadhalan",
+      "weight": 8,
+      "singers": [
+        "A. R. Rahman",
+        "Mano",
+        "Minmini",
+        "S. P. Balasubrahmanyam",
+        "Shahul Hameed",
+        "Sujatha Mohan",
+        "Suresh Peters",
+        "Udit Narayan"
+      ]
+    },
+    {
+      "source": "Thiruda Thiruda",
+      "target": "Karuththamma",
+      "weight": 5,
+      "singers": [
+        "K. S. Chithra",
+        "Minmini",
+        "Shahul Hameed",
+        "Sujatha Mohan",
+        "Unni Menon"
+      ]
+    },
+    {
+      "source": "Thiruda Thiruda",
+      "target": "May Maadham",
+      "weight": 6,
+      "singers": [
+        "G. V. Prakash Kumar",
+        "K. S. Chithra",
+        "Noel James",
+        "S. P. Balasubrahmanyam",
+        "Shahul Hameed",
+        "Srinivas"
+      ]
+    },
+    {
+      "source": "Thiruda Thiruda",
+      "target": "Pavithra",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "Shahul Hameed"
+      ]
+    },
+    {
+      "source": "Thiruda Thiruda",
+      "target": "Pudhiya Mannargal",
+      "weight": 5,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "Minmini",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Thiruda Thiruda",
+      "target": "Super Police",
+      "weight": 4,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam",
+        "Suresh Peters"
+      ]
+    },
+    {
+      "source": "Thiruda Thiruda",
+      "target": "Vandicholai Chinraasu",
+      "weight": 4,
+      "singers": [
+        "S. P. Balasubrahmanyam",
+        "Shahul Hameed",
+        "Sujatha",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Thiruda Thiruda",
+      "target": "Bombay",
+      "weight": 9,
+      "singers": [
+        "A. R. Rahman",
+        "Annupamaa",
+        "G. V. Prakash Kumar",
+        "K. S. Chithra",
+        "Noel James",
+        "Srinivas",
+        "Sujatha Mohan",
+        "Suresh Peters",
+        "Udit Narayan"
+      ]
+    },
+    {
+      "source": "Thiruda Thiruda",
+      "target": "Indira",
+      "weight": 6,
+      "singers": [
+        "G. V. Prakash Kumar",
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan",
+        "Udit Narayan"
+      ]
+    },
+    {
+      "source": "Thiruda Thiruda",
+      "target": "Muthu",
+      "weight": 5,
+      "singers": [
+        "G. V. Prakash Kumar",
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam",
+        "Udit Narayan"
+      ]
+    },
+    {
+      "source": "Thiruda Thiruda",
+      "target": "Rangeela",
+      "weight": 7,
+      "singers": [
+        "A. R. Rahman",
+        "Annupamaa",
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan",
+        "Udit Narayan"
+      ]
+    },
+    {
+      "source": "Thiruda Thiruda",
+      "target": "Indian",
+      "weight": 2,
+      "singers": [
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Thiruda Thiruda",
+      "target": "Kadhal Desam",
+      "weight": 5,
+      "singers": [
+        "A. R. Rahman",
+        "Mano",
+        "Noel James",
+        "S. P. Balasubrahmanyam",
+        "Srinivas"
+      ]
+    },
+    {
+      "source": "Thiruda Thiruda",
+      "target": "Love Birds",
+      "weight": 6,
+      "singers": [
+        "A. R. Rahman",
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan",
+        "Udit Narayan"
+      ]
+    },
+    {
+      "source": "Thiruda Thiruda",
+      "target": "Mr. Romeo",
+      "weight": 5,
+      "singers": [
+        "Noel James",
+        "S. P. Balasubrahmanyam",
+        "Srinivas",
+        "Sujatha Mohan",
+        "Udit Narayan"
+      ]
+    },
+    {
+      "source": "Thiruda Thiruda",
+      "target": "Daud",
+      "weight": 4,
+      "singers": [
+        "A. R. Rahman",
+        "K. S. Chithra",
+        "Sujatha Mohan",
+        "Unni Menon"
+      ]
+    },
+    {
+      "source": "Thiruda Thiruda",
+      "target": "Iruvar",
+      "weight": 2,
+      "singers": [
+        "Mano",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Thiruda Thiruda",
+      "target": "Minsara Kanavu",
+      "weight": 6,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam",
+        "Srinivas",
+        "Sujatha Mohan",
+        "Unni Menon"
+      ]
+    },
+    {
+      "source": "Thiruda Thiruda",
+      "target": "Rockstar",
+      "weight": 1,
+      "singers": [
+        "A. R. Rahman"
+      ]
+    },
+    {
+      "source": "Uzhavan",
+      "target": "Duet",
+      "weight": 4,
+      "singers": [
+        "K. J. Yesudas",
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Uzhavan",
+      "target": "Gangmaster",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Uzhavan",
+      "target": "Kaadhalan",
+      "weight": 3,
+      "singers": [
+        "S. P. Balasubrahmanyam",
+        "Shahul Hameed",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Uzhavan",
+      "target": "Karuththamma",
+      "weight": 4,
+      "singers": [
+        "K. S. Chithra",
+        "Shahul Hameed",
+        "Sujatha Mohan",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Uzhavan",
+      "target": "May Maadham",
+      "weight": 5,
+      "singers": [
+        "G. V. Prakash Kumar",
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam",
+        "Shahul Hameed",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Uzhavan",
+      "target": "Pavithra",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "Shahul Hameed",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Uzhavan",
+      "target": "Pudhiya Mannargal",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Uzhavan",
+      "target": "Super Police",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Uzhavan",
+      "target": "Vandicholai Chinraasu",
+      "weight": 4,
+      "singers": [
+        "S. P. Balasubrahmanyam",
+        "Shahul Hameed",
+        "Sujatha Mohan",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Uzhavan",
+      "target": "Bombay",
+      "weight": 4,
+      "singers": [
+        "G. V. Prakash Kumar",
+        "K. S. Chithra",
+        "Sujatha Mohan",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Uzhavan",
+      "target": "Indira",
+      "weight": 5,
+      "singers": [
+        "G. V. Prakash Kumar",
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Uzhavan",
+      "target": "Muthu",
+      "weight": 3,
+      "singers": [
+        "G. V. Prakash Kumar",
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Uzhavan",
+      "target": "Rangeela",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Uzhavan",
+      "target": "Anthimanthaarai",
+      "weight": 1,
+      "singers": [
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Uzhavan",
+      "target": "Indian",
+      "weight": 4,
+      "singers": [
+        "K. J. Yesudas",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Uzhavan",
+      "target": "Kadhal Desam",
+      "weight": 1,
+      "singers": [
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Uzhavan",
+      "target": "Love Birds",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Uzhavan",
+      "target": "Mr. Romeo",
+      "weight": 3,
+      "singers": [
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Uzhavan",
+      "target": "Daud",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "Sujatha Mohan",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Uzhavan",
+      "target": "Iruvar",
+      "weight": 1,
+      "singers": [
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Uzhavan",
+      "target": "Minsara Kanavu",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Duet",
+      "target": "Gangmaster",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Duet",
+      "target": "Kaadhalan",
+      "weight": 2,
+      "singers": [
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Duet",
+      "target": "Karuththamma",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "Sujatha Mohan",
+        "T. K. Kala"
+      ]
+    },
+    {
+      "source": "Duet",
+      "target": "May Maadham",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Duet",
+      "target": "Pavithra",
+      "weight": 1,
+      "singers": [
+        "K. S. Chithra"
+      ]
+    },
+    {
+      "source": "Duet",
+      "target": "Pudhiya Mannargal",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Duet",
+      "target": "Super Police",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Duet",
+      "target": "Vandicholai Chinraasu",
+      "weight": 2,
+      "singers": [
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Duet",
+      "target": "Bombay",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Duet",
+      "target": "Indira",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Duet",
+      "target": "Muthu",
+      "weight": 3,
+      "singers": [
+        "&nbsp;\u2014",
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Duet",
+      "target": "Rangeela",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Duet",
+      "target": "Indian",
+      "weight": 4,
+      "singers": [
+        "K. J. Yesudas",
+        "P. Susheela",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Duet",
+      "target": "Kadhal Desam",
+      "weight": 1,
+      "singers": [
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Duet",
+      "target": "Love Birds",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Duet",
+      "target": "Mr. Romeo",
+      "weight": 2,
+      "singers": [
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Duet",
+      "target": "Daud",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Duet",
+      "target": "Iruvar",
+      "weight": 1,
+      "singers": [
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Duet",
+      "target": "Minsara Kanavu",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Gangmaster",
+      "target": "Kaadhalan",
+      "weight": 3,
+      "singers": [
+        "Mano",
+        "Minmini",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Gangmaster",
+      "target": "Karuththamma",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "Minmini",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Gangmaster",
+      "target": "May Maadham",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Gangmaster",
+      "target": "Pavithra",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Gangmaster",
+      "target": "Pudhiya Mannargal",
+      "weight": 4,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "Minmini",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Gangmaster",
+      "target": "Super Police",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Gangmaster",
+      "target": "Vandicholai Chinraasu",
+      "weight": 3,
+      "singers": [
+        "S. P. Balasubrahmanyam",
+        "Sujatha",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Gangmaster",
+      "target": "Bombay",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Gangmaster",
+      "target": "Indira",
+      "weight": 4,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Gangmaster",
+      "target": "Muthu",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Gangmaster",
+      "target": "Rangeela",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Gangmaster",
+      "target": "Anthimanthaarai",
+      "weight": 1,
+      "singers": [
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Gangmaster",
+      "target": "Indian",
+      "weight": 2,
+      "singers": [
+        "S. P. Balasubrahmanyam",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Gangmaster",
+      "target": "Kadhal Desam",
+      "weight": 2,
+      "singers": [
+        "Mano",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Gangmaster",
+      "target": "Love Birds",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Gangmaster",
+      "target": "Mr. Romeo",
+      "weight": 2,
+      "singers": [
+        "S. P. Balasubrahmanyam",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Gangmaster",
+      "target": "Daud",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Gangmaster",
+      "target": "Iruvar",
+      "weight": 2,
+      "singers": [
+        "Mano",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Gangmaster",
+      "target": "Minsara Kanavu",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Kaadhalan",
+      "target": "Karuththamma",
+      "weight": 6,
+      "singers": [
+        "Minmini",
+        "P. Jayachandran",
+        "P. Unnikrishnan",
+        "Shahul Hameed",
+        "Sujatha Mohan",
+        "Theni Kunjarammal"
+      ]
+    },
+    {
+      "source": "Kaadhalan",
+      "target": "May Maadham",
+      "weight": 4,
+      "singers": [
+        "P. Jayachandran",
+        "P. Unnikrishnan",
+        "S. P. Balasubrahmanyam",
+        "Shahul Hameed"
+      ]
+    },
+    {
+      "source": "Kaadhalan",
+      "target": "Pavithra",
+      "weight": 3,
+      "singers": [
+        "Mano",
+        "P. Unnikrishnan",
+        "Shahul Hameed"
+      ]
+    },
+    {
+      "source": "Kaadhalan",
+      "target": "Pudhiya Mannargal",
+      "weight": 4,
+      "singers": [
+        "Mano",
+        "Minmini",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Kaadhalan",
+      "target": "Super Police",
+      "weight": 4,
+      "singers": [
+        "Mano",
+        "S. Janaki",
+        "S. P. Balasubrahmanyam",
+        "Suresh Peters"
+      ]
+    },
+    {
+      "source": "Kaadhalan",
+      "target": "Vandicholai Chinraasu",
+      "weight": 4,
+      "singers": [
+        "P. Jayachandran",
+        "S. P. Balasubrahmanyam",
+        "Shahul Hameed",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Kaadhalan",
+      "target": "Bombay",
+      "weight": 6,
+      "singers": [
+        "A. R. Rahman",
+        "Hariharan",
+        "Shankar Mahadevan",
+        "Sujatha Mohan",
+        "Suresh Peters",
+        "Udit Narayan"
+      ]
+    },
+    {
+      "source": "Kaadhalan",
+      "target": "Indira",
+      "weight": 5,
+      "singers": [
+        "Hariharan",
+        "Mano",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan",
+        "Udit Narayan"
+      ]
+    },
+    {
+      "source": "Kaadhalan",
+      "target": "Muthu",
+      "weight": 5,
+      "singers": [
+        "Hariharan",
+        "Mano",
+        "S. P. Balasubrahmanyam",
+        "Theni Kunjarammal",
+        "Udit Narayan"
+      ]
+    },
+    {
+      "source": "Kaadhalan",
+      "target": "Rangeela",
+      "weight": 8,
+      "singers": [
+        "A. R. Rahman",
+        "Hariharan",
+        "Mano",
+        "P. Unnikrishnan",
+        "S. Janaki",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan",
+        "Udit Narayan"
+      ]
+    },
+    {
+      "source": "Kaadhalan",
+      "target": "Indian",
+      "weight": 3,
+      "singers": [
+        "Hariharan",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Kaadhalan",
+      "target": "Kadhal Desam",
+      "weight": 4,
+      "singers": [
+        "A. R. Rahman",
+        "Hariharan",
+        "Mano",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Kaadhalan",
+      "target": "Love Birds",
+      "weight": 7,
+      "singers": [
+        "A. R. Rahman",
+        "Hariharan",
+        "Mano",
+        "P. Unnikrishnan",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan",
+        "Udit Narayan"
+      ]
+    },
+    {
+      "source": "Kaadhalan",
+      "target": "Mr. Romeo",
+      "weight": 4,
+      "singers": [
+        "Hariharan",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan",
+        "Udit Narayan"
+      ]
+    },
+    {
+      "source": "Kaadhalan",
+      "target": "Daud",
+      "weight": 2,
+      "singers": [
+        "A. R. Rahman",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Kaadhalan",
+      "target": "Iruvar",
+      "weight": 4,
+      "singers": [
+        "Hariharan",
+        "Mano",
+        "P. Unnikrishnan",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Kaadhalan",
+      "target": "Minsara Kanavu",
+      "weight": 6,
+      "singers": [
+        "Hariharan",
+        "Mano",
+        "P. Unnikrishnan",
+        "S. P. Balasubrahmanyam",
+        "Shankar Mahadevan",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Kaadhalan",
+      "target": "Rockstar",
+      "weight": 1,
+      "singers": [
+        "A. R. Rahman"
+      ]
+    },
+    {
+      "source": "Karuththamma",
+      "target": "May Maadham",
+      "weight": 5,
+      "singers": [
+        "K. S. Chithra",
+        "P. Jayachandran",
+        "P. Unnikrishnan",
+        "Shahul Hameed",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Karuththamma",
+      "target": "Pavithra",
+      "weight": 4,
+      "singers": [
+        "K. S. Chithra",
+        "P. Unnikrishnan",
+        "Shahul Hameed",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Karuththamma",
+      "target": "Pudhiya Mannargal",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "Minmini",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Karuththamma",
+      "target": "Super Police",
+      "weight": 1,
+      "singers": [
+        "K. S. Chithra"
+      ]
+    },
+    {
+      "source": "Karuththamma",
+      "target": "Vandicholai Chinraasu",
+      "weight": 4,
+      "singers": [
+        "P. Jayachandran",
+        "Shahul Hameed",
+        "Sujatha Mohan",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Karuththamma",
+      "target": "Bombay",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "Sujatha Mohan",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Karuththamma",
+      "target": "Indira",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "Sujatha Mohan",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Karuththamma",
+      "target": "Muthu",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "Theni Kunjarammal"
+      ]
+    },
+    {
+      "source": "Karuththamma",
+      "target": "Rangeela",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "P. Unnikrishnan",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Karuththamma",
+      "target": "Anthimanthaarai",
+      "weight": 2,
+      "singers": [
+        "Bharathiraja",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Karuththamma",
+      "target": "Indian",
+      "weight": 2,
+      "singers": [
+        "Sujatha Mohan",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Karuththamma",
+      "target": "Love Birds",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "P. Unnikrishnan",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Karuththamma",
+      "target": "Mr. Romeo",
+      "weight": 3,
+      "singers": [
+        "Malaysia Vasudevan",
+        "Sujatha Mohan",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Karuththamma",
+      "target": "Daud",
+      "weight": 4,
+      "singers": [
+        "K. S. Chithra",
+        "Sujatha Mohan",
+        "Swarnalatha",
+        "Unni Menon"
+      ]
+    },
+    {
+      "source": "Karuththamma",
+      "target": "Iruvar",
+      "weight": 1,
+      "singers": [
+        "P. Unnikrishnan"
+      ]
+    },
+    {
+      "source": "Karuththamma",
+      "target": "Minsara Kanavu",
+      "weight": 5,
+      "singers": [
+        "K. S. Chithra",
+        "Malaysia Vasudevan",
+        "P. Unnikrishnan",
+        "Sujatha Mohan",
+        "Unni Menon"
+      ]
+    },
+    {
+      "source": "May Maadham",
+      "target": "Pavithra",
+      "weight": 4,
+      "singers": [
+        "K. S. Chithra",
+        "P. Unnikrishnan",
+        "Shahul Hameed",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "May Maadham",
+      "target": "Pudhiya Mannargal",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "May Maadham",
+      "target": "Super Police",
+      "weight": 3,
+      "singers": [
+        "Anupama",
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "May Maadham",
+      "target": "Vandicholai Chinraasu",
+      "weight": 4,
+      "singers": [
+        "P. Jayachandran",
+        "S. P. Balasubrahmanyam",
+        "Shahul Hameed",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "May Maadham",
+      "target": "Bombay",
+      "weight": 7,
+      "singers": [
+        "Anupama",
+        "G. V. Prakash Kumar",
+        "K. S. Chithra",
+        "Noel James",
+        "Srinivas",
+        "Swarnalatha",
+        "chorus"
+      ]
+    },
+    {
+      "source": "May Maadham",
+      "target": "Indira",
+      "weight": 4,
+      "singers": [
+        "G. V. Prakash Kumar",
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "May Maadham",
+      "target": "Muthu",
+      "weight": 3,
+      "singers": [
+        "G. V. Prakash Kumar",
+        "K. S. Chithra",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "May Maadham",
+      "target": "Rangeela",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "P. Unnikrishnan",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "May Maadham",
+      "target": "Anthimanthaarai",
+      "weight": 1,
+      "singers": [
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "May Maadham",
+      "target": "Indian",
+      "weight": 2,
+      "singers": [
+        "S. P. Balasubrahmanyam",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "May Maadham",
+      "target": "Kadhal Desam",
+      "weight": 4,
+      "singers": [
+        "Anupama",
+        "Noel James",
+        "S. P. Balasubrahmanyam",
+        "Srinivas"
+      ]
+    },
+    {
+      "source": "May Maadham",
+      "target": "Love Birds",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "P. Unnikrishnan",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "May Maadham",
+      "target": "Mr. Romeo",
+      "weight": 4,
+      "singers": [
+        "Noel James",
+        "S. P. Balasubrahmanyam",
+        "Srinivas",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "May Maadham",
+      "target": "Daud",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "May Maadham",
+      "target": "Iruvar",
+      "weight": 2,
+      "singers": [
+        "P. Unnikrishnan",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "May Maadham",
+      "target": "Minsara Kanavu",
+      "weight": 4,
+      "singers": [
+        "K. S. Chithra",
+        "P. Unnikrishnan",
+        "S. P. Balasubrahmanyam",
+        "Srinivas"
+      ]
+    },
+    {
+      "source": "Pavithra",
+      "target": "Pudhiya Mannargal",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "Mano"
+      ]
+    },
+    {
+      "source": "Pavithra",
+      "target": "Super Police",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "Mano"
+      ]
+    },
+    {
+      "source": "Pavithra",
+      "target": "Vandicholai Chinraasu",
+      "weight": 2,
+      "singers": [
+        "Shahul Hameed",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Pavithra",
+      "target": "Bombay",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Pavithra",
+      "target": "Indira",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Pavithra",
+      "target": "Muthu",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "Mano"
+      ]
+    },
+    {
+      "source": "Pavithra",
+      "target": "Rangeela",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "P. Unnikrishnan"
+      ]
+    },
+    {
+      "source": "Pavithra",
+      "target": "Anthimanthaarai",
+      "weight": 1,
+      "singers": [
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Pavithra",
+      "target": "Indian",
+      "weight": 1,
+      "singers": [
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Pavithra",
+      "target": "Kadhal Desam",
+      "weight": 1,
+      "singers": [
+        "Mano"
+      ]
+    },
+    {
+      "source": "Pavithra",
+      "target": "Love Birds",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "P. Unnikrishnan"
+      ]
+    },
+    {
+      "source": "Pavithra",
+      "target": "Mr. Romeo",
+      "weight": 1,
+      "singers": [
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Pavithra",
+      "target": "Daud",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Pavithra",
+      "target": "Iruvar",
+      "weight": 2,
+      "singers": [
+        "Mano",
+        "P. Unnikrishnan"
+      ]
+    },
+    {
+      "source": "Pavithra",
+      "target": "Minsara Kanavu",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "P. Unnikrishnan"
+      ]
+    },
+    {
+      "source": "Pudhiya Mannargal",
+      "target": "Super Police",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Pudhiya Mannargal",
+      "target": "Vandicholai Chinraasu",
+      "weight": 2,
+      "singers": [
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Pudhiya Mannargal",
+      "target": "Bombay",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Pudhiya Mannargal",
+      "target": "Indira",
+      "weight": 5,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan",
+        "T. L. Maharajan"
+      ]
+    },
+    {
+      "source": "Pudhiya Mannargal",
+      "target": "Muthu",
+      "weight": 4,
+      "singers": [
+        "K. S. Chithra",
+        "Kalyani Menon",
+        "Mano",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Pudhiya Mannargal",
+      "target": "Rangeela",
+      "weight": 4,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Pudhiya Mannargal",
+      "target": "Indian",
+      "weight": 2,
+      "singers": [
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Pudhiya Mannargal",
+      "target": "Kadhal Desam",
+      "weight": 2,
+      "singers": [
+        "Mano",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Pudhiya Mannargal",
+      "target": "Love Birds",
+      "weight": 4,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Pudhiya Mannargal",
+      "target": "Mr. Romeo",
+      "weight": 2,
+      "singers": [
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Pudhiya Mannargal",
+      "target": "Daud",
+      "weight": 2,
+      "singers": [
+        "K. S. Chithra",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Pudhiya Mannargal",
+      "target": "Iruvar",
+      "weight": 2,
+      "singers": [
+        "Mano",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Pudhiya Mannargal",
+      "target": "Minsara Kanavu",
+      "weight": 4,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Super Police",
+      "target": "Vandicholai Chinraasu",
+      "weight": 1,
+      "singers": [
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Super Police",
+      "target": "Bombay",
+      "weight": 3,
+      "singers": [
+        "Anupama",
+        "K. S. Chithra",
+        "Suresh Peters"
+      ]
+    },
+    {
+      "source": "Super Police",
+      "target": "Indira",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Super Police",
+      "target": "Muthu",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Super Police",
+      "target": "Rangeela",
+      "weight": 4,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "S. Janaki",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Super Police",
+      "target": "Indian",
+      "weight": 1,
+      "singers": [
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Super Police",
+      "target": "Kadhal Desam",
+      "weight": 3,
+      "singers": [
+        "Anupama",
+        "Mano",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Super Police",
+      "target": "Love Birds",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Super Police",
+      "target": "Mr. Romeo",
+      "weight": 1,
+      "singers": [
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Super Police",
+      "target": "Daud",
+      "weight": 1,
+      "singers": [
+        "K. S. Chithra"
+      ]
+    },
+    {
+      "source": "Super Police",
+      "target": "Iruvar",
+      "weight": 2,
+      "singers": [
+        "Mano",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Super Police",
+      "target": "Minsara Kanavu",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Vandicholai Chinraasu",
+      "target": "Bombay",
+      "weight": 2,
+      "singers": [
+        "Sujatha Mohan",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Vandicholai Chinraasu",
+      "target": "Indira",
+      "weight": 3,
+      "singers": [
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Vandicholai Chinraasu",
+      "target": "Muthu",
+      "weight": 1,
+      "singers": [
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Vandicholai Chinraasu",
+      "target": "Rangeela",
+      "weight": 2,
+      "singers": [
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Vandicholai Chinraasu",
+      "target": "Anthimanthaarai",
+      "weight": 1,
+      "singers": [
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Vandicholai Chinraasu",
+      "target": "Indian",
+      "weight": 3,
+      "singers": [
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Vandicholai Chinraasu",
+      "target": "Kadhal Desam",
+      "weight": 1,
+      "singers": [
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Vandicholai Chinraasu",
+      "target": "Love Birds",
+      "weight": 2,
+      "singers": [
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Vandicholai Chinraasu",
+      "target": "Mr. Romeo",
+      "weight": 3,
+      "singers": [
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Vandicholai Chinraasu",
+      "target": "Daud",
+      "weight": 2,
+      "singers": [
+        "Sujatha Mohan",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Vandicholai Chinraasu",
+      "target": "Iruvar",
+      "weight": 1,
+      "singers": [
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Vandicholai Chinraasu",
+      "target": "Minsara Kanavu",
+      "weight": 3,
+      "singers": [
+        "Malgudi Subha",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Bombay",
+      "target": "Indira",
+      "weight": 7,
+      "singers": [
+        "Anuradha Sriram",
+        "G. V. Prakash Kumar",
+        "Hariharan",
+        "K. S. Chithra",
+        "Sujatha Mohan",
+        "Swarnalatha",
+        "Udit Narayan"
+      ]
+    },
+    {
+      "source": "Bombay",
+      "target": "Muthu",
+      "weight": 4,
+      "singers": [
+        "G. V. Prakash Kumar",
+        "Hariharan",
+        "K. S. Chithra",
+        "Udit Narayan"
+      ]
+    },
+    {
+      "source": "Bombay",
+      "target": "Rangeela",
+      "weight": 7,
+      "singers": [
+        "A. R. Rahman",
+        "Annupamaa",
+        "Hariharan",
+        "Instrumental",
+        "K. S. Chithra",
+        "Sujatha Mohan",
+        "Udit Narayan"
+      ]
+    },
+    {
+      "source": "Bombay",
+      "target": "Anthimanthaarai",
+      "weight": 2,
+      "singers": [
+        "Instrumental",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Bombay",
+      "target": "Indian",
+      "weight": 3,
+      "singers": [
+        "Hariharan",
+        "Sujatha Mohan",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Bombay",
+      "target": "Kadhal Desam",
+      "weight": 5,
+      "singers": [
+        "A. R. Rahman",
+        "Anupama",
+        "Hariharan",
+        "Noel James",
+        "Srinivas"
+      ]
+    },
+    {
+      "source": "Bombay",
+      "target": "Love Birds",
+      "weight": 5,
+      "singers": [
+        "A. R. Rahman",
+        "Hariharan",
+        "K. S. Chithra",
+        "Sujatha Mohan",
+        "Udit Narayan"
+      ]
+    },
+    {
+      "source": "Bombay",
+      "target": "Mr. Romeo",
+      "weight": 8,
+      "singers": [
+        "Chorus",
+        "Hariharan",
+        "Kavita Krishnamurthy",
+        "Noel James",
+        "Srinivas",
+        "Sujatha Mohan",
+        "Swarnalatha",
+        "Udit Narayan"
+      ]
+    },
+    {
+      "source": "Bombay",
+      "target": "Daud",
+      "weight": 5,
+      "singers": [
+        "A. R. Rahman",
+        "K. S. Chithra",
+        "Remo Fernandes",
+        "Sujatha Mohan",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Bombay",
+      "target": "Iruvar",
+      "weight": 1,
+      "singers": [
+        "Hariharan"
+      ]
+    },
+    {
+      "source": "Bombay",
+      "target": "Minsara Kanavu",
+      "weight": 6,
+      "singers": [
+        "Anuradha Sriram",
+        "Hariharan",
+        "K. S. Chithra",
+        "Shankar Mahadevan",
+        "Srinivas",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Bombay",
+      "target": "Rockstar",
+      "weight": 2,
+      "singers": [
+        "A. R. Rahman",
+        "Kavita Krishnamurthy"
+      ]
+    },
+    {
+      "source": "Indira",
+      "target": "Muthu",
+      "weight": 6,
+      "singers": [
+        "G. V. Prakash Kumar",
+        "Hariharan",
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam",
+        "Udit Narayan"
+      ]
+    },
+    {
+      "source": "Indira",
+      "target": "Rangeela",
+      "weight": 6,
+      "singers": [
+        "Hariharan",
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan",
+        "Udit Narayan"
+      ]
+    },
+    {
+      "source": "Indira",
+      "target": "Anthimanthaarai",
+      "weight": 1,
+      "singers": [
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Indira",
+      "target": "Indian",
+      "weight": 4,
+      "singers": [
+        "Hariharan",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Indira",
+      "target": "Kadhal Desam",
+      "weight": 3,
+      "singers": [
+        "Hariharan",
+        "Mano",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Indira",
+      "target": "Love Birds",
+      "weight": 6,
+      "singers": [
+        "Hariharan",
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan",
+        "Udit Narayan"
+      ]
+    },
+    {
+      "source": "Indira",
+      "target": "Mr. Romeo",
+      "weight": 5,
+      "singers": [
+        "Hariharan",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan",
+        "Swarnalatha",
+        "Udit Narayan"
+      ]
+    },
+    {
+      "source": "Indira",
+      "target": "Daud",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "Sujatha Mohan",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Indira",
+      "target": "Iruvar",
+      "weight": 4,
+      "singers": [
+        "Hariharan",
+        "Harini",
+        "Mano",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Indira",
+      "target": "Minsara Kanavu",
+      "weight": 6,
+      "singers": [
+        "Anuradha Sriram",
+        "Hariharan",
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Muthu",
+      "target": "Rangeela",
+      "weight": 5,
+      "singers": [
+        "Hariharan",
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam",
+        "Udit Narayan"
+      ]
+    },
+    {
+      "source": "Muthu",
+      "target": "Indian",
+      "weight": 2,
+      "singers": [
+        "Hariharan",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Muthu",
+      "target": "Kadhal Desam",
+      "weight": 3,
+      "singers": [
+        "Hariharan",
+        "Mano",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Muthu",
+      "target": "Love Birds",
+      "weight": 5,
+      "singers": [
+        "Hariharan",
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam",
+        "Udit Narayan"
+      ]
+    },
+    {
+      "source": "Muthu",
+      "target": "Mr. Romeo",
+      "weight": 4,
+      "singers": [
+        "Hariharan",
+        "Ila Arun",
+        "S. P. Balasubrahmanyam",
+        "Udit Narayan"
+      ]
+    },
+    {
+      "source": "Muthu",
+      "target": "Daud",
+      "weight": 1,
+      "singers": [
+        "K. S. Chithra"
+      ]
+    },
+    {
+      "source": "Muthu",
+      "target": "Iruvar",
+      "weight": 3,
+      "singers": [
+        "Hariharan",
+        "Mano",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Muthu",
+      "target": "Minsara Kanavu",
+      "weight": 4,
+      "singers": [
+        "Hariharan",
+        "K. S. Chithra",
+        "Mano",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Rangeela",
+      "target": "Anthimanthaarai",
+      "weight": 1,
+      "singers": [
+        "Instrumental"
+      ]
+    },
+    {
+      "source": "Rangeela",
+      "target": "Indian",
+      "weight": 3,
+      "singers": [
+        "Hariharan",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Rangeela",
+      "target": "Kadhal Desam",
+      "weight": 4,
+      "singers": [
+        "A. R. Rahman",
+        "Hariharan",
+        "Mano",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Rangeela",
+      "target": "Love Birds",
+      "weight": 8,
+      "singers": [
+        "A. R. Rahman",
+        "Hariharan",
+        "K. S. Chithra",
+        "Mano",
+        "P. Unnikrishnan",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan",
+        "Udit Narayan"
+      ]
+    },
+    {
+      "source": "Rangeela",
+      "target": "Mr. Romeo",
+      "weight": 4,
+      "singers": [
+        "Hariharan",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan",
+        "Udit Narayan"
+      ]
+    },
+    {
+      "source": "Rangeela",
+      "target": "Daud",
+      "weight": 4,
+      "singers": [
+        "A. R. Rahman",
+        "Asha Bhosle",
+        "K. S. Chithra",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Rangeela",
+      "target": "Iruvar",
+      "weight": 5,
+      "singers": [
+        "Asha Bhosle",
+        "Hariharan",
+        "Mano",
+        "P. Unnikrishnan",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Rangeela",
+      "target": "Minsara Kanavu",
+      "weight": 6,
+      "singers": [
+        "Hariharan",
+        "K. S. Chithra",
+        "Mano",
+        "P. Unnikrishnan",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Rangeela",
+      "target": "Rockstar",
+      "weight": 1,
+      "singers": [
+        "A. R. Rahman"
+      ]
+    },
+    {
+      "source": "Anthimanthaarai",
+      "target": "Indian",
+      "weight": 1,
+      "singers": [
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Anthimanthaarai",
+      "target": "Love Birds",
+      "weight": 1,
+      "singers": [
+        "Unnikrishnan"
+      ]
+    },
+    {
+      "source": "Anthimanthaarai",
+      "target": "Mr. Romeo",
+      "weight": 1,
+      "singers": [
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Anthimanthaarai",
+      "target": "Daud",
+      "weight": 1,
+      "singers": [
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Indian",
+      "target": "Kadhal Desam",
+      "weight": 2,
+      "singers": [
+        "Hariharan",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Indian",
+      "target": "Love Birds",
+      "weight": 3,
+      "singers": [
+        "Hariharan",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Indian",
+      "target": "Mr. Romeo",
+      "weight": 5,
+      "singers": [
+        "Hariharan",
+        "S. P. Balasubrahmanyam",
+        "Sadhana Sargam",
+        "Sujatha Mohan",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Indian",
+      "target": "Daud",
+      "weight": 2,
+      "singers": [
+        "Sujatha Mohan",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Indian",
+      "target": "Iruvar",
+      "weight": 2,
+      "singers": [
+        "Hariharan",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Indian",
+      "target": "Minsara Kanavu",
+      "weight": 4,
+      "singers": [
+        "Hariharan",
+        "S. P. Balasubrahmanyam",
+        "Sadhana Sargam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Kadhal Desam",
+      "target": "Love Birds",
+      "weight": 5,
+      "singers": [
+        "A. R. Rahman",
+        "Aslam Mustafa",
+        "Hariharan",
+        "Mano",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Kadhal Desam",
+      "target": "Mr. Romeo",
+      "weight": 5,
+      "singers": [
+        "Hariharan",
+        "Noel James",
+        "S. P. Balasubrahmanyam",
+        "Sonu Nigam",
+        "Srinivas"
+      ]
+    },
+    {
+      "source": "Kadhal Desam",
+      "target": "Daud",
+      "weight": 1,
+      "singers": [
+        "A. R. Rahman"
+      ]
+    },
+    {
+      "source": "Kadhal Desam",
+      "target": "Iruvar",
+      "weight": 4,
+      "singers": [
+        "Dominique Cerejo",
+        "Hariharan",
+        "Mano",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Kadhal Desam",
+      "target": "Minsara Kanavu",
+      "weight": 5,
+      "singers": [
+        "Hariharan",
+        "KK",
+        "Mano",
+        "S. P. Balasubrahmanyam",
+        "Srinivas"
+      ]
+    },
+    {
+      "source": "Kadhal Desam",
+      "target": "Rockstar",
+      "weight": 1,
+      "singers": [
+        "A. R. Rahman"
+      ]
+    },
+    {
+      "source": "Love Birds",
+      "target": "Mr. Romeo",
+      "weight": 4,
+      "singers": [
+        "Hariharan",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan",
+        "Udit Narayan"
+      ]
+    },
+    {
+      "source": "Love Birds",
+      "target": "Daud",
+      "weight": 3,
+      "singers": [
+        "A. R. Rahman",
+        "K. S. Chithra",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Love Birds",
+      "target": "Iruvar",
+      "weight": 4,
+      "singers": [
+        "Hariharan",
+        "Mano",
+        "P. Unnikrishnan",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Love Birds",
+      "target": "Minsara Kanavu",
+      "weight": 6,
+      "singers": [
+        "Hariharan",
+        "K. S. Chithra",
+        "Mano",
+        "P. Unnikrishnan",
+        "S. P. Balasubrahmanyam",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Love Birds",
+      "target": "Rockstar",
+      "weight": 1,
+      "singers": [
+        "A. R. Rahman"
+      ]
+    },
+    {
+      "source": "Mr. Romeo",
+      "target": "Daud",
+      "weight": 2,
+      "singers": [
+        "Sujatha Mohan",
+        "Swarnalatha"
+      ]
+    },
+    {
+      "source": "Mr. Romeo",
+      "target": "Iruvar",
+      "weight": 2,
+      "singers": [
+        "Hariharan",
+        "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Mr. Romeo",
+      "target": "Minsara Kanavu",
+      "weight": 6,
+      "singers": [
+        "Hariharan",
+        "Malaysia Vasudevan",
+        "S. P. Balasubrahmanyam",
+        "Sadhana Sargam",
+        "Srinivas",
+        "Sujatha Mohan"
+      ]
+    },
+    {
+      "source": "Mr. Romeo",
+      "target": "Rockstar",
+      "weight": 1,
+      "singers": [
+        "Kavita Krishnamurthy"
+      ]
+    },
+    {
+      "source": "Daud",
+      "target": "Iruvar",
+      "weight": 1,
+      "singers": [
+        "Asha Bhosle"
+      ]
+    },
+    {
+      "source": "Daud",
+      "target": "Minsara Kanavu",
+      "weight": 3,
+      "singers": [
+        "K. S. Chithra",
+        "Sujatha Mohan",
+        "Unni Menon"
+      ]
+    },
+    {
+      "source": "Daud",
+      "target": "Rockstar",
+      "weight": 1,
+      "singers": [
+        "A. R. Rahman"
+      ]
+    },
+    {
+      "source": "Iruvar",
+      "target": "Minsara Kanavu",
+      "weight": 4,
+      "singers": [
+        "Hariharan",
+        "Mano",
+        "P. Unnikrishnan",
+        "S. P. Balasubrahmanyam"
+      ]
+    }
+  ]
+};
+
+const langColors = {
+  Tamil: '#e8575a',
+  Hindi: '#5bb8d4',
+  Telugu: '#e8b83d',
+  Malayalam: '#6dc78a',
+  Marathi: '#c48ad6',
+  Unknown: '#8888aa'
+};
+
+const width = window.innerWidth;
+const height = window.innerHeight;
+
+const svg = document.getElementById('network');
+svg.setAttribute('width', width);
+svg.setAttribute('height', height);
+
+// Create SVG namespace helper
+function svgEl(tag, attrs) {
+  const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const [k, v] of Object.entries(attrs || {})) el.setAttribute(k, v);
+  return el;
+}
+
+// --- Map pre-computed positions to screen ---
+const pad = 100;
+const usableW = width - pad * 2;
+const usableH = height - pad * 2;
+
+// Find bounds of pre-computed positions
+const xs = DATA.nodes.map(n => n.x);
+const ys = DATA.nodes.map(n => n.y);
+const minX = Math.min(...xs), maxX = Math.max(...xs);
+const minY = Math.min(...ys), maxY = Math.max(...ys);
+const rangeX = maxX - minX || 1;
+const rangeY = maxY - minY || 1;
+
+const nodes = DATA.nodes.map(n => ({
+  ...n,
+  x: pad + ((n.x - minX) / rangeX) * usableW,
+  y: pad + ((n.y - minY) / rangeY) * usableH,
+  radius: 12 + n.singer_count * 2,
+}));
+
+const nodeMap = {};
+nodes.forEach(n => nodeMap[n.id] = n);
+
+const edges = DATA.edges.map(e => ({
+  ...e,
+  sourceNode: nodeMap[e.source],
+  targetNode: nodeMap[e.target],
+}));
+
+const maxWeight = Math.max(...edges.map(e => e.weight));
+
+// SVG groups
+const edgeGroup = svgEl('g');
+const nodeGroup = svgEl('g');
+svg.appendChild(edgeGroup);
+svg.appendChild(nodeGroup);
+
+// Create edge elements
+const edgeEls = edges.map(e => {
+  const line = svgEl('line', {
+    stroke: 'rgba(255,255,255,0.15)',
+    'stroke-width': 1 + (e.weight / maxWeight) * 7,
+    'data-source': e.source,
+    'data-target': e.target,
+  });
+  edgeGroup.appendChild(line);
+
+  // Invisible wider line for hover target
+  const hitLine = svgEl('line', {
+    stroke: 'transparent',
+    'stroke-width': 16,
+    style: 'cursor: pointer',
+  });
+  edgeGroup.appendChild(hitLine);
+
+  hitLine.addEventListener('mouseenter', (ev) => showEdgeTooltip(ev, e));
+  hitLine.addEventListener('mousemove', (ev) => moveEdgeTooltip(ev));
+  hitLine.addEventListener('mouseleave', hideEdgeTooltip);
+
+  return { line, hitLine, data: e };
+});
+
+// Create node elements
+const nodeEls = nodes.map(n => {
+  const g = svgEl('g');
+
+  // Glow
+  const glow = svgEl('circle', {
+    r: n.radius + 8,
+    fill: langColors[n.primary_language] || '#999',
+    opacity: 0.08,
+  });
+  g.appendChild(glow);
+
+  // Main circle
+  const circle = svgEl('circle', {
+    r: n.radius,
+    fill: langColors[n.primary_language] || '#999',
+    stroke: 'rgba(255,255,255,0.4)',
+    'stroke-width': 1.5,
+    opacity: 0.9,
+  });
+  g.appendChild(circle);
+
+  // Label
+  const text = svgEl('text', {
+    'text-anchor': 'middle',
+    dy: n.radius + 16,
+    fill: '#ccc',
+    'font-size': '11px',
+    'font-weight': '600',
+    'font-family': 'Segoe UI, system-ui, sans-serif',
+    'pointer-events': 'none',
+  });
+  text.textContent = n.id;
+  g.appendChild(text);
+
+  // Year label
+  if (n.year) {
+    const yearText = svgEl('text', {
+      'text-anchor': 'middle',
+      dy: n.radius + 29,
+      fill: '#777',
+      'font-size': '10px',
+      'font-family': 'Segoe UI, system-ui, sans-serif',
+      'pointer-events': 'none',
+    });
+    yearText.textContent = n.year;
+    g.appendChild(yearText);
+  }
+
+  nodeGroup.appendChild(g);
+
+  // Events
+  g.addEventListener('mouseenter', (ev) => showTooltip(ev, n));
+  g.addEventListener('mousemove', (ev) => moveTooltip(ev));
+  g.addEventListener('mouseleave', hideTooltip);
+
+  return { g, glow, circle, data: n };
+});
+
+function render() {
+  for (const e of edgeEls) {
+    const s = e.data.sourceNode;
+    const t = e.data.targetNode;
+    e.line.setAttribute('x1', s.x);
+    e.line.setAttribute('y1', s.y);
+    e.line.setAttribute('x2', t.x);
+    e.line.setAttribute('y2', t.y);
+    e.hitLine.setAttribute('x1', s.x);
+    e.hitLine.setAttribute('y1', s.y);
+    e.hitLine.setAttribute('x2', t.x);
+    e.hitLine.setAttribute('y2', t.y);
+  }
+  for (const n of nodeEls) {
+    n.g.setAttribute('transform', `translate(${n.data.x},${n.data.y})`);
+  }
+}
+
+render();
+
+// --- Tooltips ---
+
+const tooltip = document.getElementById('tooltip');
+const edgeTooltip = document.getElementById('edge-tooltip');
+
+function showTooltip(ev, n) {
+  // Highlight connected edges
+  edgeEls.forEach(e => {
+    const connected = e.data.source === n.id || e.data.target === n.id;
+    e.line.setAttribute('stroke', connected ? 'rgba(255,255,255,0.6)' : 'rgba(255,255,255,0.05)');
+  });
+  // Dim unconnected nodes
+  const connectedIds = new Set([n.id]);
+  edges.forEach(e => {
+    if (e.source === n.id) connectedIds.add(e.target);
+    if (e.target === n.id) connectedIds.add(e.source);
+  });
+  nodeEls.forEach(ne => {
+    const dim = !connectedIds.has(ne.data.id);
+    ne.circle.setAttribute('opacity', dim ? 0.2 : 0.95);
+    ne.glow.setAttribute('opacity', dim ? 0.02 : 0.12);
+  });
+
+  let html = `<div class="tt-album" style="color:${langColors[n.primary_language]}">${n.id}</div>`;
+  html += `<div class="tt-meta">`;
+  if (n.year) html += `${n.year}`;
+  if (n.director) html += ` &middot; Dir: ${n.director}`;
+  html += ` &middot; ${n.languages.join(', ')}`;
+  html += `</div>`;
+  if (n.hero || n.heroine) {
+    html += `<div class="tt-meta">`;
+    if (n.hero) html += `${n.hero}`;
+    if (n.hero && n.heroine) html += ` & `;
+    if (n.heroine) html += `${n.heroine}`;
+    html += `</div>`;
+  }
+  html += `<div class="tt-section">Singers (${n.singer_count})</div>`;
+  html += `<div class="tt-singers">${n.singers.join(', ')}</div>`;
+
+  // Show shared singers with connected albums
+  const connections = edges.filter(e => e.source === n.id || e.target === n.id)
+    .sort((a, b) => b.weight - a.weight);
+  if (connections.length) {
+    html += `<div class="tt-section">Connections</div>`;
+    connections.forEach(e => {
+      const other = e.source === n.id ? e.target : e.source;
+      html += `<div style="color:#aaa; font-size:12px">${other}: ${e.weight} shared</div>`;
+    });
+  }
+
+  tooltip.innerHTML = html;
+  tooltip.style.display = 'block';
+  moveTooltip(ev);
+}
+
+function moveTooltip(ev) {
+  let x = ev.clientX + 16;
+  let y = ev.clientY + 16;
+  if (x + 320 > width) x = ev.clientX - 330;
+  if (y + 300 > height) y = ev.clientY - 300;
+  tooltip.style.left = x + 'px';
+  tooltip.style.top = y + 'px';
+}
+
+function hideTooltip() {
+  tooltip.style.display = 'none';
+  edgeEls.forEach(e => e.line.setAttribute('stroke', 'rgba(255,255,255,0.15)'));
+  nodeEls.forEach(ne => {
+    ne.circle.setAttribute('opacity', 0.9);
+    ne.glow.setAttribute('opacity', 0.08);
+  });
+}
+
+function showEdgeTooltip(ev, e) {
+  let html = `<div style="font-weight:700; margin-bottom:4px">`;
+  html += `${e.source} &harr; ${e.target}</div>`;
+  html += `<div style="color:#aaa">${e.weight} shared singer${e.weight > 1 ? 's' : ''}:</div>`;
+  html += `<div style="color:#ccc; margin-top:2px">${e.singers.join(', ')}</div>`;
+  edgeTooltip.innerHTML = html;
+  edgeTooltip.style.display = 'block';
+
+  // Highlight this edge
+  edgeEls.forEach(ee => {
+    const isThis = ee.data === e;
+    ee.line.setAttribute('stroke', isThis ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.05)');
+  });
+  moveEdgeTooltip(ev);
+}
+
+function moveEdgeTooltip(ev) {
+  let x = ev.clientX + 12;
+  let y = ev.clientY + 12;
+  if (x + 280 > width) x = ev.clientX - 290;
+  edgeTooltip.style.left = x + 'px';
+  edgeTooltip.style.top = y + 'px';
+}
+
+function hideEdgeTooltip() {
+  edgeTooltip.style.display = 'none';
+  edgeEls.forEach(e => e.line.setAttribute('stroke', 'rgba(255,255,255,0.15)'));
+}
+</script>
+</body>
+</html>

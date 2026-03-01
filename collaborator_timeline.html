@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AR Rahman — Collaborator Timeline</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0a1a;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    overflow-x: auto;
+    overflow-y: auto;
+  }
+  #header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+    padding: 16px 24px;
+    background: rgba(10,10,26,0.95);
+  }
+  #header h1 { font-size: 22px; font-weight: 700; color: #fff; }
+  #header p { font-size: 13px; color: #888; margin-top: 4px; }
+
+  #tooltip {
+    position: fixed; pointer-events: none;
+    background: rgba(20, 20, 40, 0.96);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px; padding: 12px 16px;
+    font-size: 13px; line-height: 1.5;
+    max-width: 280px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    display: none; z-index: 100;
+    backdrop-filter: blur(8px);
+  }
+
+  svg { display: block; margin-top: 70px; }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <h1>AR Rahman — Collaborator Timeline</h1>
+  <p>Who sang on which album &middot; Dot size = number of tracks &middot; Hover for details</p>
+</div>
+
+<div id="tooltip"></div>
+
+<svg id="chart"></svg>
+
+<script>
+const DATA = {"singers": ["S. P. Balasubrahmanyam", "K. S. Chithra", "Sujatha Mohan", "Mano", "Hariharan", "Swarnalatha", "A. R. Rahman", "Srinivas", "Minmini", "Suresh Peters", "G. V. Prakash Kumar", "Shahul Hameed", "Udit Narayan", "Noel James", "Unni Menon", "S. Janaki", "Malgudi Subha", "P. Unnikrishnan", "Annupamaa", "K. J. Yesudas", "Mohit Chauhan", "Anuradha Sriram", "Anupama", "KK", "Kavita Krishnamurthy"], "albums": ["Roja", "Yoddha", "Nippu Ravva", "Pudhiya Mugam", "Kizhakku Cheemayile", "Thiruda Thiruda", "Uzhavan", "Gentleman", "Gangmaster", "Pavithra", "Duet", "May Maadham", "Super Police", "Karuththamma", "Pudhiya Mannargal", "Vandicholai Chinraasu", "Kaadhalan", "Bombay", "Muthu", "Indira", "Rangeela", "Love Birds", "Anthimanthaarai", "Kadhal Desam", "Indian", "Mr. Romeo", "Iruvar", "Daud", "Minsara Kanavu", "Rockstar"], "albumYears": {"Roja": 1992, "Yoddha": 1992, "Nippu Ravva": 1993, "Pudhiya Mugam": 1993, "Kizhakku Cheemayile": 1993, "Thiruda Thiruda": 1993, "Uzhavan": 1993, "Gentleman": 1993, "Gangmaster": 1994, "Pavithra": 1994, "Duet": 1994, "May Maadham": 1994, "Super Police": 1994, "Karuththamma": 1994, "Pudhiya Mannargal": 1994, "Vandicholai Chinraasu": 1994, "Kaadhalan": 1994, "Bombay": 1995, "Muthu": 1995, "Indira": 1995, "Rangeela": 1995, "Love Birds": 1996, "Anthimanthaarai": 1996, "Kadhal Desam": 1996, "Indian": 1996, "Mr. Romeo": 1996, "Iruvar": 1997, "Daud": 1997, "Minsara Kanavu": 1997, "Rockstar": 2011}, "albumDirectors": {"Roja": "Mani Ratnam", "Yoddha": "Sangeeth Sivan", "Nippu Ravva": "A. Kodandarami Reddy", "Pudhiya Mugam": "Suresh Chandra Menon", "Kizhakku Cheemayile": "Bharathiraja", "Thiruda Thiruda": "Mani Ratnam", "Uzhavan": "Kathir", "Gentleman": "Shankar", "Gangmaster": "B. Gopal", "Pavithra": "K. Subash", "Duet": "K. Balachander", "May Maadham": "Balu", "Super Police": "K. Murali Mohana Rao", "Karuththamma": "Bharathiraja", "Pudhiya Mannargal": "Vikraman", "Vandicholai Chinraasu": "Manoj Kumar", "Kaadhalan": "Shankar", "Bombay": "Mani Ratnam", "Muthu": "K. S. Ravikumar", "Indira": "Suhasini Maniratnam", "Rangeela": "Ram Gopal Varma", "Love Birds": "P. Vasu", "Anthimanthaarai": "Bharathiraja", "Kadhal Desam": "Kathir", "Indian": "Shankar", "Mr. Romeo": "K. S. Ravi", "Iruvar": "Mani Ratnam", "Daud": "Ram Gopal Varma", "Minsara Kanavu": "Rajiv Menon", "Rockstar": "Imtiaz Ali"}, "cells": [{"singer": "S. P. Balasubrahmanyam", "album": "Roja", "tracks": 8}, {"singer": "S. P. Balasubrahmanyam", "album": "Yoddha", "tracks": 6}, {"singer": "S. P. Balasubrahmanyam", "album": "Nippu Ravva", "tracks": 6}, {"singer": "S. P. Balasubrahmanyam", "album": "Pudhiya Mugam", "tracks": 1}, {"singer": "S. P. Balasubrahmanyam", "album": "Kizhakku Cheemayile", "tracks": 1}, {"singer": "S. P. Balasubrahmanyam", "album": "Thiruda Thiruda", "tracks": 1}, {"singer": "S. P. Balasubrahmanyam", "album": "Uzhavan", "tracks": 2}, {"singer": "S. P. Balasubrahmanyam", "album": "Gentleman", "tracks": 4}, {"singer": "S. P. Balasubrahmanyam", "album": "Gangmaster", "tracks": 2}, {"singer": "S. P. Balasubrahmanyam", "album": "Duet", "tracks": 10}, {"singer": "S. P. Balasubrahmanyam", "album": "May Maadham", "tracks": 1}, {"singer": "S. P. Balasubrahmanyam", "album": "Super Police", "tracks": 2}, {"singer": "S. P. Balasubrahmanyam", "album": "Pudhiya Mannargal", "tracks": 1}, {"singer": "S. P. Balasubrahmanyam", "album": "Vandicholai Chinraasu", "tracks": 4}, {"singer": "S. P. Balasubrahmanyam", "album": "Kaadhalan", "tracks": 7}, {"singer": "S. P. Balasubrahmanyam", "album": "Muthu", "tracks": 7}, {"singer": "S. P. Balasubrahmanyam", "album": "Indira", "tracks": 3}, {"singer": "S. P. Balasubrahmanyam", "album": "Rangeela", "tracks": 1}, {"singer": "S. P. Balasubrahmanyam", "album": "Love Birds", "tracks": 1}, {"singer": "S. P. Balasubrahmanyam", "album": "Kadhal Desam", "tracks": 4}, {"singer": "S. P. Balasubrahmanyam", "album": "Indian", "tracks": 6}, {"singer": "S. P. Balasubrahmanyam", "album": "Mr. Romeo", "tracks": 2}, {"singer": "S. P. Balasubrahmanyam", "album": "Iruvar", "tracks": 1}, {"singer": "S. P. Balasubrahmanyam", "album": "Minsara Kanavu", "tracks": 3}, {"singer": "K. S. Chithra", "album": "Roja", "tracks": 6}, {"singer": "K. S. Chithra", "album": "Yoddha", "tracks": 2}, {"singer": "K. S. Chithra", "album": "Nippu Ravva", "tracks": 4}, {"singer": "K. S. Chithra", "album": "Kizhakku Cheemayile", "tracks": 2}, {"singer": "K. S. Chithra", "album": "Thiruda Thiruda", "tracks": 6}, {"singer": "K. S. Chithra", "album": "Uzhavan", "tracks": 3}, {"singer": "K. S. Chithra", "album": "Gangmaster", "tracks": 6}, {"singer": "K. S. Chithra", "album": "Pavithra", "tracks": 2}, {"singer": "K. S. Chithra", "album": "Duet", "tracks": 3}, {"singer": "K. S. Chithra", "album": "May Maadham", "tracks": 3}, {"singer": "K. S. Chithra", "album": "Super Police", "tracks": 2}, {"singer": "K. S. Chithra", "album": "Karuththamma", "tracks": 1}, {"singer": "K. S. Chithra", "album": "Pudhiya Mannargal", "tracks": 1}, {"singer": "K. S. Chithra", "album": "Bombay", "tracks": 4}, {"singer": "K. S. Chithra", "album": "Muthu", "tracks": 3}, {"singer": "K. S. Chithra", "album": "Indira", "tracks": 3}, {"singer": "K. S. Chithra", "album": "Rangeela", "tracks": 1}, {"singer": "K. S. Chithra", "album": "Love Birds", "tracks": 1}, {"singer": "K. S. Chithra", "album": "Daud", "tracks": 1}, {"singer": "K. S. Chithra", "album": "Minsara Kanavu", "tracks": 3}, {"singer": "Sujatha Mohan", "album": "Roja", "tracks": 9}, {"singer": "Sujatha Mohan", "album": "Yoddha", "tracks": 2}, {"singer": "Sujatha Mohan", "album": "Pudhiya Mugam", "tracks": 2}, {"singer": "Sujatha Mohan", "album": "Kizhakku Cheemayile", "tracks": 1}, {"singer": "Sujatha Mohan", "album": "Thiruda Thiruda", "tracks": 4}, {"singer": "Sujatha Mohan", "album": "Uzhavan", "tracks": 1}, {"singer": "Sujatha Mohan", "album": "Gentleman", "tracks": 3}, {"singer": "Sujatha Mohan", "album": "Gangmaster", "tracks": 2}, {"singer": "Sujatha Mohan", "album": "Duet", "tracks": 2}, {"singer": "Sujatha Mohan", "album": "Karuththamma", "tracks": 1}, {"singer": "Sujatha Mohan", "album": "Pudhiya Mannargal", "tracks": 2}, {"singer": "Sujatha Mohan", "album": "Vandicholai Chinraasu", "tracks": 2}, {"singer": "Sujatha Mohan", "album": "Kaadhalan", "tracks": 5}, {"singer": "Sujatha Mohan", "album": "Bombay", "tracks": 6}, {"singer": "Sujatha Mohan", "album": "Indira", "tracks": 2}, {"singer": "Sujatha Mohan", "album": "Rangeela", "tracks": 1}, {"singer": "Sujatha Mohan", "album": "Love Birds", "tracks": 2}, {"singer": "Sujatha Mohan", "album": "Indian", "tracks": 1}, {"singer": "Sujatha Mohan", "album": "Mr. Romeo", "tracks": 1}, {"singer": "Sujatha Mohan", "album": "Daud", "tracks": 2}, {"singer": "Sujatha Mohan", "album": "Minsara Kanavu", "tracks": 2}, {"singer": "Mano", "album": "Roja", "tracks": 1}, {"singer": "Mano", "album": "Kizhakku Cheemayile", "tracks": 1}, {"singer": "Mano", "album": "Thiruda Thiruda", "tracks": 9}, {"singer": "Mano", "album": "Gangmaster", "tracks": 10}, {"singer": "Mano", "album": "Pavithra", "tracks": 1}, {"singer": "Mano", "album": "Super Police", "tracks": 2}, {"singer": "Mano", "album": "Pudhiya Mannargal", "tracks": 2}, {"singer": "Mano", "album": "Kaadhalan", "tracks": 3}, {"singer": "Mano", "album": "Muthu", "tracks": 3}, {"singer": "Mano", "album": "Indira", "tracks": 2}, {"singer": "Mano", "album": "Rangeela", "tracks": 1}, {"singer": "Mano", "album": "Love Birds", "tracks": 2}, {"singer": "Mano", "album": "Kadhal Desam", "tracks": 2}, {"singer": "Mano", "album": "Iruvar", "tracks": 3}, {"singer": "Mano", "album": "Minsara Kanavu", "tracks": 1}, {"singer": "Hariharan", "album": "Roja", "tracks": 3}, {"singer": "Hariharan", "album": "Kaadhalan", "tracks": 1}, {"singer": "Hariharan", "album": "Bombay", "tracks": 5}, {"singer": "Hariharan", "album": "Muthu", "tracks": 4}, {"singer": "Hariharan", "album": "Indira", "tracks": 3}, {"singer": "Hariharan", "album": "Rangeela", "tracks": 4}, {"singer": "Hariharan", "album": "Love Birds", "tracks": 3}, {"singer": "Hariharan", "album": "Kadhal Desam", "tracks": 3}, {"singer": "Hariharan", "album": "Indian", "tracks": 3}, {"singer": "Hariharan", "album": "Mr. Romeo", "tracks": 2}, {"singer": "Hariharan", "album": "Iruvar", "tracks": 2}, {"singer": "Hariharan", "album": "Minsara Kanavu", "tracks": 3}, {"singer": "Swarnalatha", "album": "Uzhavan", "tracks": 1}, {"singer": "Swarnalatha", "album": "Gentleman", "tracks": 2}, {"singer": "Swarnalatha", "album": "Gangmaster", "tracks": 2}, {"singer": "Swarnalatha", "album": "Pavithra", "tracks": 1}, {"singer": "Swarnalatha", "album": "May Maadham", "tracks": 1}, {"singer": "Swarnalatha", "album": "Karuththamma", "tracks": 1}, {"singer": "Swarnalatha", "album": "Vandicholai Chinraasu", "tracks": 3}, {"singer": "Swarnalatha", "album": "Bombay", "tracks": 5}, {"singer": "Swarnalatha", "album": "Indira", "tracks": 2}, {"singer": "Swarnalatha", "album": "Anthimanthaarai", "tracks": 1}, {"singer": "Swarnalatha", "album": "Indian", "tracks": 6}, {"singer": "Swarnalatha", "album": "Mr. Romeo", "tracks": 2}, {"singer": "Swarnalatha", "album": "Daud", "tracks": 3}, {"singer": "A. R. Rahman", "album": "Yoddha", "tracks": 1}, {"singer": "A. R. Rahman", "album": "Thiruda Thiruda", "tracks": 1}, {"singer": "A. R. Rahman", "album": "Kaadhalan", "tracks": 3}, {"singer": "A. R. Rahman", "album": "Bombay", "tracks": 7}, {"singer": "A. R. Rahman", "album": "Rangeela", "tracks": 2}, {"singer": "A. R. Rahman", "album": "Love Birds", "tracks": 2}, {"singer": "A. R. Rahman", "album": "Kadhal Desam", "tracks": 5}, {"singer": "A. R. Rahman", "album": "Daud", "tracks": 3}, {"singer": "A. R. Rahman", "album": "Rockstar", "tracks": 2}, {"singer": "Srinivas", "album": "Thiruda Thiruda", "tracks": 3}, {"singer": "Srinivas", "album": "Gentleman", "tracks": 2}, {"singer": "Srinivas", "album": "May Maadham", "tracks": 1}, {"singer": "Srinivas", "album": "Bombay", "tracks": 5}, {"singer": "Srinivas", "album": "Kadhal Desam", "tracks": 1}, {"singer": "Srinivas", "album": "Mr. Romeo", "tracks": 3}, {"singer": "Srinivas", "album": "Minsara Kanavu", "tracks": 3}, {"singer": "Minmini", "album": "Roja", "tracks": 5}, {"singer": "Minmini", "album": "Pudhiya Mugam", "tracks": 1}, {"singer": "Minmini", "album": "Thiruda Thiruda", "tracks": 1}, {"singer": "Minmini", "album": "Gentleman", "tracks": 3}, {"singer": "Minmini", "album": "Gangmaster", "tracks": 2}, {"singer": "Minmini", "album": "Karuththamma", "tracks": 1}, {"singer": "Minmini", "album": "Pudhiya Mannargal", "tracks": 1}, {"singer": "Minmini", "album": "Kaadhalan", "tracks": 2}, {"singer": "Suresh Peters", "album": "Thiruda Thiruda", "tracks": 4}, {"singer": "Suresh Peters", "album": "Gentleman", "tracks": 2}, {"singer": "Suresh Peters", "album": "Super Police", "tracks": 1}, {"singer": "Suresh Peters", "album": "Kaadhalan", "tracks": 5}, {"singer": "Suresh Peters", "album": "Bombay", "tracks": 3}, {"singer": "G. V. Prakash Kumar", "album": "Thiruda Thiruda", "tracks": 3}, {"singer": "G. V. Prakash Kumar", "album": "Uzhavan", "tracks": 2}, {"singer": "G. V. Prakash Kumar", "album": "Gentleman", "tracks": 2}, {"singer": "G. V. Prakash Kumar", "album": "May Maadham", "tracks": 2}, {"singer": "G. V. Prakash Kumar", "album": "Bombay", "tracks": 3}, {"singer": "G. V. Prakash Kumar", "album": "Muthu", "tracks": 1}, {"singer": "G. V. Prakash Kumar", "album": "Indira", "tracks": 2}, {"singer": "Shahul Hameed", "album": "Kizhakku Cheemayile", "tracks": 1}, {"singer": "Shahul Hameed", "album": "Thiruda Thiruda", "tracks": 2}, {"singer": "Shahul Hameed", "album": "Uzhavan", "tracks": 1}, {"singer": "Shahul Hameed", "album": "Gentleman", "tracks": 2}, {"singer": "Shahul Hameed", "album": "Pavithra", "tracks": 1}, {"singer": "Shahul Hameed", "album": "May Maadham", "tracks": 1}, {"singer": "Shahul Hameed", "album": "Karuththamma", "tracks": 1}, {"singer": "Shahul Hameed", "album": "Vandicholai Chinraasu", "tracks": 2}, {"singer": "Shahul Hameed", "album": "Kaadhalan", "tracks": 4}, {"singer": "Udit Narayan", "album": "Thiruda Thiruda", "tracks": 2}, {"singer": "Udit Narayan", "album": "Kaadhalan", "tracks": 3}, {"singer": "Udit Narayan", "album": "Bombay", "tracks": 1}, {"singer": "Udit Narayan", "album": "Muthu", "tracks": 2}, {"singer": "Udit Narayan", "album": "Indira", "tracks": 1}, {"singer": "Udit Narayan", "album": "Rangeela", "tracks": 2}, {"singer": "Udit Narayan", "album": "Love Birds", "tracks": 1}, {"singer": "Udit Narayan", "album": "Mr. Romeo", "tracks": 2}, {"singer": "Noel James", "album": "Thiruda Thiruda", "tracks": 1}, {"singer": "Noel James", "album": "May Maadham", "tracks": 1}, {"singer": "Noel James", "album": "Bombay", "tracks": 6}, {"singer": "Noel James", "album": "Kadhal Desam", "tracks": 3}, {"singer": "Noel James", "album": "Mr. Romeo", "tracks": 2}, {"singer": "Unni Menon", "album": "Roja", "tracks": 3}, {"singer": "Unni Menon", "album": "Pudhiya Mugam", "tracks": 2}, {"singer": "Unni Menon", "album": "Thiruda Thiruda", "tracks": 2}, {"singer": "Unni Menon", "album": "Karuththamma", "tracks": 1}, {"singer": "Unni Menon", "album": "Daud", "tracks": 1}, {"singer": "Unni Menon", "album": "Minsara Kanavu", "tracks": 1}, {"singer": "S. Janaki", "album": "Kizhakku Cheemayile", "tracks": 1}, {"singer": "S. Janaki", "album": "Gentleman", "tracks": 2}, {"singer": "S. Janaki", "album": "Super Police", "tracks": 1}, {"singer": "S. Janaki", "album": "Kaadhalan", "tracks": 3}, {"singer": "S. Janaki", "album": "Rangeela", "tracks": 3}, {"singer": "Malgudi Subha", "album": "Yoddha", "tracks": 2}, {"singer": "Malgudi Subha", "album": "Pudhiya Mugam", "tracks": 1}, {"singer": "Malgudi Subha", "album": "Gentleman", "tracks": 1}, {"singer": "Malgudi Subha", "album": "Vandicholai Chinraasu", "tracks": 3}, {"singer": "Malgudi Subha", "album": "Minsara Kanavu", "tracks": 3}, {"singer": "P. Unnikrishnan", "album": "Pavithra", "tracks": 1}, {"singer": "P. Unnikrishnan", "album": "May Maadham", "tracks": 1}, {"singer": "P. Unnikrishnan", "album": "Karuththamma", "tracks": 1}, {"singer": "P. Unnikrishnan", "album": "Kaadhalan", "tracks": 2}, {"singer": "P. Unnikrishnan", "album": "Rangeela", "tracks": 1}, {"singer": "P. Unnikrishnan", "album": "Love Birds", "tracks": 1}, {"singer": "P. Unnikrishnan", "album": "Iruvar", "tracks": 2}, {"singer": "P. Unnikrishnan", "album": "Minsara Kanavu", "tracks": 1}, {"singer": "Annupamaa", "album": "Pudhiya Mugam", "tracks": 1}, {"singer": "Annupamaa", "album": "Thiruda Thiruda", "tracks": 3}, {"singer": "Annupamaa", "album": "Bombay", "tracks": 1}, {"singer": "Annupamaa", "album": "Rangeela", "tracks": 4}, {"singer": "K. J. Yesudas", "album": "Yoddha", "tracks": 3}, {"singer": "K. J. Yesudas", "album": "Uzhavan", "tracks": 2}, {"singer": "K. J. Yesudas", "album": "Duet", "tracks": 1}, {"singer": "K. J. Yesudas", "album": "Indian", "tracks": 3}, {"singer": "Mohit Chauhan", "album": "Rockstar", "tracks": 9}, {"singer": "Anuradha Sriram", "album": "Bombay", "tracks": 3}, {"singer": "Anuradha Sriram", "album": "Indira", "tracks": 2}, {"singer": "Anuradha Sriram", "album": "Minsara Kanavu", "tracks": 3}, {"singer": "Anupama", "album": "May Maadham", "tracks": 1}, {"singer": "Anupama", "album": "Super Police", "tracks": 1}, {"singer": "Anupama", "album": "Bombay", "tracks": 2}, {"singer": "Anupama", "album": "Kadhal Desam", "tracks": 2}, {"singer": "KK", "album": "Kadhal Desam", "tracks": 4}, {"singer": "KK", "album": "Minsara Kanavu", "tracks": 2}, {"singer": "Kavita Krishnamurthy", "album": "Yoddha", "tracks": 1}, {"singer": "Kavita Krishnamurthy", "album": "Bombay", "tracks": 2}, {"singer": "Kavita Krishnamurthy", "album": "Mr. Romeo", "tracks": 1}, {"singer": "Kavita Krishnamurthy", "album": "Rockstar", "tracks": 1}]};
+
+const rowH = 32;
+const colW = 38;
+const labelW = 200;
+const headerH = 50;
+const margin = { top: headerH, left: labelW, right: 30, bottom: 20 };
+
+const chartW = margin.left + DATA.albums.length * colW + margin.right;
+const chartH = margin.top + DATA.singers.length * rowH + margin.bottom;
+
+const svg = document.getElementById('chart');
+svg.setAttribute('width', chartW);
+svg.setAttribute('height', chartH);
+
+function svgEl(tag, attrs) {
+  const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const [k, v] of Object.entries(attrs || {})) el.setAttribute(k, v);
+  return el;
+}
+
+// Singer index / album index maps
+const singerIdx = {};
+DATA.singers.forEach((s, i) => singerIdx[s] = i);
+const albumIdx = {};
+DATA.albums.forEach((a, i) => albumIdx[a] = i);
+
+// --- Year groups: draw vertical separators between years ---
+let prevYear = null;
+DATA.albums.forEach((a, i) => {
+  const year = DATA.albumYears[a];
+  const x = margin.left + i * colW + colW / 2;
+
+  if (year && year !== prevYear) {
+    // Year label at top
+    const yt = svgEl('text', {
+      x: x, y: margin.top - 8,
+      'text-anchor': 'middle', fill: '#666', 'font-size': '11px',
+      'font-weight': '600',
+      'font-family': 'Segoe UI, system-ui, sans-serif',
+    });
+    yt.textContent = year;
+    svg.appendChild(yt);
+
+    // Separator line
+    if (prevYear !== null) {
+      svg.appendChild(svgEl('line', {
+        x1: margin.left + i * colW - 2,
+        y1: margin.top - 4,
+        x2: margin.left + i * colW - 2,
+        y2: chartH - margin.bottom,
+        stroke: 'rgba(255,255,255,0.08)', 'stroke-width': 1,
+      }));
+    }
+    prevYear = year;
+  }
+});
+
+// --- Singer labels (left side) ---
+DATA.singers.forEach((s, i) => {
+  const y = margin.top + i * rowH + rowH / 2;
+
+  // Alternating row background
+  if (i % 2 === 0) {
+    svg.appendChild(svgEl('rect', {
+      x: 0, y: y - rowH / 2,
+      width: chartW, height: rowH,
+      fill: 'rgba(255,255,255,0.015)',
+    }));
+  }
+
+  const text = svgEl('text', {
+    x: margin.left - 12, y: y + 4,
+    'text-anchor': 'end', fill: '#aaa', 'font-size': '12px',
+    'font-family': 'Segoe UI, system-ui, sans-serif',
+  });
+  text.textContent = s;
+  svg.appendChild(text);
+});
+
+// --- Album labels (angled at top) ---
+DATA.albums.forEach((a, i) => {
+  const x = margin.left + i * colW + colW / 2;
+  const text = svgEl('text', {
+    x: x, y: margin.top - 22,
+    'text-anchor': 'start', fill: '#555', 'font-size': '9px',
+    'font-family': 'Segoe UI, system-ui, sans-serif',
+    transform: `rotate(-55, ${x}, ${margin.top - 22})`,
+  });
+  text.textContent = a;
+  svg.appendChild(text);
+});
+
+// --- Dots ---
+const maxTracks = Math.max(...DATA.cells.map(c => c.tracks));
+
+const tooltip = document.getElementById('tooltip');
+const dotGroup = svgEl('g');
+svg.appendChild(dotGroup);
+
+DATA.cells.forEach(c => {
+  const col = albumIdx[c.album];
+  const row = singerIdx[c.singer];
+  if (col === undefined || row === undefined) return;
+
+  const cx = margin.left + col * colW + colW / 2;
+  const cy = margin.top + row * rowH + rowH / 2;
+  const r = 3 + Math.sqrt(c.tracks / maxTracks) * 10;
+
+  // Color: warm gold intensity based on track count
+  const t = c.tracks / maxTracks;
+  const red = Math.round(180 + t * 70);
+  const green = Math.round(140 + t * 56);
+  const blue = Math.round(80 - t * 40);
+  const color = `rgb(${red},${green},${blue})`;
+
+  const circle = svgEl('circle', {
+    cx: cx, cy: cy, r: r,
+    fill: color, opacity: 0.85,
+    stroke: 'rgba(255,255,255,0.15)', 'stroke-width': 0.5,
+  });
+  dotGroup.appendChild(circle);
+
+  circle.addEventListener('mouseenter', (ev) => {
+    const year = DATA.albumYears[c.album] || '?';
+    const dir = DATA.albumDirectors[c.album] || '';
+    let html = `<div style="font-weight:700; color:${color}; font-size:14px">${c.singer}</div>`;
+    html += `<div style="color:#aaa; font-size:12px; margin-bottom:6px">${c.album} (${year})${dir ? ' — Dir: ' + dir : ''}</div>`;
+    html += `<div style="color:#ddd">${c.tracks} track${c.tracks > 1 ? 's' : ''} on this album</div>`;
+    tooltip.innerHTML = html;
+    tooltip.style.display = 'block';
+
+    // Highlight row + column
+    circle.setAttribute('r', r + 2);
+    circle.setAttribute('opacity', 1);
+    moveTooltip(ev);
+  });
+
+  circle.addEventListener('mousemove', moveTooltip);
+
+  circle.addEventListener('mouseleave', () => {
+    tooltip.style.display = 'none';
+    circle.setAttribute('r', r);
+    circle.setAttribute('opacity', 0.85);
+  });
+});
+
+function moveTooltip(ev) {
+  let x = ev.clientX + 14, y = ev.clientY + 14;
+  if (x + 280 > window.innerWidth) x = ev.clientX - 290;
+  if (y + 150 > window.innerHeight) y = ev.clientY - 150;
+  tooltip.style.left = x + 'px';
+  tooltip.style.top = y + 'px';
+}
+</script>
+</body>
+</html>
