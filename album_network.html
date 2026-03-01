@@ -12094,7 +12094,7 @@ function showTooltip(ev, n) {
   // Only the hovered node stays bright; everything else dims
   nodeEls.forEach(ne => {
     const isHovered = ne.data.id === n.id;
-    ne.circle.setAttribute('opacity', isHovered ? 1 : 0.08);
+    ne.circle.setAttribute('opacity', isHovered ? 1 : 0.01);
     ne.glow.setAttribute('opacity', isHovered ? 0.3 : 0);
     if (isHovered) {
       ne.circle.setAttribute('r', ne.data.radius * 1.3);
