@@ -14828,7 +14828,7 @@ const nodes = DATA.nodes.map(n => ({
   ...n,
   x: pad + ((n.x - minX) / rangeX) * usableW,
   y: pad + ((n.y - minY) / rangeY) * usableH,
-  radius: 12 + n.singer_count * 2,
+  radius: 12 + Math.sqrt(n.singer_count) * 8,
 }));
 
 const nodeMap = {};
@@ -14929,7 +14929,9 @@ const nodeEls = nodes.map(n => {
   g.addEventListener('mousemove', (ev) => moveTooltip(ev));
   g.addEventListener('mouseleave', hideTooltip);
 
-  return { g, glow, circle, data: n };
+  // Collect text elements for dimming
+  const texts = g.querySelectorAll('text');
+  return { g, glow, circle, texts, data: n };
 });
 
 function render() {
@@ -14963,11 +14965,12 @@ function showTooltip(ev, n) {
     const connected = e.data.source === n.id || e.data.target === n.id;
     e.line.setAttribute('stroke', connected ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.02)');
   });
-  // Only the hovered node stays bright; everything else dims
+  // Only the hovered node stays bright; everything else vanishes
   nodeEls.forEach(ne => {
     const isHovered = ne.data.id === n.id;
-    ne.circle.setAttribute('opacity', isHovered ? 1 : 0.01);
+    ne.circle.setAttribute('opacity', isHovered ? 1 : 0);
     ne.glow.setAttribute('opacity', isHovered ? 0.3 : 0);
+    ne.texts.forEach(t => t.setAttribute('opacity', isHovered ? 1 : 0));
     if (isHovered) {
       ne.circle.setAttribute('r', ne.data.radius * 1.3);
       ne.glow.setAttribute('r', (ne.data.radius + 8) * 1.3);
@@ -15023,6 +15026,7 @@ function hideTooltip() {
     ne.circle.setAttribute('r', ne.data.radius);
     ne.glow.setAttribute('opacity', 0.08);
     ne.glow.setAttribute('r', ne.data.radius + 8);
+    ne.texts.forEach(t => t.setAttribute('opacity', 1));
   });
 }
 
