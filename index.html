@@ -7,8 +7,8 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    background: #0a0a1a;
-    color: #e0e0e0;
+    background: #F5E6D3;
+    color: #3D1C11;
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     min-height: 100vh;
     display: flex;
@@ -24,7 +24,7 @@
   header h1 {
     font-size: 36px;
     font-weight: 800;
-    background: linear-gradient(135deg, #e8575a, #f0c46c, #5bb8d4);
+    background: linear-gradient(135deg, #C62828, #E64A19, #F9A825);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -32,7 +32,7 @@
   }
   header p {
     font-size: 16px;
-    color: #888;
+    color: #6B4226;
     line-height: 1.6;
   }
   header .stats {
@@ -48,11 +48,11 @@
   .stat-num {
     font-size: 28px;
     font-weight: 700;
-    color: #f0c46c;
+    color: #C62828;
   }
   .stat-label {
     font-size: 12px;
-    color: #666;
+    color: #8D6E63;
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
@@ -67,8 +67,8 @@
   }
 
   .card {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(61, 28, 17, 0.04);
+    border: 1px solid rgba(61, 28, 17, 0.08);
     border-radius: 12px;
     padding: 28px;
     text-decoration: none;
@@ -77,8 +77,8 @@
     display: block;
   }
   .card:hover {
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(61, 28, 17, 0.08);
+    border-color: rgba(198, 40, 40, 0.2);
     transform: translateY(-2px);
   }
   .card-icon {
@@ -90,43 +90,31 @@
     font-size: 18px;
     font-weight: 700;
     margin-bottom: 8px;
-    color: #fff;
+    color: #3D1C11;
   }
   .card p {
     font-size: 13px;
-    color: #888;
+    color: #6B4226;
     line-height: 1.5;
   }
   .card .card-meta {
     margin-top: 12px;
     font-size: 11px;
-    color: #555;
+    color: #8D6E63;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-  }
-  .card.new-tag::after {
-    content: 'NEW';
-    display: inline-block;
-    font-size: 9px;
-    font-weight: 700;
-    color: #0a0a1a;
-    background: #f0c46c;
-    padding: 2px 6px;
-    border-radius: 3px;
-    margin-left: 8px;
-    vertical-align: middle;
   }
 
   footer {
     padding: 30px;
     text-align: center;
-    color: #444;
+    color: #8D6E63;
     font-size: 12px;
-    border-top: 1px solid rgba(255,255,255,0.05);
+    border-top: 1px solid rgba(61,28,17,0.08);
     width: 100%;
     max-width: 900px;
   }
-  footer a { color: #666; }
+  footer a { color: #6B4226; }
 </style>
 </head>
 <body>
@@ -156,7 +144,7 @@
       <div class="stat-label">Lyricists</div>
     </div>
     <div class="stat">
-      <div class="stat-num">1992–2025</div>
+      <div class="stat-num">1992–2026</div>
       <div class="stat-label">Years Covered</div>
     </div>
   </div>
@@ -189,55 +177,85 @@
     <span class="card-icon">&#9679; &#9675; &#9679;</span>
     <h2>Audio Mood Map</h2>
     <p>
-      Every song plotted on an energy-vs-valence chart using Spotify audio
-      features. See which albums are melancholic vs. euphoric, calm vs. intense.
-      Click albums in the sidebar to filter.
+      Every song plotted by audio features. Choose your own axes — energy,
+      valence, danceability, acousticness, or tempo. Click albums in the
+      sidebar to filter, or deselect all at once.
     </p>
-    <div class="card-meta">Scatter plot &middot; 1,274 tracks &middot; Click to filter albums</div>
+    <div class="card-meta">Scatter plot &middot; 883 tracks &middot; Axis selector + album filter</div>
   </a>
 
   <a class="card" href="collaborator_timeline.html">
     <span class="card-icon">&#9476;&#9679;&#9476;&#9679;&#9476;</span>
     <h2>Collaborator Timeline</h2>
     <p>
-      Who sang on which album, chronologically. Each row is a singer, each
-      column an album. Dot size shows how many tracks they contributed.
-      Watch SPB dominate the early years.
+      Who sang for Rahman each year? Top 25 singers shown across 3 decades.
+      Dot size reflects total tracks that year. Watch SPB dominate early,
+      then new voices emerge.
     </p>
-    <div class="card-meta">Timeline &middot; 25 singers &times; 164 albums &middot; Hover for details</div>
+    <div class="card-meta">Timeline &middot; 25 singers &times; 34 years &middot; Hover for details</div>
   </a>
 
-  <a class="card new-tag" href="sound_radar.html">
+  <a class="card" href="sound_radar.html">
     <span class="card-icon">&#11039;</span>
     <h2>Sound Over Time</h2>
     <p>
-      Radar charts showing each album's average audio profile: danceability,
-      energy, valence, acousticness, and more. Navigate chronologically or
-      hit play to watch Rahman's sound evolve.
+      Radar charts showing each album's audio profile: danceability,
+      energy, valence, acousticness, liveness, and instrumentalness.
+      Auto-generated summaries describe each album's character.
     </p>
-    <div class="card-meta">Radar chart &middot; 162 albums &middot; Arrow keys or autoplay</div>
+    <div class="card-meta">Radar chart &middot; 108 albums &middot; Arrow keys or autoplay</div>
   </a>
 
-  <a class="card new-tag" href="lyricist_heatmap.html">
+  <a class="card" href="lyricist_heatmap.html">
     <span class="card-icon">&#9638;&#9638;&#9638;</span>
     <h2>Lyricist &times; Singer</h2>
     <p>
       Who writes for whom? A heatmap with lyricists on one axis and singers
-      on the other. Vairamuthu + SPB dominates with 19 tracks. See which
-      pairings define Rahman's sound.
+      on the other. See which pairings define Rahman's sound across languages.
     </p>
     <div class="card-meta">Heatmap &middot; 47 lyricists &times; 66 singers &middot; Hover for details</div>
   </a>
 
-  <a class="card new-tag" href="key_wheel.html">
+  <a class="card" href="key_wheel.html">
     <span class="card-icon">&#9836;</span>
     <h2>Key & Mode Wheel</h2>
     <p>
-      Which musical keys does Rahman favour? A circular chart shows D and G
-      as his go-to keys, with 61% major vs 39% minor. Click any segment to
-      see the tracks in that key.
+      Which musical keys does Rahman favour? A circular chart of major vs.
+      minor across all 12 keys. Click any segment to see the tracks.
     </p>
-    <div class="card-meta">Polar chart &middot; 1,274 tracks &middot; Click to explore</div>
+    <div class="card-meta">Polar chart &middot; 883 tracks &middot; Click to explore</div>
+  </a>
+
+  <a class="card" href="racing_bar.html">
+    <span class="card-icon">&#9654;&#9646;</span>
+    <h2>Collaborators Over Time</h2>
+    <p>
+      Animated racing bar chart showing cumulative collaborations year by year.
+      Toggle between singers (track count) and heroes/actors (album count).
+      Hit play and watch the rankings shift.
+    </p>
+    <div class="card-meta">Animation &middot; Singers + Heroes &middot; Play / arrow keys</div>
+  </a>
+
+  <a class="card" href="song_siblings.html">
+    <span class="card-icon">&#9835;&#8776;&#9835;</span>
+    <h2>Song Siblings</h2>
+    <p>
+      Find the 3 most sonically similar tracks for any song. Search by name,
+      see feature comparisons, and click siblings to explore further.
+      Similarity based on 7 audio dimensions.
+    </p>
+    <div class="card-meta">Search &middot; 883 tracks &middot; Euclidean similarity</div>
+  </a>
+
+  <a class="card" href="data_quality.html">
+    <span class="card-icon">&#9745;</span>
+    <h2>Data Quality</h2>
+    <p>
+      How complete is the dataset? See which albums have singers, lyricists,
+      and audio features. Color-coded completeness bars for every album.
+    </p>
+    <div class="card-meta">Report &middot; 168 albums &middot; Completeness overview</div>
   </a>
 </div>
 

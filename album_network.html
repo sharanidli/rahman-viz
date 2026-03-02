@@ -7,19 +7,19 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    background: #0a0a1a;
-    color: #e0e0e0;
+    background: #F5E6D3;
+    color: #3D1C11;
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     overflow: hidden;
   }
   #header {
     position: fixed; top: 0; left: 0; right: 0; z-index: 10;
     padding: 16px 24px;
-    background: linear-gradient(180deg, rgba(10,10,26,0.95) 0%, rgba(10,10,26,0) 100%);
+    background: linear-gradient(180deg, rgba(245,230,211,0.95) 0%, rgba(245,230,211,0) 100%);
     pointer-events: none;
   }
-  #header h1 { font-size: 22px; font-weight: 700; color: #fff; }
-  #header p { font-size: 13px; color: #888; margin-top: 4px; }
+  #header h1 { font-size: 22px; font-weight: 700; color: #3D1C11; }
+  #header p { font-size: 13px; color: #6B4226; margin-top: 4px; }
 
   svg { display: block; }
 
@@ -27,36 +27,36 @@
   #tooltip {
     position: fixed;
     pointer-events: none;
-    background: rgba(20, 20, 40, 0.96);
-    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(237, 224, 212, 0.97);
+    border: 1px solid rgba(61,28,17,0.15);
     border-radius: 10px;
     padding: 14px 18px;
     font-size: 13px;
     line-height: 1.5;
     max-width: 320px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    box-shadow: 0 8px 32px rgba(61,28,17,0.15);
     display: none;
     z-index: 100;
     backdrop-filter: blur(8px);
   }
   #tooltip .tt-album { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
-  #tooltip .tt-meta { color: #aaa; font-size: 12px; margin-bottom: 8px; }
-  #tooltip .tt-section { color: #888; font-size: 11px; text-transform: uppercase;
+  #tooltip .tt-meta { color: #6B4226; font-size: 12px; margin-bottom: 8px; }
+  #tooltip .tt-section { color: #6B4226; font-size: 11px; text-transform: uppercase;
     letter-spacing: 0.5px; margin-top: 8px; margin-bottom: 2px; }
-  #tooltip .tt-singers { color: #ccc; }
+  #tooltip .tt-singers { color: #3D1C11; }
 
   /* Edge tooltip */
   #edge-tooltip {
     position: fixed;
     pointer-events: none;
-    background: rgba(20, 20, 40, 0.96);
-    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(237, 224, 212, 0.97);
+    border: 1px solid rgba(61,28,17,0.15);
     border-radius: 8px;
     padding: 10px 14px;
     font-size: 12px;
     line-height: 1.5;
     max-width: 280px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    box-shadow: 0 8px 32px rgba(61,28,17,0.15);
     display: none;
     z-index: 100;
     backdrop-filter: blur(8px);
@@ -65,23 +65,23 @@
   /* Legend */
   #legend {
     position: fixed; bottom: 20px; left: 20px; z-index: 10;
-    background: rgba(20, 20, 40, 0.85);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(237, 224, 212, 0.9);
+    border: 1px solid rgba(61,28,17,0.1);
     border-radius: 8px;
     padding: 12px 16px;
     font-size: 12px;
     backdrop-filter: blur(8px);
   }
-  #legend h3 { font-size: 11px; text-transform: uppercase; color: #888;
+  #legend h3 { font-size: 11px; text-transform: uppercase; color: #6B4226;
     letter-spacing: 0.5px; margin-bottom: 8px; }
-  .legend-item { display: flex; align-items: center; margin-bottom: 4px; }
+  .legend-item { display: flex; align-items: center; margin-bottom: 4px; color: #3D1C11; }
   .legend-dot { width: 10px; height: 10px; border-radius: 50%; margin-right: 8px;
-    border: 1px solid rgba(255,255,255,0.3); }
+    border: 1px solid rgba(61,28,17,0.3); }
 
   /* Instructions */
   #instructions {
     position: fixed; bottom: 20px; right: 20px; z-index: 10;
-    color: #555; font-size: 11px; text-align: right;
+    color: #6B4226; font-size: 11px; text-align: right;
   }
 </style>
 </head>
@@ -97,10 +97,10 @@
 
 <div id="legend">
   <h3>Primary Language</h3>
-  <div class="legend-item"><div class="legend-dot" style="background:#e8575a"></div>Tamil</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#5bb8d4"></div>Hindi</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#e8b83d"></div>Telugu</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#6dc78a"></div>Malayalam</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#C62828"></div>Tamil</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#E64A19"></div>Hindi</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#F9A825"></div>Telugu</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#558B2F"></div>Malayalam</div>
 </div>
 
 <div id="instructions">
@@ -112,29 +112,6 @@
 <script>
 const DATA = {
   "nodes": [
-    {
-      "id": "Kadhalikka Neramillai",
-      "year": 1964,
-      "director": "C. V. Sridhar",
-      "hero": "Balaiah",
-      "heroine": "Muthuraman",
-      "primary_language": "Tamil",
-      "languages": [
-        "Tamil"
-      ],
-      "singers": [
-        "K. J. Yesudas",
-        "L. R. Eswari",
-        "M. S. Raju",
-        "P. B. Sreenivas",
-        "P. Susheela",
-        "Sirkazhi Govindarajan"
-      ],
-      "singer_count": 6,
-      "track_count": 8,
-      "x": -1.0,
-      "y": 0.2381
-    },
     {
       "id": "Roja",
       "year": 1992,
@@ -169,8 +146,8 @@ const DATA = {
       ],
       "singer_count": 16,
       "track_count": 32,
-      "x": -0.3337,
-      "y": 0.0944
+      "x": -0.3567,
+      "y": 0.0115
     },
     {
       "id": "Yoddha",
@@ -201,8 +178,8 @@ const DATA = {
       ],
       "singer_count": 15,
       "track_count": 16,
-      "x": -0.1444,
-      "y": 0.1165
+      "x": -0.133,
+      "y": 0.0887
     },
     {
       "id": "Gentleman",
@@ -229,8 +206,8 @@ const DATA = {
       ],
       "singer_count": 10,
       "track_count": 10,
-      "x": -0.3875,
-      "y": 0.0611
+      "x": -0.3916,
+      "y": 0.0303
     },
     {
       "id": "Kizhakku Cheemayile",
@@ -257,8 +234,8 @@ const DATA = {
       ],
       "singer_count": 11,
       "track_count": 6,
-      "x": -0.3275,
-      "y": 0.1861
+      "x": -0.3266,
+      "y": 0.1653
     },
     {
       "id": "Nippu Ravva",
@@ -277,8 +254,8 @@ const DATA = {
       ],
       "singer_count": 3,
       "track_count": 6,
-      "x": -0.4881,
-      "y": 0.2208
+      "x": -0.4476,
+      "y": 0.2342
     },
     {
       "id": "Pudhiya Mugam",
@@ -303,8 +280,8 @@ const DATA = {
       ],
       "singer_count": 9,
       "track_count": 7,
-      "x": -0.5084,
-      "y": -0.0324
+      "x": -0.5034,
+      "y": 0.0039
     },
     {
       "id": "Thiruda Thiruda",
@@ -339,8 +316,8 @@ const DATA = {
       ],
       "singer_count": 17,
       "track_count": 23,
-      "x": -0.1675,
-      "y": 0.0859
+      "x": -0.1619,
+      "y": 0.0662
     },
     {
       "id": "Uzhavan",
@@ -363,8 +340,8 @@ const DATA = {
       ],
       "singer_count": 7,
       "track_count": 6,
-      "x": -0.4423,
-      "y": 0.0827
+      "x": -0.4282,
+      "y": 0.0661
     },
     {
       "id": "Duet",
@@ -395,8 +372,8 @@ const DATA = {
       ],
       "singer_count": 14,
       "track_count": 24,
-      "x": -0.4409,
-      "y": 0.1663
+      "x": -0.4697,
+      "y": 0.0396
     },
     {
       "id": "Gangmaster",
@@ -419,8 +396,8 @@ const DATA = {
       ],
       "singer_count": 6,
       "track_count": 12,
-      "x": -0.371,
-      "y": 0.2272
+      "x": -0.3516,
+      "y": 0.2248
     },
     {
       "id": "Kaadhalan",
@@ -458,8 +435,8 @@ const DATA = {
       ],
       "singer_count": 20,
       "track_count": 27,
-      "x": -0.1658,
-      "y": 0.0345
+      "x": -0.1557,
+      "y": -0.0123
     },
     {
       "id": "Karuththamma",
@@ -488,8 +465,8 @@ const DATA = {
       ],
       "singer_count": 13,
       "track_count": 7,
-      "x": -0.4131,
-      "y": 0.1091
+      "x": -0.4142,
+      "y": 0.0973
     },
     {
       "id": "May Maadham",
@@ -524,8 +501,8 @@ const DATA = {
       ],
       "singer_count": 18,
       "track_count": 11,
-      "x": -0.2969,
-      "y": 0.1473
+      "x": -0.3376,
+      "y": 0.0844
     },
     {
       "id": "Pavithra",
@@ -546,8 +523,8 @@ const DATA = {
       ],
       "singer_count": 5,
       "track_count": 5,
-      "x": -0.474,
-      "y": 0.1376
+      "x": -0.4422,
+      "y": 0.1603
     },
     {
       "id": "Pudhiya Mannargal",
@@ -570,8 +547,8 @@ const DATA = {
       ],
       "singer_count": 7,
       "track_count": 5,
-      "x": -0.3626,
-      "y": 0.1637
+      "x": -0.358,
+      "y": 0.1391
     },
     {
       "id": "Super Police",
@@ -593,8 +570,8 @@ const DATA = {
       ],
       "singer_count": 6,
       "track_count": 5,
-      "x": -0.304,
-      "y": 0.2523
+      "x": -0.3819,
+      "y": 0.1727
     },
     {
       "id": "Vandicholai Chinraasu",
@@ -620,8 +597,8 @@ const DATA = {
       ],
       "singer_count": 9,
       "track_count": 11,
-      "x": -0.508,
-      "y": 0.0392
+      "x": -0.481,
+      "y": -0.0336
     },
     {
       "id": "Bombay",
@@ -672,8 +649,8 @@ const DATA = {
       ],
       "singer_count": 33,
       "track_count": 25,
-      "x": -0.1194,
-      "y": -0.0032
+      "x": -0.1196,
+      "y": 0.0013
     },
     {
       "id": "Indira",
@@ -702,8 +679,8 @@ const DATA = {
       ],
       "singer_count": 12,
       "track_count": 13,
-      "x": -0.285,
-      "y": 0.0138
+      "x": -0.2779,
+      "y": 0.0304
     },
     {
       "id": "Muthu",
@@ -732,8 +709,8 @@ const DATA = {
       ],
       "singer_count": 11,
       "track_count": 19,
-      "x": -0.2702,
-      "y": 0.0931
+      "x": -0.3124,
+      "y": 0.011
     },
     {
       "id": "Rangeela",
@@ -766,8 +743,8 @@ const DATA = {
       ],
       "singer_count": 15,
       "track_count": 22,
-      "x": -0.149,
-      "y": 0.0101
+      "x": -0.1476,
+      "y": 0.0255
     },
     {
       "id": "Anthimanthaarai",
@@ -788,8 +765,8 @@ const DATA = {
       ],
       "singer_count": 5,
       "track_count": 9,
-      "x": -0.4666,
-      "y": 0.2562
+      "x": -0.4287,
+      "y": 0.3073
     },
     {
       "id": "Indian",
@@ -816,8 +793,8 @@ const DATA = {
       ],
       "singer_count": 9,
       "track_count": 16,
-      "x": -0.4228,
-      "y": -0.0763
+      "x": -0.4056,
+      "y": -0.0865
     },
     {
       "id": "Kadhal Desam",
@@ -851,8 +828,8 @@ const DATA = {
       ],
       "singer_count": 16,
       "track_count": 18,
-      "x": -0.1057,
-      "y": 0.0397
+      "x": -0.0939,
+      "y": 0.0303
     },
     {
       "id": "Love Birds",
@@ -882,8 +859,8 @@ const DATA = {
       ],
       "singer_count": 12,
       "track_count": 15,
-      "x": -0.1449,
-      "y": 0.0664
+      "x": -0.1344,
+      "y": 0.05
     },
     {
       "id": "Mr. Romeo",
@@ -917,8 +894,8 @@ const DATA = {
       ],
       "singer_count": 17,
       "track_count": 12,
-      "x": -0.2682,
-      "y": -0.1188
+      "x": -0.2627,
+      "y": -0.0981
     },
     {
       "id": "Daud",
@@ -962,8 +939,8 @@ const DATA = {
       ],
       "singer_count": 26,
       "track_count": 23,
-      "x": -0.1304,
-      "y": 0.1647
+      "x": -0.11,
+      "y": 0.1412
     },
     {
       "id": "Iruvar",
@@ -990,8 +967,8 @@ const DATA = {
       ],
       "singer_count": 10,
       "track_count": 16,
-      "x": -0.3902,
-      "y": -0.0413
+      "x": -0.3133,
+      "y": 0.1031
     },
     {
       "id": "Minsara Kanavu",
@@ -1025,8 +1002,8 @@ const DATA = {
       ],
       "singer_count": 16,
       "track_count": 19,
-      "x": -0.2568,
-      "y": -0.0353
+      "x": -0.2561,
+      "y": -0.0236
     },
     {
       "id": "Ratchagan",
@@ -1062,8 +1039,8 @@ const DATA = {
       ],
       "singer_count": 19,
       "track_count": 18,
-      "x": -0.2254,
-      "y": -0.0756
+      "x": -0.2383,
+      "y": -0.053
     },
     {
       "id": "Doli Saja Ke Rakhna",
@@ -1086,8 +1063,8 @@ const DATA = {
       ],
       "singer_count": 7,
       "track_count": 8,
-      "x": -0.2098,
-      "y": -0.6255
+      "x": -0.1402,
+      "y": -0.5975
     },
     {
       "id": "Earth",
@@ -1109,8 +1086,8 @@ const DATA = {
       ],
       "singer_count": 6,
       "track_count": 9,
-      "x": -0.2164,
-      "y": -0.2063
+      "x": -0.2138,
+      "y": -0.1989
     },
     {
       "id": "Jeans",
@@ -1148,8 +1125,8 @@ const DATA = {
       ],
       "singer_count": 20,
       "track_count": 21,
-      "x": -0.0989,
-      "y": -0.0681
+      "x": -0.0979,
+      "y": -0.058
     },
     {
       "id": "Kabhi Na Kabhi",
@@ -1174,8 +1151,8 @@ const DATA = {
       ],
       "singer_count": 9,
       "track_count": 6,
-      "x": -0.0975,
-      "y": 0.1082
+      "x": -0.0876,
+      "y": 0.1001
     },
     {
       "id": "En Swasa Kaatre",
@@ -1198,8 +1175,8 @@ const DATA = {
       ],
       "singer_count": 7,
       "track_count": 6,
-      "x": -0.4319,
-      "y": 0.0199
+      "x": -0.2924,
+      "y": 0.2216
     },
     {
       "id": "Jodi",
@@ -1227,8 +1204,8 @@ const DATA = {
       ],
       "singer_count": 12,
       "track_count": 9,
-      "x": -0.271,
-      "y": 0.0452
+      "x": -0.2652,
+      "y": 0.0652
     },
     {
       "id": "Kadhalar Dhinam",
@@ -1263,8 +1240,8 @@ const DATA = {
       ],
       "singer_count": 17,
       "track_count": 20,
-      "x": -0.3341,
-      "y": -0.0774
+      "x": -0.3371,
+      "y": -0.0462
     },
     {
       "id": "Mudhalvan",
@@ -1292,8 +1269,8 @@ const DATA = {
       ],
       "singer_count": 11,
       "track_count": 12,
-      "x": -0.3089,
-      "y": -0.0472
+      "x": -0.3036,
+      "y": -0.0547
     },
     {
       "id": "Padayappa",
@@ -1317,8 +1294,8 @@ const DATA = {
       ],
       "singer_count": 7,
       "track_count": 12,
-      "x": -0.3463,
-      "y": -0.0014
+      "x": -0.236,
+      "y": 0.1929
     },
     {
       "id": "Sangamam",
@@ -1342,8 +1319,8 @@ const DATA = {
       ],
       "singer_count": 8,
       "track_count": 6,
-      "x": -0.3518,
-      "y": -0.1655
+      "x": -0.3181,
+      "y": -0.1779
     },
     {
       "id": "Taal",
@@ -1374,8 +1351,8 @@ const DATA = {
       ],
       "singer_count": 15,
       "track_count": 12,
-      "x": -0.0545,
-      "y": -0.1004
+      "x": -0.0619,
+      "y": -0.0953
     },
     {
       "id": "Taj Mahal",
@@ -1415,8 +1392,8 @@ const DATA = {
       ],
       "singer_count": 24,
       "track_count": 10,
-      "x": -0.3297,
-      "y": 0.0394
+      "x": -0.2673,
+      "y": 0.1215
     },
     {
       "id": "Thakshak",
@@ -1441,8 +1418,8 @@ const DATA = {
       ],
       "singer_count": 9,
       "track_count": 8,
-      "x": 0.0702,
-      "y": -0.191
+      "x": 0.0464,
+      "y": -0.2094
     },
     {
       "id": "Alai Payuthey",
@@ -1477,8 +1454,8 @@ const DATA = {
       ],
       "singer_count": 18,
       "track_count": 17,
-      "x": -0.1252,
-      "y": -0.0481
+      "x": -0.121,
+      "y": -0.0632
     },
     {
       "id": "Kandukondain Kandukondain",
@@ -1506,8 +1483,8 @@ const DATA = {
       ],
       "singer_count": 11,
       "track_count": 14,
-      "x": -0.3621,
-      "y": -0.1211
+      "x": -0.3497,
+      "y": -0.1273
     },
     {
       "id": "Pukar",
@@ -1533,8 +1510,8 @@ const DATA = {
       ],
       "singer_count": 10,
       "track_count": 7,
-      "x": -0.3246,
-      "y": -0.2122
+      "x": -0.3598,
+      "y": -0.1753
     },
     {
       "id": "Rhythm",
@@ -1558,8 +1535,8 @@ const DATA = {
       ],
       "singer_count": 8,
       "track_count": 10,
-      "x": -0.3057,
-      "y": -0.277
+      "x": -0.2945,
+      "y": -0.2681
     },
     {
       "id": "Thenali",
@@ -1584,8 +1561,8 @@ const DATA = {
       ],
       "singer_count": 9,
       "track_count": 6,
-      "x": -0.2859,
-      "y": -0.0837
+      "x": -0.2949,
+      "y": -0.0943
     },
     {
       "id": "One 2 Ka 4",
@@ -1609,8 +1586,8 @@ const DATA = {
       ],
       "singer_count": 8,
       "track_count": 8,
-      "x": -0.4299,
-      "y": -0.4527
+      "x": -0.4301,
+      "y": -0.4207
     },
     {
       "id": "Paarthale Paravasam",
@@ -1642,8 +1619,8 @@ const DATA = {
       ],
       "singer_count": 16,
       "track_count": 7,
-      "x": -0.3779,
-      "y": -0.2217
+      "x": -0.3435,
+      "y": -0.2372
     },
     {
       "id": "Alli Arjuna",
@@ -1668,8 +1645,8 @@ const DATA = {
       ],
       "singer_count": 9,
       "track_count": 5,
-      "x": -0.2408,
-      "y": -0.1369
+      "x": -0.2461,
+      "y": -0.1273
     },
     {
       "id": "Baba",
@@ -1694,8 +1671,8 @@ const DATA = {
       ],
       "singer_count": 9,
       "track_count": 8,
-      "x": -0.1873,
-      "y": -0.1239
+      "x": -0.192,
+      "y": -0.1177
     },
     {
       "id": "Kadhal Virus",
@@ -1722,8 +1699,8 @@ const DATA = {
       ],
       "singer_count": 11,
       "track_count": 6,
-      "x": -0.2386,
-      "y": -0.0113
+      "x": -0.2398,
+      "y": 0.0156
     },
     {
       "id": "Kannathil Muthamittal",
@@ -1751,8 +1728,8 @@ const DATA = {
       ],
       "singer_count": 12,
       "track_count": 7,
-      "x": -0.0696,
-      "y": 0.1414
+      "x": -0.0488,
+      "y": 0.1055
     },
     {
       "id": "Saathiya",
@@ -1783,8 +1760,8 @@ const DATA = {
       ],
       "singer_count": 15,
       "track_count": 9,
-      "x": 0.0065,
-      "y": -0.1582
+      "x": -0.0061,
+      "y": -0.1525
     },
     {
       "id": "Boys",
@@ -1819,8 +1796,8 @@ const DATA = {
       ],
       "singer_count": 17,
       "track_count": 22,
-      "x": 0.0022,
-      "y": -0.2735
+      "x": -0.0196,
+      "y": -0.2721
     },
     {
       "id": "Parasuram",
@@ -1843,8 +1820,8 @@ const DATA = {
       ],
       "singer_count": 7,
       "track_count": 5,
-      "x": -0.7523,
-      "y": -0.0072
+      "x": -0.6836,
+      "y": 0.2161
     },
     {
       "id": "Tehzeeb",
@@ -1868,8 +1845,8 @@ const DATA = {
       ],
       "singer_count": 8,
       "track_count": 8,
-      "x": 0.0056,
-      "y": -0.4196
+      "x": -0.1048,
+      "y": 0.2281
     },
     {
       "id": "Aaytha Ezhuthu",
@@ -1899,8 +1876,8 @@ const DATA = {
       ],
       "singer_count": 13,
       "track_count": 14,
-      "x": 0.0126,
-      "y": -0.0899
+      "x": 0.0093,
+      "y": -0.1249
     },
     {
       "id": "Kangalal Kaidhu Sei",
@@ -1929,8 +1906,8 @@ const DATA = {
       ],
       "singer_count": 13,
       "track_count": 5,
-      "x": -0.1044,
-      "y": -0.2438
+      "x": -0.0936,
+      "y": -0.2535
     },
     {
       "id": "Naani",
@@ -1955,8 +1932,8 @@ const DATA = {
       ],
       "singer_count": 9,
       "track_count": 7,
-      "x": -0.2579,
-      "y": -0.2188
+      "x": -0.2565,
+      "y": -0.2079
     },
     {
       "id": "New",
@@ -1986,8 +1963,8 @@ const DATA = {
       ],
       "singer_count": 14,
       "track_count": 7,
-      "x": -0.1225,
-      "y": -0.1158
+      "x": -0.1254,
+      "y": -0.1168
     },
     {
       "id": "Swades",
@@ -2017,8 +1994,8 @@ const DATA = {
       ],
       "singer_count": 14,
       "track_count": 8,
-      "x": -0.0836,
-      "y": 0.064
+      "x": -0.0854,
+      "y": -0.0239
     },
     {
       "id": "Udhaya",
@@ -2041,8 +2018,8 @@ const DATA = {
       ],
       "singer_count": 7,
       "track_count": 5,
-      "x": -0.1821,
-      "y": -0.1824
+      "x": -0.1955,
+      "y": -0.1641
     },
     {
       "id": "Yuva",
@@ -2069,8 +2046,8 @@ const DATA = {
       ],
       "singer_count": 11,
       "track_count": 6,
-      "x": 0.1651,
-      "y": -0.1826
+      "x": 0.1311,
+      "y": -0.1977
     },
     {
       "id": "Anbe Aaruyire",
@@ -2092,8 +2069,8 @@ const DATA = {
       ],
       "singer_count": 6,
       "track_count": 13,
-      "x": -0.0746,
-      "y": -0.0233
+      "x": -0.0682,
+      "y": -0.1232
     },
     {
       "id": "Water",
@@ -2116,8 +2093,8 @@ const DATA = {
       ],
       "singer_count": 6,
       "track_count": 27,
-      "x": -0.1781,
-      "y": -0.3808
+      "x": -0.1403,
+      "y": -0.3373
     },
     {
       "id": "Rang De Basanti",
@@ -2145,8 +2122,8 @@ const DATA = {
       ],
       "singer_count": 12,
       "track_count": 10,
-      "x": 0.0384,
-      "y": 0.1182
+      "x": 0.0458,
+      "y": 0.1064
     },
     {
       "id": "Guru",
@@ -2181,8 +2158,8 @@ const DATA = {
       ],
       "singer_count": 18,
       "track_count": 26,
-      "x": -0.0393,
-      "y": -0.0214
+      "x": -0.0441,
+      "y": -0.0294
     },
     {
       "id": "Ghajini",
@@ -2204,8 +2181,8 @@ const DATA = {
       ],
       "singer_count": 6,
       "track_count": 8,
-      "x": 0.1302,
-      "y": -0.4125
+      "x": -0.0568,
+      "y": 0.2685
     },
     {
       "id": "Jodhaa Akbar",
@@ -2240,8 +2217,8 @@ const DATA = {
       ],
       "singer_count": 17,
       "track_count": 22,
-      "x": 0.0366,
-      "y": -0.1111
+      "x": 0.029,
+      "y": -0.0817
     },
     {
       "id": "Sakkarakatti",
@@ -2269,8 +2246,8 @@ const DATA = {
       ],
       "singer_count": 12,
       "track_count": 6,
-      "x": 0.2172,
-      "y": -0.0708
+      "x": 0.1943,
+      "y": -0.1485
     },
     {
       "id": "Yuvvraaj",
@@ -2305,8 +2282,8 @@ const DATA = {
       ],
       "singer_count": 19,
       "track_count": 9,
-      "x": 0.0874,
-      "y": -0.0961
+      "x": 0.0801,
+      "y": -0.0669
     },
     {
       "id": "Blue",
@@ -2345,8 +2322,8 @@ const DATA = {
       ],
       "singer_count": 22,
       "track_count": 18,
-      "x": 0.1099,
-      "y": -0.2078
+      "x": 0.0728,
+      "y": -0.1822
     },
     {
       "id": "The Fakir of Venice",
@@ -2365,8 +2342,8 @@ const DATA = {
       ],
       "singer_count": 3,
       "track_count": 2,
-      "x": 0.2579,
-      "y": 0.2053
+      "x": 0.3017,
+      "y": -0.1436
     },
     {
       "id": "Enthiran",
@@ -2399,8 +2376,8 @@ const DATA = {
       ],
       "singer_count": 15,
       "track_count": 21,
-      "x": 0.0194,
-      "y": 0.0059
+      "x": 0.0104,
+      "y": 0.031
     },
     {
       "id": "Raavan",
@@ -2436,8 +2413,8 @@ const DATA = {
       ],
       "singer_count": 20,
       "track_count": 10,
-      "x": 0.1412,
-      "y": -0.1275
+      "x": 0.124,
+      "y": -0.0672
     },
     {
       "id": "Raavanan",
@@ -2480,8 +2457,8 @@ const DATA = {
       ],
       "singer_count": 26,
       "track_count": 17,
-      "x": 0.1099,
-      "y": -0.0753
+      "x": 0.0992,
+      "y": -0.1006
     },
     {
       "id": "Vinnaithaandi Varuvaayaa",
@@ -2508,8 +2485,8 @@ const DATA = {
       ],
       "singer_count": 11,
       "track_count": 9,
-      "x": 0.1796,
-      "y": -0.0361
+      "x": 0.165,
+      "y": -0.05
     },
     {
       "id": "Ye Maaya Chesave",
@@ -2537,8 +2514,8 @@ const DATA = {
       ],
       "singer_count": 12,
       "track_count": 10,
-      "x": 0.2281,
-      "y": -0.2045
+      "x": 0.1889,
+      "y": -0.2101
     },
     {
       "id": "Ekk Deewana Tha",
@@ -2570,8 +2547,8 @@ const DATA = {
       ],
       "singer_count": 16,
       "track_count": 12,
-      "x": 0.2838,
-      "y": -0.0089
+      "x": 0.2335,
+      "y": 0.0908
     },
     {
       "id": "Jab Tak Hai Jaan",
@@ -2597,8 +2574,8 @@ const DATA = {
       ],
       "singer_count": 10,
       "track_count": 10,
-      "x": 0.0366,
-      "y": 0.347
+      "x": 0.1111,
+      "y": 0.3598
     },
     {
       "id": "Maryan",
@@ -2626,8 +2603,8 @@ const DATA = {
       ],
       "singer_count": 12,
       "track_count": 7,
-      "x": 0.2782,
-      "y": -0.0517
+      "x": 0.2584,
+      "y": -0.0594
     },
     {
       "id": "Raanjhanaa",
@@ -2666,8 +2643,31 @@ const DATA = {
       ],
       "singer_count": 22,
       "track_count": 18,
-      "x": 0.0784,
-      "y": -0.0387
+      "x": 0.0792,
+      "y": -0.0203
+    },
+    {
+      "id": "Kadhalikka Neramillai",
+      "year": 2014,
+      "director": "Kiruthiga Udhayanidhi",
+      "hero": "",
+      "heroine": "",
+      "primary_language": "Tamil",
+      "languages": [
+        "Tamil"
+      ],
+      "singers": [
+        "K. J. Yesudas",
+        "L. R. Eswari",
+        "M. S. Raju",
+        "P. B. Sreenivas",
+        "P. Susheela",
+        "Sirkazhi Govindarajan"
+      ],
+      "singer_count": 6,
+      "track_count": 8,
+      "x": -1.0,
+      "y": -0.068
     },
     {
       "id": "Kochadaiiyaan",
@@ -2706,8 +2706,8 @@ const DATA = {
       ],
       "singer_count": 21,
       "track_count": 27,
-      "x": 0.0217,
-      "y": 0.0334
+      "x": 0.0298,
+      "y": 0.0161
     },
     {
       "id": "Lekar Hum Deewana Dil",
@@ -2732,8 +2732,8 @@ const DATA = {
       ],
       "singer_count": 9,
       "track_count": 6,
-      "x": 0.3454,
-      "y": -0.0464
+      "x": 0.3231,
+      "y": -0.1054
     },
     {
       "id": "Lingaa",
@@ -2761,8 +2761,8 @@ const DATA = {
       ],
       "singer_count": 10,
       "track_count": 15,
-      "x": -0.0105,
-      "y": 0.1266
+      "x": 0.0024,
+      "y": 0.1173
     },
     {
       "id": "O Kadhal Kanmani",
@@ -2793,8 +2793,8 @@ const DATA = {
       ],
       "singer_count": 14,
       "track_count": 18,
-      "x": 0.1015,
-      "y": 0.1207
+      "x": 0.101,
+      "y": 0.1132
     },
     {
       "id": "Achcham Yenbadhu Madamaiyada",
@@ -2819,8 +2819,8 @@ const DATA = {
       ],
       "singer_count": 9,
       "track_count": 5,
-      "x": 0.5888,
-      "y": 0.182
+      "x": 0.5781,
+      "y": 0.1434
     },
     {
       "id": "Mohenjo Daro",
@@ -2847,8 +2847,8 @@ const DATA = {
       ],
       "singer_count": 11,
       "track_count": 8,
-      "x": 0.2997,
-      "y": 0.2306
+      "x": 0.3256,
+      "y": 0.1379
     },
     {
       "id": "Sahasam Swasaga Sagipo",
@@ -2872,8 +2872,8 @@ const DATA = {
       ],
       "singer_count": 8,
       "track_count": 5,
-      "x": 0.4824,
-      "y": 0.062
+      "x": 0.4641,
+      "y": 0.0003
     },
     {
       "id": "Beyond the Clouds",
@@ -2896,8 +2896,8 @@ const DATA = {
       ],
       "singer_count": 7,
       "track_count": 15,
-      "x": 0.3635,
-      "y": 0.2004
+      "x": 0.3663,
+      "y": 0.1172
     },
     {
       "id": "Kaatru Veliyidai",
@@ -2931,8 +2931,8 @@ const DATA = {
       ],
       "singer_count": 17,
       "track_count": 12,
-      "x": 0.2352,
-      "y": 0.1301
+      "x": 0.2615,
+      "y": 0.0557
     },
     {
       "id": "Mersal",
@@ -2960,8 +2960,8 @@ const DATA = {
       ],
       "singer_count": 12,
       "track_count": 4,
-      "x": 0.265,
-      "y": 0.0741
+      "x": 0.2815,
+      "y": 0.0138
     },
     {
       "id": "Mom",
@@ -2989,8 +2989,8 @@ const DATA = {
       ],
       "singer_count": 12,
       "track_count": 7,
-      "x": 0.2547,
-      "y": -0.0889
+      "x": 0.2163,
+      "y": -0.0393
     },
     {
       "id": "Chekka Chivantha Vaanam",
@@ -3023,8 +3023,8 @@ const DATA = {
       ],
       "singer_count": 16,
       "track_count": 14,
-      "x": 0.2259,
-      "y": -0.121
+      "x": 0.2095,
+      "y": -0.08
     },
     {
       "id": "Sarkar",
@@ -3050,8 +3050,8 @@ const DATA = {
       ],
       "singer_count": 10,
       "track_count": 5,
-      "x": 0.3193,
-      "y": 0.0168
+      "x": 0.3105,
+      "y": -0.0371
     },
     {
       "id": "99 Songs",
@@ -3097,8 +3097,8 @@ const DATA = {
       ],
       "singer_count": 28,
       "track_count": 42,
-      "x": 0.2009,
-      "y": 0.0572
+      "x": 0.1836,
+      "y": 0.0667
     },
     {
       "id": "Bigil",
@@ -3126,8 +3126,8 @@ const DATA = {
       ],
       "singer_count": 11,
       "track_count": 11,
-      "x": 0.2136,
-      "y": 0.2229
+      "x": 0.2226,
+      "y": 0.1934
     },
     {
       "id": "Blinded by the Light",
@@ -3150,8 +3150,8 @@ const DATA = {
       ],
       "singer_count": 7,
       "track_count": 24,
-      "x": 0.4087,
-      "y": 0.0741
+      "x": 0.3066,
+      "y": -0.2327
     },
     {
       "id": "Sarvam Thaala Mayam",
@@ -3176,8 +3176,8 @@ const DATA = {
       ],
       "singer_count": 9,
       "track_count": 6,
-      "x": 0.1729,
-      "y": 0.4062
+      "x": 0.1895,
+      "y": 0.3641
     },
     {
       "id": "Dil Bechara",
@@ -3207,8 +3207,8 @@ const DATA = {
       ],
       "singer_count": 14,
       "track_count": 10,
-      "x": 0.199,
-      "y": 0.1055
+      "x": 0.2109,
+      "y": 0.0787
     },
     {
       "id": "Shikara",
@@ -3230,8 +3230,8 @@ const DATA = {
       ],
       "singer_count": 6,
       "track_count": 7,
-      "x": 0.5419,
-      "y": 0.3304
+      "x": 0.5377,
+      "y": 0.2878
     },
     {
       "id": "Atrangi Re",
@@ -3261,8 +3261,8 @@ const DATA = {
       ],
       "singer_count": 13,
       "track_count": 14,
-      "x": 0.0882,
-      "y": 0.1659
+      "x": 0.0832,
+      "y": 0.1876
     },
     {
       "id": "Mimi",
@@ -3286,8 +3286,8 @@ const DATA = {
       ],
       "singer_count": 8,
       "track_count": 7,
-      "x": 0.3052,
-      "y": 0.0903
+      "x": 0.2835,
+      "y": 0.107
     },
     {
       "id": "Cobra",
@@ -3323,8 +3323,8 @@ const DATA = {
       ],
       "singer_count": 17,
       "track_count": 20,
-      "x": 0.337,
-      "y": 0.0638
+      "x": 0.3266,
+      "y": 0.0231
     },
     {
       "id": "Heropanti 2",
@@ -3353,8 +3353,8 @@ const DATA = {
       ],
       "singer_count": 13,
       "track_count": 6,
-      "x": 0.5889,
-      "y": -0.265
+      "x": 0.6161,
+      "y": -0.1591
     },
     {
       "id": "Iravin Nizhal",
@@ -3381,8 +3381,8 @@ const DATA = {
       ],
       "singer_count": 11,
       "track_count": 6,
-      "x": 0.2728,
-      "y": 0.1496
+      "x": 0.265,
+      "y": 0.1462
     },
     {
       "id": "Malayankunju",
@@ -3401,8 +3401,8 @@ const DATA = {
       ],
       "singer_count": 3,
       "track_count": 3,
-      "x": 0.5159,
-      "y": 0.5633
+      "x": 0.51,
+      "y": 0.5209
     },
     {
       "id": "Mili",
@@ -3423,8 +3423,8 @@ const DATA = {
       ],
       "singer_count": 5,
       "track_count": 5,
-      "x": 0.2879,
-      "y": 0.2832
+      "x": 0.3019,
+      "y": 0.2228
     },
     {
       "id": "Vendhu Thanindhathu Kaadu",
@@ -3447,8 +3447,8 @@ const DATA = {
       ],
       "singer_count": 7,
       "track_count": 6,
-      "x": 0.3069,
-      "y": -0.0909
+      "x": 0.2742,
+      "y": -0.093
     },
     {
       "id": "Gandhi Godse Ek Yudh",
@@ -3466,12 +3466,277 @@ const DATA = {
       ],
       "singer_count": 2,
       "track_count": 2,
-      "x": 0.6179,
-      "y": -0.1704
+      "x": 0.5885,
+      "y": -0.2075
+    },
+    {
+      "id": "Maamannan",
+      "year": 2023,
+      "director": "Mari Selvaraj",
+      "hero": "| cinematography = Theni Eswar",
+      "heroine": "",
+      "primary_language": "Tamil",
+      "languages": [
+        "Tamil"
+      ],
+      "singers": [
+        "A. R. Ameen",
+        "A. R. Rahman",
+        "Aparna Harikumar",
+        "Arivu",
+        "Deepthi Suresh",
+        "Deva (composer)",
+        "Kalpana Raghavendar",
+        "Pavithra Chari",
+        "Rakshita Suresh",
+        "Shakthisree Gopalan",
+        "Sireesha Bhaguvatula",
+        "Vadivelu",
+        "Vijay Yesudas"
+      ],
+      "singer_count": 13,
+      "track_count": 8,
+      "x": 0.2596,
+      "y": 0.2085
+    },
+    {
+      "id": "Pathu Thala",
+      "year": 2023,
+      "director": "Obeli N. Krishna",
+      "hero": "Silambarasan",
+      "heroine": "Gautham Karthik",
+      "primary_language": "Tamil",
+      "languages": [
+        "Tamil"
+      ],
+      "singers": [
+        "A. R. Ameen",
+        "A. R. Rahman",
+        "Deepthi Suresh",
+        "Nivas",
+        "Sathyaprakash",
+        "Shakthisree Gopalan",
+        "Shuba",
+        "Sid Sriram",
+        "Sreekanth Hariharan",
+        "Yogi Sekar"
+      ],
+      "singer_count": 10,
+      "track_count": 5,
+      "x": 0.3209,
+      "y": 0.1782
+    },
+    {
+      "id": "Pippa",
+      "year": 2023,
+      "director": "Raja Krishna Menon",
+      "hero": "Ishaan Khatter",
+      "heroine": "Mrunal Thakur",
+      "primary_language": "Tamil",
+      "languages": [
+        "Tamil"
+      ],
+      "singers": [
+        "A. R. Rahman",
+        "Arijit Singh",
+        "Dilasa Chowdhury",
+        "Jubin Nautiyal",
+        "Krystal Garib",
+        "MC Heam",
+        "Nisa Shetty",
+        "Pijush Das",
+        "Pooja Tiwari",
+        "Rahul Dutta",
+        "Rakshita Suresh",
+        "Sarthak Kalyani",
+        "Shalini Mukherjee",
+        "Shilpa Rao",
+        "Shrayee Paul",
+        "Tirtha Bhattacharjee",
+        "Vishal Mishra (composer)"
+      ],
+      "singer_count": 17,
+      "track_count": 7,
+      "x": 0.3843,
+      "y": 0.0293
+    },
+    {
+      "id": "Ayalaan",
+      "year": 2024,
+      "director": "R. Ravikumar",
+      "hero": "{{Plainlist| * Sivakarthikeyan * Rakul Preet Singh * Siddharth * Sharad Kelkar * Isha Koppikar",
+      "heroine": "",
+      "primary_language": "Tamil",
+      "languages": [
+        "Tamil"
+      ],
+      "singers": [
+        "A. R. Ameen",
+        "A. R. Rahman",
+        "Hriday Gattani",
+        "Mohit Chauhan",
+        "Nakul Abhyankar",
+        "Naresh Iyer",
+        "Sanjith Hegde",
+        "Shashaa Tirupati"
+      ],
+      "singer_count": 8,
+      "track_count": 5,
+      "x": 0.311,
+      "y": 0.0771
+    },
+    {
+      "id": "Maidaan",
+      "year": 2024,
+      "director": "Amit Sharma",
+      "hero": "{{plainlist| *Ajay Devgn *Priyamani *Gajraj Rao",
+      "heroine": "",
+      "primary_language": "Tamil",
+      "languages": [
+        "Tamil"
+      ],
+      "singers": [
+        "A.R. Rahman",
+        "Hiral Viradia",
+        "Javed Ali",
+        "MC Heam",
+        "Nakul Abhyankar",
+        "Richa Sharma",
+        "Vaishali Samant"
+      ],
+      "singer_count": 7,
+      "track_count": 5,
+      "x": 0.5166,
+      "y": 0.0156
+    },
+    {
+      "id": "Raayan",
+      "year": 2024,
+      "director": "Dhanush",
+      "hero": "",
+      "heroine": "",
+      "primary_language": "Tamil",
+      "languages": [
+        "Hindi",
+        "Tamil",
+        "Telugu"
+      ],
+      "singers": [
+        "A. R. Rahman",
+        "Antara Nandy",
+        "Arivu",
+        "Dhanush",
+        "Dinesh Kanagaratnam",
+        "Ganavya Doraisamy",
+        "Haripriya",
+        "Hemachandra",
+        "Nakash Aziz",
+        "Nanku",
+        "Rakendu Mouli",
+        "Runa Rizvi",
+        "Santhosh Narayanan",
+        "Shweta Mohan",
+        "Sukhwinder Singh",
+        "Vijay Prakash"
+      ],
+      "singer_count": 16,
+      "track_count": 15,
+      "x": 0.231,
+      "y": -0.1334
+    },
+    {
+      "id": "Chhaava",
+      "year": 2025,
+      "director": "Laxman Utekar",
+      "hero": "{{plainlist| *Vicky Kaushal *Akshaye Khanna *Rashmika Mandanna",
+      "heroine": "",
+      "primary_language": "Tamil",
+      "languages": [
+        "Tamil"
+      ],
+      "singers": [
+        "A. R. Rahman",
+        "Arijit Singh",
+        "Hiral Viradia",
+        "Jonita Gandhi",
+        "MC Heam",
+        "Mahsa Ahmadi",
+        "Nakul Abhyankar",
+        "Nooshin Ghayoor",
+        "Seeta Qasemi",
+        "Vaishali Samant"
+      ],
+      "singer_count": 10,
+      "track_count": 7,
+      "x": 0.3552,
+      "y": 0.0635
+    },
+    {
+      "id": "Tere Ishk Mein",
+      "year": 2025,
+      "director": "Aanand L. Rai",
+      "hero": "| music = A. R. Rahman",
+      "heroine": "",
+      "primary_language": "Tamil",
+      "languages": [
+        "Hindi",
+        "Tamil",
+        "Telugu"
+      ],
+      "singers": [
+        "A. R. Ameen",
+        "A. R. Rahman",
+        "Adithya RK",
+        "Amina Rafiq",
+        "Anurag Kulkarni",
+        "Arijit Singh",
+        "Darshan Raval",
+        "Faheem Abdullah",
+        "Guru Priya",
+        "Haricharan",
+        "Jonita Gandhi",
+        "Khatija Rahman",
+        "Nitesh Aher",
+        "Palakkad Sreeram",
+        "Sanjana Kalmanje",
+        "Sarath Santhosh",
+        "Sarthak Kalyani",
+        "Shankar Mahadevan",
+        "Shilpa Rao",
+        "Soubhagya Mohapatra",
+        "Sukhwinder Singh",
+        "Suryansh"
+      ],
+      "singer_count": 22,
+      "track_count": 27,
+      "x": 0.1444,
+      "y": 0.012
+    },
+    {
+      "id": "Ufff Yeh Siyapaa",
+      "year": 2025,
+      "director": "G. Ashok",
+      "hero": "| cinematography = Nuthan Nagaraj",
+      "heroine": "",
+      "primary_language": "Tamil",
+      "languages": [
+        "Tamil"
+      ],
+      "singers": [
+        "A. R. Rahman",
+        "Benny Dayal",
+        "Mallika Barot",
+        "Nomi Gene",
+        "Sunidhi Chauhan"
+      ],
+      "singer_count": 5,
+      "track_count": 5,
+      "x": 0.3149,
+      "y": -0.1835
     },
     {
       "id": "Gandhi Talks",
-      "year": 2023,
+      "year": 2026,
       "director": "Kishor Pandurang Belekar",
       "hero": "{{plainlist| *Vijay Sethupathi *Arvind Swamy *Aditi Rao Hydari *Siddharth Jadhav",
       "heroine": "",
@@ -3517,273 +3782,8 @@ const DATA = {
       ],
       "singer_count": 30,
       "track_count": 25,
-      "x": 0.5045,
-      "y": 0.0259
-    },
-    {
-      "id": "Maamannan",
-      "year": 2023,
-      "director": "Mari Selvaraj",
-      "hero": "| cinematography = Theni Eswar",
-      "heroine": "",
-      "primary_language": "Tamil",
-      "languages": [
-        "Tamil"
-      ],
-      "singers": [
-        "A. R. Ameen",
-        "A. R. Rahman",
-        "Aparna Harikumar",
-        "Arivu",
-        "Deepthi Suresh",
-        "Deva (composer)",
-        "Kalpana Raghavendar",
-        "Pavithra Chari",
-        "Rakshita Suresh",
-        "Shakthisree Gopalan",
-        "Sireesha Bhaguvatula",
-        "Vadivelu",
-        "Vijay Yesudas"
-      ],
-      "singer_count": 13,
-      "track_count": 8,
-      "x": 0.2438,
-      "y": 0.2606
-    },
-    {
-      "id": "Pathu Thala",
-      "year": 2023,
-      "director": "Obeli N. Krishna",
-      "hero": "Silambarasan",
-      "heroine": "Gautham Karthik",
-      "primary_language": "Tamil",
-      "languages": [
-        "Tamil"
-      ],
-      "singers": [
-        "A. R. Ameen",
-        "A. R. Rahman",
-        "Deepthi Suresh",
-        "Nivas",
-        "Sathyaprakash",
-        "Shakthisree Gopalan",
-        "Shuba",
-        "Sid Sriram",
-        "Sreekanth Hariharan",
-        "Yogi Sekar"
-      ],
-      "singer_count": 10,
-      "track_count": 5,
-      "x": 0.323,
-      "y": 0.1992
-    },
-    {
-      "id": "Pippa",
-      "year": 2023,
-      "director": "Raja Krishna Menon",
-      "hero": "Ishaan Khatter",
-      "heroine": "Mrunal Thakur",
-      "primary_language": "Tamil",
-      "languages": [
-        "Tamil"
-      ],
-      "singers": [
-        "A. R. Rahman",
-        "Arijit Singh",
-        "Dilasa Chowdhury",
-        "Jubin Nautiyal",
-        "Krystal Garib",
-        "MC Heam",
-        "Nisa Shetty",
-        "Pijush Das",
-        "Pooja Tiwari",
-        "Rahul Dutta",
-        "Rakshita Suresh",
-        "Sarthak Kalyani",
-        "Shalini Mukherjee",
-        "Shilpa Rao",
-        "Shrayee Paul",
-        "Tirtha Bhattacharjee",
-        "Vishal Mishra (composer)"
-      ],
-      "singer_count": 17,
-      "track_count": 7,
-      "x": 0.3605,
-      "y": 0.1494
-    },
-    {
-      "id": "Ayalaan",
-      "year": 2024,
-      "director": "R. Ravikumar",
-      "hero": "{{Plainlist| * Sivakarthikeyan * Rakul Preet Singh * Siddharth * Sharad Kelkar * Isha Koppikar",
-      "heroine": "",
-      "primary_language": "Tamil",
-      "languages": [
-        "Tamil"
-      ],
-      "singers": [
-        "A. R. Ameen",
-        "A. R. Rahman",
-        "Hriday Gattani",
-        "Mohit Chauhan",
-        "Nakul Abhyankar",
-        "Naresh Iyer",
-        "Sanjith Hegde",
-        "Shashaa Tirupati"
-      ],
-      "singer_count": 8,
-      "track_count": 5,
-      "x": 0.3057,
-      "y": 0.1329
-    },
-    {
-      "id": "Maidaan",
-      "year": 2024,
-      "director": "Amit Sharma",
-      "hero": "{{plainlist| *Ajay Devgn *Priyamani *Gajraj Rao",
-      "heroine": "",
-      "primary_language": "Tamil",
-      "languages": [
-        "Tamil"
-      ],
-      "singers": [
-        "A.R. Rahman",
-        "Hiral Viradia",
-        "Javed Ali",
-        "MC Heam",
-        "Nakul Abhyankar",
-        "Richa Sharma",
-        "Vaishali Samant"
-      ],
-      "singer_count": 7,
-      "track_count": 5,
-      "x": 0.3732,
-      "y": -0.3598
-    },
-    {
-      "id": "Raayan",
-      "year": 2024,
-      "director": "Dhanush",
-      "hero": "",
-      "heroine": "",
-      "primary_language": "Tamil",
-      "languages": [
-        "Hindi",
-        "Tamil",
-        "Telugu"
-      ],
-      "singers": [
-        "A. R. Rahman",
-        "Antara Nandy",
-        "Arivu",
-        "Dhanush",
-        "Dinesh Kanagaratnam",
-        "Ganavya Doraisamy",
-        "Haripriya",
-        "Hemachandra",
-        "Nakash Aziz",
-        "Nanku",
-        "Rakendu Mouli",
-        "Runa Rizvi",
-        "Santhosh Narayanan",
-        "Shweta Mohan",
-        "Sukhwinder Singh",
-        "Vijay Prakash"
-      ],
-      "singer_count": 16,
-      "track_count": 15,
-      "x": 0.2636,
-      "y": -0.1417
-    },
-    {
-      "id": "Chhaava",
-      "year": 2025,
-      "director": "Laxman Utekar",
-      "hero": "{{plainlist| *Vicky Kaushal *Akshaye Khanna *Rashmika Mandanna",
-      "heroine": "",
-      "primary_language": "Tamil",
-      "languages": [
-        "Tamil"
-      ],
-      "singers": [
-        "A. R. Rahman",
-        "Arijit Singh",
-        "Hiral Viradia",
-        "Jonita Gandhi",
-        "MC Heam",
-        "Mahsa Ahmadi",
-        "Nakul Abhyankar",
-        "Nooshin Ghayoor",
-        "Seeta Qasemi",
-        "Vaishali Samant"
-      ],
-      "singer_count": 10,
-      "track_count": 7,
-      "x": 0.3716,
-      "y": 0.0147
-    },
-    {
-      "id": "Tere Ishk Mein",
-      "year": 2025,
-      "director": "Aanand L. Rai",
-      "hero": "| music = A. R. Rahman",
-      "heroine": "",
-      "primary_language": "Tamil",
-      "languages": [
-        "Hindi",
-        "Tamil",
-        "Telugu"
-      ],
-      "singers": [
-        "A. R. Ameen",
-        "A. R. Rahman",
-        "Adithya RK",
-        "Amina Rafiq",
-        "Anurag Kulkarni",
-        "Arijit Singh",
-        "Darshan Raval",
-        "Faheem Abdullah",
-        "Guru Priya",
-        "Haricharan",
-        "Jonita Gandhi",
-        "Khatija Rahman",
-        "Nitesh Aher",
-        "Palakkad Sreeram",
-        "Sanjana Kalmanje",
-        "Sarath Santhosh",
-        "Sarthak Kalyani",
-        "Shankar Mahadevan",
-        "Shilpa Rao",
-        "Soubhagya Mohapatra",
-        "Sukhwinder Singh",
-        "Suryansh"
-      ],
-      "singer_count": 22,
-      "track_count": 27,
-      "x": 0.1522,
-      "y": 0.0235
-    },
-    {
-      "id": "Ufff Yeh Siyapaa",
-      "year": 2025,
-      "director": "G. Ashok",
-      "hero": "| cinematography = Nuthan Nagaraj",
-      "heroine": "",
-      "primary_language": "Tamil",
-      "languages": [
-        "Tamil"
-      ],
-      "singers": [
-        "A. R. Rahman",
-        "Benny Dayal",
-        "Mallika Barot",
-        "Nomi Gene",
-        "Sunidhi Chauhan"
-      ],
-      "singer_count": 5,
-      "track_count": 5,
-      "x": 0.1287,
-      "y": 0.2679
+      "x": 0.474,
+      "y": 0.1046
     },
     {
       "id": "127 Hours: Music from the Motion Picture",
@@ -3807,8 +3807,8 @@ const DATA = {
       ],
       "singer_count": 8,
       "track_count": 14,
-      "x": 0.1632,
-      "y": 0.3354
+      "x": 0.2073,
+      "y": 0.2721
     },
     {
       "id": "2.0 (Original Motion Picture Soundtrack)",
@@ -3838,8 +3838,8 @@ const DATA = {
       ],
       "singer_count": 12,
       "track_count": 9,
-      "x": 0.4619,
-      "y": -0.0804
+      "x": 0.4452,
+      "y": -0.0748
     },
     {
       "id": "24: Original Motion Picture Soundtrack",
@@ -3874,8 +3874,8 @@ const DATA = {
       ],
       "singer_count": 17,
       "track_count": 17,
-      "x": 0.4361,
-      "y": 0.1548
+      "x": 0.4166,
+      "y": 0.1379
     },
     {
       "id": "Ada... A Way of Life",
@@ -3903,8 +3903,8 @@ const DATA = {
       ],
       "singer_count": 12,
       "track_count": 10,
-      "x": -0.0134,
-      "y": -0.052
+      "x": -0.0137,
+      "y": -0.0555
     },
     {
       "id": "Azhagiya Tamil Magan",
@@ -3931,8 +3931,8 @@ const DATA = {
       ],
       "singer_count": 11,
       "track_count": 6,
-      "x": 0.1508,
-      "y": 0.2008
+      "x": 0.1677,
+      "y": 0.1678
     },
     {
       "id": "Delhi-6",
@@ -3968,8 +3968,8 @@ const DATA = {
       ],
       "singer_count": 20,
       "track_count": 10,
-      "x": 0.19,
-      "y": -0.101
+      "x": 0.1825,
+      "y": -0.1071
     },
     {
       "id": "Dil Ne Jise Apna Kaha",
@@ -3999,8 +3999,8 @@ const DATA = {
       ],
       "singer_count": 14,
       "track_count": 8,
-      "x": -0.0906,
-      "y": -0.3028
+      "x": -0.1327,
+      "y": -0.2604
     },
     {
       "id": "Dil Se...",
@@ -4043,8 +4043,8 @@ const DATA = {
       ],
       "singer_count": 23,
       "track_count": 44,
-      "x": -0.0675,
-      "y": 0.0268
+      "x": -0.0653,
+      "y": 0.0623
     },
     {
       "id": "Elizabeth: The Golden Age: Music from the Motion Picture",
@@ -4062,8 +4062,8 @@ const DATA = {
       ],
       "singer_count": 2,
       "track_count": 20,
-      "x": 0.11,
-      "y": 0.3342
+      "x": 0.1603,
+      "y": 0.2761
     },
     {
       "id": "Enakku 20 Unakku 18 / Nee Manasu Naaku Telusu",
@@ -4100,8 +4100,8 @@ const DATA = {
       ],
       "singer_count": 21,
       "track_count": 24,
-      "x": -0.0784,
-      "y": -0.1416
+      "x": -0.0636,
+      "y": 0.0158
     },
     {
       "id": "Highway",
@@ -4125,8 +4125,8 @@ const DATA = {
       ],
       "singer_count": 8,
       "track_count": 9,
-      "x": 0.1896,
-      "y": 0.2751
+      "x": 0.3593,
+      "y": -0.0724
     },
     {
       "id": "I",
@@ -4162,8 +4162,8 @@ const DATA = {
       ],
       "singer_count": 18,
       "track_count": 21,
-      "x": 0.3884,
-      "y": -0.0485
+      "x": 0.3694,
+      "y": -0.0309
     },
     {
       "id": "Jaane Tu... Ya Jaane Na",
@@ -4198,8 +4198,8 @@ const DATA = {
       ],
       "singer_count": 19,
       "track_count": 8,
-      "x": 0.1295,
-      "y": -0.0222
+      "x": 0.1334,
+      "y": -0.1137
     },
     {
       "id": "Kaaviya Thalaivan",
@@ -4230,8 +4230,8 @@ const DATA = {
       ],
       "singer_count": 13,
       "track_count": 21,
-      "x": -0.0429,
-      "y": 0.2573
+      "x": -0.0118,
+      "y": 0.2456
     },
     {
       "id": "Kadal",
@@ -4260,8 +4260,8 @@ const DATA = {
       ],
       "singer_count": 12,
       "track_count": 14,
-      "x": 0.1665,
-      "y": 0.1604
+      "x": 0.1804,
+      "y": 0.1394
     },
     {
       "id": "Kisna: The Warrior Poet",
@@ -4294,8 +4294,8 @@ const DATA = {
       ],
       "singer_count": 17,
       "track_count": 16,
-      "x": -0.0392,
-      "y": -0.2261
+      "x": -0.0669,
+      "y": -0.1917
     },
     {
       "id": "Puli{{efn|The soundtrack album was released under the title ''Komaram Puli'' (refer album cover), despite the film's title being changed to ''Puli''.",
@@ -4325,8 +4325,8 @@ const DATA = {
       ],
       "singer_count": 14,
       "track_count": 6,
-      "x": 0.0721,
-      "y": 0.0742
+      "x": 0.0768,
+      "y": 0.069
     },
     {
       "id": "Lagaan",
@@ -4358,8 +4358,8 @@ const DATA = {
       ],
       "singer_count": 16,
       "track_count": 8,
-      "x": -0.0288,
-      "y": -0.1221
+      "x": -0.0326,
+      "y": -0.0913
     },
     {
       "id": "Lakeer - Forbidden Lines",
@@ -4387,8 +4387,8 @@ const DATA = {
       ],
       "singer_count": 12,
       "track_count": 6,
-      "x": -0.1254,
-      "y": -0.2729
+      "x": -0.1361,
+      "y": -0.2205
     },
     {
       "id": "Mangal Pandey: The Rising",
@@ -4417,8 +4417,8 @@ const DATA = {
       ],
       "singer_count": 13,
       "track_count": 8,
-      "x": 0.0828,
-      "y": -0.1481
+      "x": 0.0594,
+      "y": -0.136
     },
     {
       "id": "Meenaxi: A Tale of Three Cities",
@@ -4442,8 +4442,8 @@ const DATA = {
       ],
       "singer_count": 8,
       "track_count": 8,
-      "x": -0.0349,
-      "y": -0.3762
+      "x": -0.1616,
+      "y": 0.139
     },
     {
       "id": "Million Dollar Arm (Original Motion Picture Soundtrack)",
@@ -4466,8 +4466,8 @@ const DATA = {
       ],
       "singer_count": 7,
       "track_count": 14,
-      "x": -0.0369,
-      "y": 0.1667
+      "x": -0.0232,
+      "y": 0.1562
     },
     {
       "id": "Muhammad: The Messenger of God (Original Motion Picture Soundtrack)",
@@ -4494,8 +4494,8 @@ const DATA = {
       ],
       "singer_count": 11,
       "track_count": 20,
-      "x": 0.3738,
-      "y": -0.1031
+      "x": 0.2694,
+      "y": -0.2178
     },
     {
       "id": "Nayak: The Real Hero",
@@ -4523,8 +4523,8 @@ const DATA = {
       ],
       "singer_count": 12,
       "track_count": 7,
-      "x": -0.183,
-      "y": -0.2639
+      "x": -0.1834,
+      "y": -0.2735
     },
     {
       "id": "Bose: The Forgotten Hero:, The Original Motion Picture Soundtrack",
@@ -4554,8 +4554,8 @@ const DATA = {
       ],
       "singer_count": 14,
       "track_count": 20,
-      "x": 0.0543,
-      "y": -0.3739
+      "x": 0.0254,
+      "y": -0.3389
     },
     {
       "id": "Ok Jaanu",
@@ -4582,8 +4582,8 @@ const DATA = {
       ],
       "singer_count": 11,
       "track_count": 8,
-      "x": 0.5879,
-      "y": 0.276
+      "x": 0.5735,
+      "y": 0.2554
     },
     {
       "id": "Pel\u00e9: Birth of a Legend (soundtrack)",
@@ -4610,8 +4610,8 @@ const DATA = {
       ],
       "singer_count": 11,
       "track_count": 20,
-      "x": 0.3823,
-      "y": 0.1192
+      "x": 0.3678,
+      "y": -0.1264
     },
     {
       "id": "Ponniyin Selvan: I",
@@ -4658,8 +4658,8 @@ const DATA = {
       ],
       "singer_count": 31,
       "track_count": 26,
-      "x": 0.1224,
-      "y": 0.0557
+      "x": 0.1216,
+      "y": 0.0506
     },
     {
       "id": "Ponniyin Selvan: II",
@@ -4728,8 +4728,8 @@ const DATA = {
       ],
       "singer_count": 49,
       "track_count": 40,
-      "x": 0.0706,
-      "y": 0.0364
+      "x": 0.0718,
+      "y": 0.0269
     },
     {
       "id": "Sachin: A Billion of Dreams",
@@ -4750,8 +4750,8 @@ const DATA = {
       ],
       "singer_count": 5,
       "track_count": 3,
-      "x": 0.0765,
-      "y": 0.2062
+      "x": 0.1236,
+      "y": 0.1921
     },
     {
       "id": "Sillunu Oru Kaadhal / Nuvvu Nenu Prema",
@@ -4787,8 +4787,8 @@ const DATA = {
       ],
       "singer_count": 19,
       "track_count": 14,
-      "x": 0.0122,
-      "y": 0.0748
+      "x": 0.017,
+      "y": 0.0621
     },
     {
       "id": "Sivaji: The Boss",
@@ -4825,8 +4825,8 @@ const DATA = {
       ],
       "singer_count": 19,
       "track_count": 21,
-      "x": 0.0191,
-      "y": -0.03
+      "x": 0.0195,
+      "y": -0.0372
     },
     {
       "id": "Slumdog Millionaire: Music from the Motion Picture",
@@ -4858,8 +4858,8 @@ const DATA = {
       ],
       "singer_count": 16,
       "track_count": 13,
-      "x": 0.1232,
-      "y": -0.2956
+      "x": 0.0856,
+      "y": -0.2716
     },
     {
       "id": "Tamasha (soundtrack)",
@@ -4890,8 +4890,8 @@ const DATA = {
       ],
       "singer_count": 15,
       "track_count": 9,
-      "x": 0.2276,
-      "y": -0.0248
+      "x": 0.1932,
+      "y": 0.0141
     },
     {
       "id": "The Hundred-Foot Journey (Original Motion Picture Soundtrack)",
@@ -4910,8 +4910,8 @@ const DATA = {
       ],
       "singer_count": 3,
       "track_count": 16,
-      "x": 0.2244,
-      "y": 0.3309
+      "x": 0.2548,
+      "y": 0.2671
     },
     {
       "id": "The Legend of Bhagat Singh (Original Motion Picture Soundtrack)",
@@ -4934,8 +4934,8 @@ const DATA = {
       ],
       "singer_count": 7,
       "track_count": 10,
-      "x": 0.0617,
-      "y": -0.4588
+      "x": -0.0182,
+      "y": -0.4004
     },
     {
       "id": "Thug Life",
@@ -4984,8 +4984,8 @@ const DATA = {
       ],
       "singer_count": 31,
       "track_count": 28,
-      "x": 0.2312,
-      "y": 0.0148
+      "x": 0.228,
+      "y": 0.0018
     },
     {
       "id": "Varalaaru",
@@ -5016,8 +5016,8 @@ const DATA = {
       ],
       "singer_count": 15,
       "track_count": 9,
-      "x": -0.0192,
-      "y": 0.0499
+      "x": -0.0078,
+      "y": -0.0051
     },
     {
       "id": "Viceroy's House (Original Motion Picture Soundtrack)",
@@ -5040,8 +5040,8 @@ const DATA = {
       ],
       "singer_count": 6,
       "track_count": 19,
-      "x": 0.137,
-      "y": -0.0652
+      "x": 0.1124,
+      "y": -0.1541
     },
     {
       "id": "Warriors of Heaven and Earth: Original Motion Picture Soundtrack",
@@ -5059,8 +5059,8 @@ const DATA = {
       ],
       "singer_count": 2,
       "track_count": 12,
-      "x": -0.2796,
-      "y": 0.4664
+      "x": -0.2921,
+      "y": 0.5159
     },
     {
       "id": "Zubeidaa \u2013 The Story of a Princess",
@@ -5083,77 +5083,11 @@ const DATA = {
       ],
       "singer_count": 7,
       "track_count": 8,
-      "x": -0.1137,
-      "y": -0.3747
+      "x": -0.2124,
+      "y": -0.049
     }
   ],
   "edges": [
-    {
-      "source": "Kadhalikka Neramillai",
-      "target": "Yoddha",
-      "weight": 1,
-      "singers": [
-        "K. J. Yesudas"
-      ]
-    },
-    {
-      "source": "Kadhalikka Neramillai",
-      "target": "Pudhiya Mugam",
-      "weight": 1,
-      "singers": [
-        "P. Susheela"
-      ]
-    },
-    {
-      "source": "Kadhalikka Neramillai",
-      "target": "Uzhavan",
-      "weight": 1,
-      "singers": [
-        "K. J. Yesudas"
-      ]
-    },
-    {
-      "source": "Kadhalikka Neramillai",
-      "target": "Duet",
-      "weight": 2,
-      "singers": [
-        "K. J. Yesudas",
-        "P. Susheela"
-      ]
-    },
-    {
-      "source": "Kadhalikka Neramillai",
-      "target": "Indian",
-      "weight": 2,
-      "singers": [
-        "K. J. Yesudas",
-        "P. Susheela"
-      ]
-    },
-    {
-      "source": "Kadhalikka Neramillai",
-      "target": "Ratchagan",
-      "weight": 1,
-      "singers": [
-        "K. J. Yesudas"
-      ]
-    },
-    {
-      "source": "Kadhalikka Neramillai",
-      "target": "Kandukondain Kandukondain",
-      "weight": 1,
-      "singers": [
-        "K. J. Yesudas"
-      ]
-    },
-    {
-      "source": "Kadhalikka Neramillai",
-      "target": "Swades",
-      "weight": 1,
-      "singers": [
-        "K. J. Yesudas"
-      ]
-    },
     {
       "source": "Roja",
       "target": "Yoddha",
@@ -6523,6 +6457,14 @@ const DATA = {
       "weight": 1,
       "singers": [
         "A. R. Rahman"
+      ]
+    },
+    {
+      "source": "Yoddha",
+      "target": "Kadhalikka Neramillai",
+      "weight": 1,
+      "singers": [
+        "K. J. Yesudas"
       ]
     },
     {
@@ -9198,6 +9140,14 @@ const DATA = {
     },
     {
       "source": "Pudhiya Mugam",
+      "target": "Kadhalikka Neramillai",
+      "weight": 1,
+      "singers": [
+        "P. Susheela"
+      ]
+    },
+    {
+      "source": "Pudhiya Mugam",
       "target": "Kochadaiiyaan",
       "weight": 1,
       "singers": [
@@ -10935,6 +10885,14 @@ const DATA = {
     },
     {
       "source": "Uzhavan",
+      "target": "Kadhalikka Neramillai",
+      "weight": 1,
+      "singers": [
+        "K. J. Yesudas"
+      ]
+    },
+    {
+      "source": "Uzhavan",
       "target": "Kochadaiiyaan",
       "weight": 1,
       "singers": [
@@ -11448,6 +11406,15 @@ const DATA = {
       "weight": 1,
       "singers": [
         "S. P. Balasubrahmanyam"
+      ]
+    },
+    {
+      "source": "Duet",
+      "target": "Kadhalikka Neramillai",
+      "weight": 2,
+      "singers": [
+        "K. J. Yesudas",
+        "P. Susheela"
       ]
     },
     {
@@ -20434,6 +20401,15 @@ const DATA = {
     },
     {
       "source": "Indian",
+      "target": "Kadhalikka Neramillai",
+      "weight": 2,
+      "singers": [
+        "K. J. Yesudas",
+        "P. Susheela"
+      ]
+    },
+    {
+      "source": "Indian",
       "target": "Kochadaiiyaan",
       "weight": 2,
       "singers": [
@@ -25558,6 +25534,14 @@ const DATA = {
         "Hariharan",
         "Instrumental",
         "Sukhwinder Singh"
+      ]
+    },
+    {
+      "source": "Ratchagan",
+      "target": "Kadhalikka Neramillai",
+      "weight": 1,
+      "singers": [
+        "K. J. Yesudas"
       ]
     },
     {
@@ -34267,6 +34251,14 @@ const DATA = {
     },
     {
       "source": "Kandukondain Kandukondain",
+      "target": "Kadhalikka Neramillai",
+      "weight": 1,
+      "singers": [
+        "K. J. Yesudas"
+      ]
+    },
+    {
+      "source": "Kandukondain Kandukondain",
       "target": "Kochadaiiyaan",
       "weight": 1,
       "singers": [
@@ -41708,6 +41700,14 @@ const DATA = {
     },
     {
       "source": "Swades",
+      "target": "Kadhalikka Neramillai",
+      "weight": 1,
+      "singers": [
+        "K. J. Yesudas"
+      ]
+    },
+    {
+      "source": "Swades",
       "target": "Kochadaiiyaan",
       "weight": 3,
       "singers": [
@@ -41881,14 +41881,6 @@ const DATA = {
     },
     {
       "source": "Swades",
-      "target": "Gandhi Talks",
-      "weight": 1,
-      "singers": [
-        "Mohammed Aslam"
-      ]
-    },
-    {
-      "source": "Swades",
       "target": "Maamannan",
       "weight": 1,
       "singers": [
@@ -41949,6 +41941,14 @@ const DATA = {
       "weight": 1,
       "singers": [
         "A. R. Rahman"
+      ]
+    },
+    {
+      "source": "Swades",
+      "target": "Gandhi Talks",
+      "weight": 1,
+      "singers": [
+        "Mohammed Aslam"
       ]
     },
     {
@@ -44501,14 +44501,6 @@ const DATA = {
     },
     {
       "source": "Rang De Basanti",
-      "target": "Gandhi Talks",
-      "weight": 1,
-      "singers": [
-        "Mohammed Aslam"
-      ]
-    },
-    {
-      "source": "Rang De Basanti",
       "target": "Maamannan",
       "weight": 1,
       "singers": [
@@ -44571,6 +44563,14 @@ const DATA = {
       "weight": 1,
       "singers": [
         "A. R. Rahman"
+      ]
+    },
+    {
+      "source": "Rang De Basanti",
+      "target": "Gandhi Talks",
+      "weight": 1,
+      "singers": [
+        "Mohammed Aslam"
       ]
     },
     {
@@ -46145,15 +46145,6 @@ const DATA = {
     },
     {
       "source": "Jodhaa Akbar",
-      "target": "Gandhi Talks",
-      "weight": 2,
-      "singers": [
-        "Bela Shende",
-        "Mohammed Aslam"
-      ]
-    },
-    {
-      "source": "Jodhaa Akbar",
       "target": "Maamannan",
       "weight": 1,
       "singers": [
@@ -46222,6 +46213,15 @@ const DATA = {
       "weight": 1,
       "singers": [
         "A. R. Rahman"
+      ]
+    },
+    {
+      "source": "Jodhaa Akbar",
+      "target": "Gandhi Talks",
+      "weight": 2,
+      "singers": [
+        "Bela Shende",
+        "Mohammed Aslam"
       ]
     },
     {
@@ -47586,14 +47586,6 @@ const DATA = {
     },
     {
       "source": "Yuvvraaj",
-      "target": "Gandhi Talks",
-      "weight": 1,
-      "singers": [
-        "Shreya Ghoshal"
-      ]
-    },
-    {
-      "source": "Yuvvraaj",
       "target": "Maamannan",
       "weight": 1,
       "singers": [
@@ -47665,6 +47657,14 @@ const DATA = {
       "singers": [
         "A. R. Rahman",
         "Benny Dayal"
+      ]
+    },
+    {
+      "source": "Yuvvraaj",
+      "target": "Gandhi Talks",
+      "weight": 1,
+      "singers": [
+        "Shreya Ghoshal"
       ]
     },
     {
@@ -48307,14 +48307,6 @@ const DATA = {
     },
     {
       "source": "Blue",
-      "target": "Gandhi Talks",
-      "weight": 1,
-      "singers": [
-        "Shreya Ghoshal"
-      ]
-    },
-    {
-      "source": "Blue",
       "target": "Ayalaan",
       "weight": 1,
       "singers": [
@@ -48344,6 +48336,14 @@ const DATA = {
       "weight": 1,
       "singers": [
         "Benny Dayal"
+      ]
+    },
+    {
+      "source": "Blue",
+      "target": "Gandhi Talks",
+      "weight": 1,
+      "singers": [
+        "Shreya Ghoshal"
       ]
     },
     {
@@ -48919,14 +48919,6 @@ const DATA = {
     },
     {
       "source": "The Fakir of Venice",
-      "target": "Gandhi Talks",
-      "weight": 1,
-      "singers": [
-        "Shreya Ghoshal"
-      ]
-    },
-    {
-      "source": "The Fakir of Venice",
       "target": "Maamannan",
       "weight": 1,
       "singers": [
@@ -48987,6 +48979,14 @@ const DATA = {
       "weight": 1,
       "singers": [
         "A. R. Rahman"
+      ]
+    },
+    {
+      "source": "The Fakir of Venice",
+      "target": "Gandhi Talks",
+      "weight": 1,
+      "singers": [
+        "Shreya Ghoshal"
       ]
     },
     {
@@ -49518,15 +49518,6 @@ const DATA = {
     },
     {
       "source": "Enthiran",
-      "target": "Gandhi Talks",
-      "weight": 2,
-      "singers": [
-        "Khatija Rahman",
-        "Shreya Ghoshal"
-      ]
-    },
-    {
-      "source": "Enthiran",
       "target": "Maamannan",
       "weight": 1,
       "singers": [
@@ -49598,6 +49589,15 @@ const DATA = {
       "weight": 1,
       "singers": [
         "A. R. Rahman"
+      ]
+    },
+    {
+      "source": "Enthiran",
+      "target": "Gandhi Talks",
+      "weight": 2,
+      "singers": [
+        "Khatija Rahman",
+        "Shreya Ghoshal"
       ]
     },
     {
@@ -50877,14 +50877,6 @@ const DATA = {
     },
     {
       "source": "Raavanan",
-      "target": "Gandhi Talks",
-      "weight": 1,
-      "singers": [
-        "Shreya Ghoshal"
-      ]
-    },
-    {
-      "source": "Raavanan",
       "target": "Maamannan",
       "weight": 1,
       "singers": [
@@ -50949,6 +50941,14 @@ const DATA = {
       "singers": [
         "A. R. Rahman",
         "Benny Dayal"
+      ]
+    },
+    {
+      "source": "Raavanan",
+      "target": "Gandhi Talks",
+      "weight": 1,
+      "singers": [
+        "Shreya Ghoshal"
       ]
     },
     {
@@ -51572,14 +51572,6 @@ const DATA = {
     },
     {
       "source": "Vinnaithaandi Varuvaayaa",
-      "target": "Gandhi Talks",
-      "weight": 1,
-      "singers": [
-        "Shreya Ghoshal"
-      ]
-    },
-    {
-      "source": "Vinnaithaandi Varuvaayaa",
       "target": "Maamannan",
       "weight": 1,
       "singers": [
@@ -51642,6 +51634,14 @@ const DATA = {
       "singers": [
         "A. R. Rahman",
         "Benny Dayal"
+      ]
+    },
+    {
+      "source": "Vinnaithaandi Varuvaayaa",
+      "target": "Gandhi Talks",
+      "weight": 1,
+      "singers": [
+        "Shreya Ghoshal"
       ]
     },
     {
@@ -52151,14 +52151,6 @@ const DATA = {
     },
     {
       "source": "Ye Maaya Chesave",
-      "target": "Gandhi Talks",
-      "weight": 1,
-      "singers": [
-        "Shreya Ghoshal"
-      ]
-    },
-    {
-      "source": "Ye Maaya Chesave",
       "target": "Ayalaan",
       "weight": 1,
       "singers": [
@@ -52179,6 +52171,14 @@ const DATA = {
       "weight": 1,
       "singers": [
         "Benny Dayal"
+      ]
+    },
+    {
+      "source": "Ye Maaya Chesave",
+      "target": "Gandhi Talks",
+      "weight": 1,
+      "singers": [
+        "Shreya Ghoshal"
       ]
     },
     {
@@ -52632,14 +52632,6 @@ const DATA = {
     },
     {
       "source": "Ekk Deewana Tha",
-      "target": "Gandhi Talks",
-      "weight": 1,
-      "singers": [
-        "Shreya Ghoshal"
-      ]
-    },
-    {
-      "source": "Ekk Deewana Tha",
       "target": "Maamannan",
       "weight": 1,
       "singers": [
@@ -52709,6 +52701,14 @@ const DATA = {
       "weight": 1,
       "singers": [
         "A. R. Rahman"
+      ]
+    },
+    {
+      "source": "Ekk Deewana Tha",
+      "target": "Gandhi Talks",
+      "weight": 1,
+      "singers": [
+        "Shreya Ghoshal"
       ]
     },
     {
@@ -54019,14 +54019,6 @@ const DATA = {
     },
     {
       "source": "Raanjhanaa",
-      "target": "Gandhi Talks",
-      "weight": 1,
-      "singers": [
-        "Shreya Ghoshal"
-      ]
-    },
-    {
-      "source": "Raanjhanaa",
       "target": "Maamannan",
       "weight": 1,
       "singers": [
@@ -54099,6 +54091,14 @@ const DATA = {
       "weight": 1,
       "singers": [
         "A. R. Rahman"
+      ]
+    },
+    {
+      "source": "Raanjhanaa",
+      "target": "Gandhi Talks",
+      "weight": 1,
+      "singers": [
+        "Shreya Ghoshal"
       ]
     },
     {
@@ -54724,15 +54724,6 @@ const DATA = {
     },
     {
       "source": "Kochadaiiyaan",
-      "target": "Gandhi Talks",
-      "weight": 2,
-      "singers": [
-        "Arijit Singh",
-        "Shreya Ghoshal"
-      ]
-    },
-    {
-      "source": "Kochadaiiyaan",
       "target": "Maamannan",
       "weight": 1,
       "singers": [
@@ -54808,6 +54799,15 @@ const DATA = {
       "weight": 1,
       "singers": [
         "A. R. Rahman"
+      ]
+    },
+    {
+      "source": "Kochadaiiyaan",
+      "target": "Gandhi Talks",
+      "weight": 2,
+      "singers": [
+        "Arijit Singh",
+        "Shreya Ghoshal"
       ]
     },
     {
@@ -57116,15 +57116,6 @@ const DATA = {
     },
     {
       "source": "Mohenjo Daro",
-      "target": "Gandhi Talks",
-      "weight": 2,
-      "singers": [
-        "Arijit Singh",
-        "Bela Shende"
-      ]
-    },
-    {
-      "source": "Mohenjo Daro",
       "target": "Maamannan",
       "weight": 1,
       "singers": [
@@ -57189,6 +57180,15 @@ const DATA = {
       "weight": 1,
       "singers": [
         "A. R. Rahman"
+      ]
+    },
+    {
+      "source": "Mohenjo Daro",
+      "target": "Gandhi Talks",
+      "weight": 2,
+      "singers": [
+        "Arijit Singh",
+        "Bela Shende"
       ]
     },
     {
@@ -58330,14 +58330,6 @@ const DATA = {
     },
     {
       "source": "Kaatru Veliyidai",
-      "target": "Gandhi Talks",
-      "weight": 1,
-      "singers": [
-        "Abhay Jodhpurkar"
-      ]
-    },
-    {
-      "source": "Kaatru Veliyidai",
       "target": "Maamannan",
       "weight": 1,
       "singers": [
@@ -58403,6 +58395,14 @@ const DATA = {
       "weight": 1,
       "singers": [
         "A. R. Rahman"
+      ]
+    },
+    {
+      "source": "Kaatru Veliyidai",
+      "target": "Gandhi Talks",
+      "weight": 1,
+      "singers": [
+        "Abhay Jodhpurkar"
       ]
     },
     {
@@ -58831,14 +58831,6 @@ const DATA = {
     },
     {
       "source": "Mersal",
-      "target": "Gandhi Talks",
-      "weight": 1,
-      "singers": [
-        "Shreya Ghoshal"
-      ]
-    },
-    {
-      "source": "Mersal",
       "target": "Maamannan",
       "weight": 1,
       "singers": [
@@ -58902,6 +58894,14 @@ const DATA = {
       "weight": 1,
       "singers": [
         "A. R. Rahman"
+      ]
+    },
+    {
+      "source": "Mersal",
+      "target": "Gandhi Talks",
+      "weight": 1,
+      "singers": [
+        "Shreya Ghoshal"
       ]
     },
     {
@@ -60679,19 +60679,6 @@ const DATA = {
     },
     {
       "source": "99 Songs",
-      "target": "Gandhi Talks",
-      "weight": 6,
-      "singers": [
-        "Abhay Jodhpurkar",
-        "Arijit Singh",
-        "Bela Shende",
-        "Sarthak Kalyani",
-        "Shreya Ghoshal",
-        "Sreekanth Hariharan"
-      ]
-    },
-    {
-      "source": "99 Songs",
       "target": "Maamannan",
       "weight": 2,
       "singers": [
@@ -60776,6 +60763,19 @@ const DATA = {
       "singers": [
         "A. R. Rahman",
         "Benny Dayal"
+      ]
+    },
+    {
+      "source": "99 Songs",
+      "target": "Gandhi Talks",
+      "weight": 6,
+      "singers": [
+        "Abhay Jodhpurkar",
+        "Arijit Singh",
+        "Bela Shende",
+        "Sarthak Kalyani",
+        "Shreya Ghoshal",
+        "Sreekanth Hariharan"
       ]
     },
     {
@@ -62074,15 +62074,6 @@ const DATA = {
     },
     {
       "source": "Dil Bechara",
-      "target": "Gandhi Talks",
-      "weight": 2,
-      "singers": [
-        "Arijit Singh",
-        "Shreya Ghoshal"
-      ]
-    },
-    {
-      "source": "Dil Bechara",
       "target": "Maamannan",
       "weight": 2,
       "singers": [
@@ -62156,6 +62147,15 @@ const DATA = {
       "singers": [
         "A. R. Rahman",
         "Sunidhi Chauhan"
+      ]
+    },
+    {
+      "source": "Dil Bechara",
+      "target": "Gandhi Talks",
+      "weight": 2,
+      "singers": [
+        "Arijit Singh",
+        "Shreya Ghoshal"
       ]
     },
     {
@@ -62676,15 +62676,6 @@ const DATA = {
     },
     {
       "source": "Atrangi Re",
-      "target": "Gandhi Talks",
-      "weight": 2,
-      "singers": [
-        "Arijit Singh",
-        "Shreya Ghoshal"
-      ]
-    },
-    {
-      "source": "Atrangi Re",
       "target": "Maamannan",
       "weight": 1,
       "singers": [
@@ -62749,6 +62740,15 @@ const DATA = {
         "A. R. Ameen",
         "Arijit Singh",
         "Haricharan"
+      ]
+    },
+    {
+      "source": "Atrangi Re",
+      "target": "Gandhi Talks",
+      "weight": 2,
+      "singers": [
+        "Arijit Singh",
+        "Shreya Ghoshal"
       ]
     },
     {
@@ -62980,15 +62980,6 @@ const DATA = {
     },
     {
       "source": "Mimi",
-      "target": "Gandhi Talks",
-      "weight": 2,
-      "singers": [
-        "Khatija Rahman",
-        "Shreya Ghoshal"
-      ]
-    },
-    {
-      "source": "Mimi",
       "target": "Maamannan",
       "weight": 2,
       "singers": [
@@ -63055,6 +63046,15 @@ const DATA = {
       "weight": 1,
       "singers": [
         "A. R. Rahman"
+      ]
+    },
+    {
+      "source": "Mimi",
+      "target": "Gandhi Talks",
+      "weight": 2,
+      "singers": [
+        "Khatija Rahman",
+        "Shreya Ghoshal"
       ]
     },
     {
@@ -63374,16 +63374,6 @@ const DATA = {
     },
     {
       "source": "Cobra",
-      "target": "Gandhi Talks",
-      "weight": 3,
-      "singers": [
-        "Sarthak Kalyani",
-        "Shreya Ghoshal",
-        "Sreekanth Hariharan"
-      ]
-    },
-    {
-      "source": "Cobra",
       "target": "Maamannan",
       "weight": 2,
       "singers": [
@@ -63460,6 +63450,16 @@ const DATA = {
       "weight": 1,
       "singers": [
         "A. R. Rahman"
+      ]
+    },
+    {
+      "source": "Cobra",
+      "target": "Gandhi Talks",
+      "weight": 3,
+      "singers": [
+        "Sarthak Kalyani",
+        "Shreya Ghoshal",
+        "Sreekanth Hariharan"
       ]
     },
     {
@@ -63712,14 +63712,6 @@ const DATA = {
     },
     {
       "source": "Heropanti 2",
-      "target": "Gandhi Talks",
-      "weight": 1,
-      "singers": [
-        "Faiz Mustafa"
-      ]
-    },
-    {
-      "source": "Heropanti 2",
       "target": "Pippa",
       "weight": 2,
       "singers": [
@@ -63743,6 +63735,14 @@ const DATA = {
       "weight": 1,
       "singers": [
         "Hiral Viradia"
+      ]
+    },
+    {
+      "source": "Heropanti 2",
+      "target": "Gandhi Talks",
+      "weight": 1,
+      "singers": [
+        "Faiz Mustafa"
       ]
     },
     {
@@ -63846,16 +63846,6 @@ const DATA = {
     },
     {
       "source": "Iravin Nizhal",
-      "target": "Gandhi Talks",
-      "weight": 3,
-      "singers": [
-        "Khatija Rahman",
-        "Sarthak Kalyani",
-        "Shreya Ghoshal"
-      ]
-    },
-    {
-      "source": "Iravin Nizhal",
       "target": "Maamannan",
       "weight": 1,
       "singers": [
@@ -63929,6 +63919,16 @@ const DATA = {
       "weight": 1,
       "singers": [
         "A. R. Rahman"
+      ]
+    },
+    {
+      "source": "Iravin Nizhal",
+      "target": "Gandhi Talks",
+      "weight": 3,
+      "singers": [
+        "Khatija Rahman",
+        "Sarthak Kalyani",
+        "Shreya Ghoshal"
       ]
     },
     {
@@ -64269,14 +64269,6 @@ const DATA = {
     },
     {
       "source": "Mili",
-      "target": "Gandhi Talks",
-      "weight": 1,
-      "singers": [
-        "Khatija Rahman"
-      ]
-    },
-    {
-      "source": "Mili",
       "target": "Maamannan",
       "weight": 1,
       "singers": [
@@ -64340,6 +64332,14 @@ const DATA = {
       "weight": 1,
       "singers": [
         "A. R. Rahman"
+      ]
+    },
+    {
+      "source": "Mili",
+      "target": "Gandhi Talks",
+      "weight": 1,
+      "singers": [
+        "Khatija Rahman"
       ]
     },
     {
@@ -64585,15 +64585,6 @@ const DATA = {
     },
     {
       "source": "Vendhu Thanindhathu Kaadu",
-      "target": "Gandhi Talks",
-      "weight": 2,
-      "singers": [
-        "Sarthak Kalyani",
-        "Shreya Ghoshal"
-      ]
-    },
-    {
-      "source": "Vendhu Thanindhathu Kaadu",
       "target": "Maamannan",
       "weight": 2,
       "singers": [
@@ -64658,6 +64649,15 @@ const DATA = {
       "weight": 1,
       "singers": [
         "A. R. Rahman"
+      ]
+    },
+    {
+      "source": "Vendhu Thanindhathu Kaadu",
+      "target": "Gandhi Talks",
+      "weight": 2,
+      "singers": [
+        "Sarthak Kalyani",
+        "Shreya Ghoshal"
       ]
     },
     {
@@ -64983,206 +64983,6 @@ const DATA = {
       ]
     },
     {
-      "source": "Gandhi Talks",
-      "target": "Maamannan",
-      "weight": 1,
-      "singers": [
-        "Pavithra Chari"
-      ]
-    },
-    {
-      "source": "Gandhi Talks",
-      "target": "Pathu Thala",
-      "weight": 2,
-      "singers": [
-        "Nivas",
-        "Sreekanth Hariharan"
-      ]
-    },
-    {
-      "source": "Gandhi Talks",
-      "target": "Pippa",
-      "weight": 2,
-      "singers": [
-        "Arijit Singh",
-        "Sarthak Kalyani"
-      ]
-    },
-    {
-      "source": "Gandhi Talks",
-      "target": "Raayan",
-      "weight": 1,
-      "singers": [
-        "Rakendu Mouli"
-      ]
-    },
-    {
-      "source": "Gandhi Talks",
-      "target": "Chhaava",
-      "weight": 1,
-      "singers": [
-        "Arijit Singh"
-      ]
-    },
-    {
-      "source": "Gandhi Talks",
-      "target": "Tere Ishk Mein",
-      "weight": 4,
-      "singers": [
-        "Amina Rafiq",
-        "Arijit Singh",
-        "Khatija Rahman",
-        "Sarthak Kalyani"
-      ]
-    },
-    {
-      "source": "Gandhi Talks",
-      "target": "2.0 (Original Motion Picture Soundtrack)",
-      "weight": 1,
-      "singers": [
-        "Nivas"
-      ]
-    },
-    {
-      "source": "Gandhi Talks",
-      "target": "24: Original Motion Picture Soundtrack",
-      "weight": 2,
-      "singers": [
-        "Abhay Jodhpurkar",
-        "Arijit Singh"
-      ]
-    },
-    {
-      "source": "Gandhi Talks",
-      "target": "Azhagiya Tamil Magan",
-      "weight": 1,
-      "singers": [
-        "Mohammed Aslam"
-      ]
-    },
-    {
-      "source": "Gandhi Talks",
-      "target": "Delhi-6",
-      "weight": 1,
-      "singers": [
-        "Shreya Ghoshal"
-      ]
-    },
-    {
-      "source": "Gandhi Talks",
-      "target": "Enakku 20 Unakku 18 / Nee Manasu Naaku Telusu",
-      "weight": 1,
-      "singers": [
-        "Shreya Ghoshal"
-      ]
-    },
-    {
-      "source": "Gandhi Talks",
-      "target": "I",
-      "weight": 3,
-      "singers": [
-        "Arijit Singh",
-        "Bela Shende",
-        "Shreya Ghoshal"
-      ]
-    },
-    {
-      "source": "Gandhi Talks",
-      "target": "Jaane Tu... Ya Jaane Na",
-      "weight": 1,
-      "singers": [
-        "Mohammed Aslam"
-      ]
-    },
-    {
-      "source": "Gandhi Talks",
-      "target": "Kaaviya Thalaivan",
-      "weight": 1,
-      "singers": [
-        "Bela Shende"
-      ]
-    },
-    {
-      "source": "Gandhi Talks",
-      "target": "Kadal",
-      "weight": 1,
-      "singers": [
-        "Abhay Jodhpurkar"
-      ]
-    },
-    {
-      "source": "Gandhi Talks",
-      "target": "Puli{{efn|The soundtrack album was released under the title ''Komaram Puli'' (refer album cover), despite the film's title being changed to ''Puli''.",
-      "weight": 1,
-      "singers": [
-        "Shreya Ghoshal"
-      ]
-    },
-    {
-      "source": "Gandhi Talks",
-      "target": "Ok Jaanu",
-      "weight": 1,
-      "singers": [
-        "Arijit Singh"
-      ]
-    },
-    {
-      "source": "Gandhi Talks",
-      "target": "Ponniyin Selvan: I",
-      "weight": 4,
-      "singers": [
-        "Jithin Raj",
-        "Pavithra Chari",
-        "Shreya Ghoshal",
-        "Sreekanth Hariharan"
-      ]
-    },
-    {
-      "source": "Gandhi Talks",
-      "target": "Ponniyin Selvan: II",
-      "weight": 5,
-      "singers": [
-        "Arijit Singh",
-        "Khatija Rahman",
-        "Nivas",
-        "Shreya Ghoshal",
-        "Sreekanth Hariharan"
-      ]
-    },
-    {
-      "source": "Gandhi Talks",
-      "target": "Sillunu Oru Kaadhal / Nuvvu Nenu Prema",
-      "weight": 2,
-      "singers": [
-        "Mohammed Aslam",
-        "Shreya Ghoshal"
-      ]
-    },
-    {
-      "source": "Gandhi Talks",
-      "target": "Tamasha (soundtrack)",
-      "weight": 1,
-      "singers": [
-        "Arijit Singh"
-      ]
-    },
-    {
-      "source": "Gandhi Talks",
-      "target": "Varalaaru",
-      "weight": 1,
-      "singers": [
-        "Mohammed Aslam"
-      ]
-    },
-    {
-      "source": "Gandhi Talks",
-      "target": "Viceroy's House (Original Motion Picture Soundtrack)",
-      "weight": 1,
-      "singers": [
-        "Shreya Ghoshal"
-      ]
-    },
-    {
       "source": "Maamannan",
       "target": "Pathu Thala",
       "weight": 4,
@@ -65243,6 +65043,14 @@ const DATA = {
       "weight": 1,
       "singers": [
         "A. R. Rahman"
+      ]
+    },
+    {
+      "source": "Maamannan",
+      "target": "Gandhi Talks",
+      "weight": 1,
+      "singers": [
+        "Pavithra Chari"
       ]
     },
     {
@@ -65531,6 +65339,15 @@ const DATA = {
       "weight": 1,
       "singers": [
         "A. R. Rahman"
+      ]
+    },
+    {
+      "source": "Pathu Thala",
+      "target": "Gandhi Talks",
+      "weight": 2,
+      "singers": [
+        "Nivas",
+        "Sreekanth Hariharan"
       ]
     },
     {
@@ -65832,6 +65649,15 @@ const DATA = {
       "weight": 1,
       "singers": [
         "A. R. Rahman"
+      ]
+    },
+    {
+      "source": "Pippa",
+      "target": "Gandhi Talks",
+      "weight": 2,
+      "singers": [
+        "Arijit Singh",
+        "Sarthak Kalyani"
       ]
     },
     {
@@ -66482,6 +66308,14 @@ const DATA = {
     },
     {
       "source": "Raayan",
+      "target": "Gandhi Talks",
+      "weight": 1,
+      "singers": [
+        "Rakendu Mouli"
+      ]
+    },
+    {
+      "source": "Raayan",
       "target": "127 Hours: Music from the Motion Picture",
       "weight": 1,
       "singers": [
@@ -66797,6 +66631,14 @@ const DATA = {
     },
     {
       "source": "Chhaava",
+      "target": "Gandhi Talks",
+      "weight": 1,
+      "singers": [
+        "Arijit Singh"
+      ]
+    },
+    {
+      "source": "Chhaava",
       "target": "127 Hours: Music from the Motion Picture",
       "weight": 1,
       "singers": [
@@ -67036,6 +66878,17 @@ const DATA = {
       "weight": 1,
       "singers": [
         "A. R. Rahman"
+      ]
+    },
+    {
+      "source": "Tere Ishk Mein",
+      "target": "Gandhi Talks",
+      "weight": 4,
+      "singers": [
+        "Amina Rafiq",
+        "Arijit Singh",
+        "Khatija Rahman",
+        "Sarthak Kalyani"
       ]
     },
     {
@@ -67591,6 +67444,153 @@ const DATA = {
       "weight": 1,
       "singers": [
         "A. R. Rahman"
+      ]
+    },
+    {
+      "source": "Gandhi Talks",
+      "target": "2.0 (Original Motion Picture Soundtrack)",
+      "weight": 1,
+      "singers": [
+        "Nivas"
+      ]
+    },
+    {
+      "source": "Gandhi Talks",
+      "target": "24: Original Motion Picture Soundtrack",
+      "weight": 2,
+      "singers": [
+        "Abhay Jodhpurkar",
+        "Arijit Singh"
+      ]
+    },
+    {
+      "source": "Gandhi Talks",
+      "target": "Azhagiya Tamil Magan",
+      "weight": 1,
+      "singers": [
+        "Mohammed Aslam"
+      ]
+    },
+    {
+      "source": "Gandhi Talks",
+      "target": "Delhi-6",
+      "weight": 1,
+      "singers": [
+        "Shreya Ghoshal"
+      ]
+    },
+    {
+      "source": "Gandhi Talks",
+      "target": "Enakku 20 Unakku 18 / Nee Manasu Naaku Telusu",
+      "weight": 1,
+      "singers": [
+        "Shreya Ghoshal"
+      ]
+    },
+    {
+      "source": "Gandhi Talks",
+      "target": "I",
+      "weight": 3,
+      "singers": [
+        "Arijit Singh",
+        "Bela Shende",
+        "Shreya Ghoshal"
+      ]
+    },
+    {
+      "source": "Gandhi Talks",
+      "target": "Jaane Tu... Ya Jaane Na",
+      "weight": 1,
+      "singers": [
+        "Mohammed Aslam"
+      ]
+    },
+    {
+      "source": "Gandhi Talks",
+      "target": "Kaaviya Thalaivan",
+      "weight": 1,
+      "singers": [
+        "Bela Shende"
+      ]
+    },
+    {
+      "source": "Gandhi Talks",
+      "target": "Kadal",
+      "weight": 1,
+      "singers": [
+        "Abhay Jodhpurkar"
+      ]
+    },
+    {
+      "source": "Gandhi Talks",
+      "target": "Puli{{efn|The soundtrack album was released under the title ''Komaram Puli'' (refer album cover), despite the film's title being changed to ''Puli''.",
+      "weight": 1,
+      "singers": [
+        "Shreya Ghoshal"
+      ]
+    },
+    {
+      "source": "Gandhi Talks",
+      "target": "Ok Jaanu",
+      "weight": 1,
+      "singers": [
+        "Arijit Singh"
+      ]
+    },
+    {
+      "source": "Gandhi Talks",
+      "target": "Ponniyin Selvan: I",
+      "weight": 4,
+      "singers": [
+        "Jithin Raj",
+        "Pavithra Chari",
+        "Shreya Ghoshal",
+        "Sreekanth Hariharan"
+      ]
+    },
+    {
+      "source": "Gandhi Talks",
+      "target": "Ponniyin Selvan: II",
+      "weight": 5,
+      "singers": [
+        "Arijit Singh",
+        "Khatija Rahman",
+        "Nivas",
+        "Shreya Ghoshal",
+        "Sreekanth Hariharan"
+      ]
+    },
+    {
+      "source": "Gandhi Talks",
+      "target": "Sillunu Oru Kaadhal / Nuvvu Nenu Prema",
+      "weight": 2,
+      "singers": [
+        "Mohammed Aslam",
+        "Shreya Ghoshal"
+      ]
+    },
+    {
+      "source": "Gandhi Talks",
+      "target": "Tamasha (soundtrack)",
+      "weight": 1,
+      "singers": [
+        "Arijit Singh"
+      ]
+    },
+    {
+      "source": "Gandhi Talks",
+      "target": "Varalaaru",
+      "weight": 1,
+      "singers": [
+        "Mohammed Aslam"
+      ]
+    },
+    {
+      "source": "Gandhi Talks",
+      "target": "Viceroy's House (Original Motion Picture Soundtrack)",
+      "weight": 1,
+      "singers": [
+        "Shreya Ghoshal"
       ]
     },
     {
@@ -72233,12 +72233,12 @@ const DATA = {
 };
 
 const langColors = {
-  Tamil: '#e8575a',
-  Hindi: '#5bb8d4',
-  Telugu: '#e8b83d',
-  Malayalam: '#6dc78a',
-  Marathi: '#c48ad6',
-  Unknown: '#8888aa'
+  Tamil: '#C62828',
+  Hindi: '#E64A19',
+  Telugu: '#F9A825',
+  Malayalam: '#558B2F',
+  Marathi: '#8D6E63',
+  Unknown: '#6B4226'
 };
 
 const width = window.innerWidth;
@@ -72295,7 +72295,7 @@ svg.appendChild(nodeGroup);
 // Create edge elements
 const edgeEls = edges.map(e => {
   const line = svgEl('line', {
-    stroke: 'rgba(255,255,255,0.15)',
+    stroke: 'rgba(61,28,17,0.12)',
     'stroke-width': 1 + (e.weight / maxWeight) * 7,
     'data-source': e.source,
     'data-target': e.target,
@@ -72337,7 +72337,7 @@ const nodeEls = nodes.map(n => {
   const circle = svgEl('circle', {
     r: n.radius,
     fill: langColors[n.primary_language] || '#999',
-    stroke: 'rgba(255,255,255,0.4)',
+    stroke: 'rgba(61,28,17,0.3)',
     'stroke-width': 1.5,
     opacity: 0.9,
   });
@@ -72347,7 +72347,7 @@ const nodeEls = nodes.map(n => {
   const text = svgEl('text', {
     'text-anchor': 'middle',
     dy: n.radius + 16,
-    fill: '#ccc',
+    fill: '#3D1C11',
     'font-size': '11px',
     'font-weight': '600',
     'font-family': 'Segoe UI, system-ui, sans-serif',
@@ -72361,7 +72361,7 @@ const nodeEls = nodes.map(n => {
     const yearText = svgEl('text', {
       'text-anchor': 'middle',
       dy: n.radius + 29,
-      fill: '#777',
+      fill: '#6B4226',
       'font-size': '10px',
       'font-family': 'Segoe UI, system-ui, sans-serif',
       'pointer-events': 'none',
@@ -72412,7 +72412,7 @@ function showTooltip(ev, n) {
   // Highlight connected edges, dim everything else
   edgeEls.forEach(e => {
     const connected = e.data.source === n.id || e.data.target === n.id;
-    e.line.setAttribute('stroke', connected ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.02)');
+    e.line.setAttribute('stroke', connected ? 'rgba(61,28,17,0.35)' : 'rgba(61,28,17,0.04)');
   });
   // Find the strongest connection
   const connEdges = edges.filter(e => e.source === n.id || e.target === n.id);
@@ -72452,7 +72452,7 @@ function showTooltip(ev, n) {
     html += `<div class="tt-section">Top connections</div>`;
     connections.slice(0, 3).forEach(e => {
       const other = e.source === n.id ? e.target : e.source;
-      html += `<div style="color:#aaa; font-size:12px">${other}: ${e.weight} shared</div>`;
+      html += `<div style="color:#6B4226; font-size:12px">${other}: ${e.weight} shared</div>`;
     });
   }
 
@@ -72472,7 +72472,7 @@ function moveTooltip(ev) {
 
 function hideTooltip() {
   tooltip.style.display = 'none';
-  edgeEls.forEach(e => e.line.setAttribute('stroke', 'rgba(255,255,255,0.15)'));
+  edgeEls.forEach(e => e.line.setAttribute('stroke', 'rgba(61,28,17,0.12)'));
   nodeEls.forEach(ne => {
     ne.circle.setAttribute('opacity', 0.9);
     ne.circle.setAttribute('r', ne.data.radius);
@@ -72483,17 +72483,17 @@ function hideTooltip() {
 }
 
 function showEdgeTooltip(ev, e) {
-  let html = `<div style="font-weight:700; margin-bottom:4px">`;
+  let html = `<div style="font-weight:700; margin-bottom:4px; color:#3D1C11">`;
   html += `${e.source} &harr; ${e.target}</div>`;
-  html += `<div style="color:#aaa">${e.weight} shared singer${e.weight > 1 ? 's' : ''}:</div>`;
-  html += `<div style="color:#ccc; margin-top:2px">${e.singers.join(', ')}</div>`;
+  html += `<div style="color:#6B4226">${e.weight} shared singer${e.weight > 1 ? 's' : ''}:</div>`;
+  html += `<div style="color:#3D1C11; margin-top:2px">${e.singers.join(', ')}</div>`;
   edgeTooltip.innerHTML = html;
   edgeTooltip.style.display = 'block';
 
   // Highlight this edge
   edgeEls.forEach(ee => {
     const isThis = ee.data === e;
-    ee.line.setAttribute('stroke', isThis ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.05)');
+    ee.line.setAttribute('stroke', isThis ? 'rgba(61,28,17,0.5)' : 'rgba(61,28,17,0.04)');
   });
   moveEdgeTooltip(ev);
 }
@@ -72508,7 +72508,7 @@ function moveEdgeTooltip(ev) {
 
 function hideEdgeTooltip() {
   edgeTooltip.style.display = 'none';
-  edgeEls.forEach(e => e.line.setAttribute('stroke', 'rgba(255,255,255,0.15)'));
+  edgeEls.forEach(e => e.line.setAttribute('stroke', 'rgba(61,28,17,0.12)'));
 }
 </script>
 </body>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AR Rahman — Collaborators Over Time</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #F5E6D3;
+    color: #3D1C11;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+  #header {
+    padding: 24px 24px 8px;
+    text-align: center;
+  }
+  #header h1 { font-size: 22px; font-weight: 700; color: #3D1C11; }
+  #header p { font-size: 13px; color: #6B4226; margin-top: 4px; }
+
+  #controls {
+    display: flex; align-items: center; gap: 12px;
+    padding: 8px 24px 16px; flex-wrap: wrap; justify-content: center;
+  }
+  #controls button {
+    background: rgba(61,28,17,0.08);
+    border: 1px solid rgba(61,28,17,0.15);
+    color: #6B4226; padding: 7px 16px; border-radius: 6px;
+    cursor: pointer; font-size: 13px;
+    transition: all 0.15s;
+  }
+  #controls button:hover { background: rgba(61,28,17,0.15); color: #3D1C11; }
+  #controls button.active {
+    background: rgba(198,40,40,0.12);
+    border-color: rgba(198,40,40,0.3);
+    color: #C62828; font-weight: 600;
+  }
+  #play-btn.active {
+    background: rgba(198,40,40,0.12) !important;
+    border-color: rgba(198,40,40,0.3) !important;
+    color: #C62828 !important;
+  }
+
+  #speed-control { display: flex; align-items: center; gap: 6px; }
+  #speed-control label { font-size: 12px; color: #6B4226; }
+  #speed-control input[type=range] { width: 80px; accent-color: #C62828; }
+
+  #year-display {
+    font-size: 72px; font-weight: 800; color: rgba(198,40,40,0.12);
+    position: fixed; bottom: 30px; right: 40px;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    z-index: 1;
+  }
+
+  #chart-container {
+    width: min(900px, 90vw);
+    position: relative;
+  }
+
+  .bar-row {
+    display: flex; align-items: center; height: 32px; margin-bottom: 4px;
+    position: relative;
+  }
+  .bar-label {
+    width: 160px; text-align: right; padding-right: 12px;
+    font-size: 13px; font-weight: 600; color: #3D1C11;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    flex-shrink: 0;
+  }
+  .bar-track {
+    flex: 1; position: relative; height: 26px;
+  }
+  .bar-fill {
+    height: 100%; border-radius: 4px;
+    transition: width 0.8s ease-in-out;
+    position: relative;
+    min-width: 2px;
+  }
+  .bar-count {
+    position: absolute; right: -40px; top: 50%; transform: translateY(-50%);
+    font-size: 12px; font-weight: 700; color: #6B4226;
+    min-width: 35px;
+  }
+
+  #mode-toggle { display: flex; gap: 0; }
+  #mode-toggle button {
+    border-radius: 0; border-right: none;
+  }
+  #mode-toggle button:first-child { border-radius: 6px 0 0 6px; }
+  #mode-toggle button:last-child { border-radius: 0 6px 6px 0; border-right: 1px solid rgba(61,28,17,0.15); }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <h1>AR Rahman — Collaborators Over Time</h1>
+  <p>Watch how Rahman's top collaborators accumulate over his career</p>
+</div>
+
+<div id="controls">
+  <div id="mode-toggle">
+    <button id="singers-btn" class="active" onclick="setMode('singers')">Singers</button>
+    <button id="heroes-btn" onclick="setMode('heroes')">Heroes</button>
+  </div>
+  <button id="play-btn" onclick="togglePlay()">&#9654; Play</button>
+  <div id="speed-control">
+    <label>Speed</label>
+    <input type="range" id="speed" min="200" max="2000" value="800" step="100">
+  </div>
+</div>
+
+<div id="chart-container"></div>
+<div id="year-display"></div>
+
+<script>
+const DATA = {"years": [1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026], "singerSnapshots": {"1992": [{"name": "S. P. Balasubrahmanyam", "count": 14}, {"name": "Sujatha Mohan", "count": 11}, {"name": "K. S. Chithra", "count": 8}, {"name": "Minmini", "count": 5}, {"name": "Hariharan", "count": 3}, {"name": "Unni Menon", "count": 3}, {"name": "K. J. Yesudas", "count": 3}, {"name": "Malgudi Subha", "count": 2}, {"name": "Shweta Shetty", "count": 2}, {"name": "Uttara Kelkar", "count": 2}, {"name": "Suresh Wadkar", "count": 2}, {"name": "Jolly Mukherjee", "count": 2}, {"name": "A. R. Rahman", "count": 1}, {"name": "Alka Yagnik", "count": 1}, {"name": "Mano", "count": 1}], "1993": [{"name": "S. P. Balasubrahmanyam", "count": 29}, {"name": "K. S. Chithra", "count": 23}, {"name": "Sujatha Mohan", "count": 22}, {"name": "Mano", "count": 11}, {"name": "Minmini", "count": 10}, {"name": "G. V. Prakash Kumar", "count": 7}, {"name": "Unni Menon", "count": 7}, {"name": "Suresh Peters", "count": 6}, {"name": "Shahul Hameed", "count": 6}, {"name": "Srinivas", "count": 5}, {"name": "K. J. Yesudas", "count": 5}, {"name": "Annupamaa", "count": 4}, {"name": "Malgudi Subha", "count": 4}, {"name": "Hariharan", "count": 3}, {"name": "Swarnalatha", "count": 3}], "1994": [{"name": "S. P. Balasubrahmanyam", "count": 56}, {"name": "K. S. Chithra", "count": 41}, {"name": "Sujatha Mohan", "count": 36}, {"name": "Mano", "count": 29}, {"name": "Minmini", "count": 16}, {"name": "Shahul Hameed", "count": 15}, {"name": "Suresh Peters", "count": 12}, {"name": "Swarnalatha", "count": 11}, {"name": "G. V. Prakash Kumar", "count": 9}, {"name": "Unni Menon", "count": 8}, {"name": "S. Janaki", "count": 7}, {"name": "Malgudi Subha", "count": 7}, {"name": "Srinivas", "count": 6}, {"name": "K. J. Yesudas", "count": 6}, {"name": "A. R. Rahman", "count": 5}], "1995": [{"name": "S. P. Balasubrahmanyam", "count": 67}, {"name": "K. S. Chithra", "count": 52}, {"name": "Sujatha Mohan", "count": 45}, {"name": "Mano", "count": 35}, {"name": "Hariharan", "count": 20}, {"name": "Swarnalatha", "count": 18}, {"name": "Minmini", "count": 16}, {"name": "Suresh Peters", "count": 15}, {"name": "G. V. Prakash Kumar", "count": 15}, {"name": "Shahul Hameed", "count": 15}, {"name": "A. R. Rahman", "count": 14}, {"name": "Udit Narayan", "count": 11}, {"name": "Srinivas", "count": 11}, {"name": "S. Janaki", "count": 10}, {"name": "Annupamaa", "count": 9}], "1996": [{"name": "S. P. Balasubrahmanyam", "count": 80}, {"name": "K. S. Chithra", "count": 53}, {"name": "Sujatha Mohan", "count": 49}, {"name": "Mano", "count": 39}, {"name": "Hariharan", "count": 31}, {"name": "Swarnalatha", "count": 27}, {"name": "A. R. Rahman", "count": 21}, {"name": "Minmini", "count": 16}, {"name": "Srinivas", "count": 15}, {"name": "Suresh Peters", "count": 15}, {"name": "G. V. Prakash Kumar", "count": 15}, {"name": "Shahul Hameed", "count": 15}, {"name": "Udit Narayan", "count": 14}, {"name": "Noel James", "count": 13}, {"name": "S. Janaki", "count": 10}], "1997": [{"name": "S. P. Balasubrahmanyam", "count": 87}, {"name": "K. S. Chithra", "count": 57}, {"name": "Sujatha Mohan", "count": 53}, {"name": "Mano", "count": 43}, {"name": "Hariharan", "count": 38}, {"name": "Swarnalatha", "count": 32}, {"name": "A. R. Rahman", "count": 24}, {"name": "Srinivas", "count": 19}, {"name": "Udit Narayan", "count": 16}, {"name": "Minmini", "count": 16}, {"name": "Suresh Peters", "count": 15}, {"name": "G. V. Prakash Kumar", "count": 15}, {"name": "Shahul Hameed", "count": 15}, {"name": "Noel James", "count": 13}, {"name": "P. Unnikrishnan", "count": 12}], "1998": [{"name": "S. P. Balasubrahmanyam", "count": 89}, {"name": "K. S. Chithra", "count": 60}, {"name": "Sujatha Mohan", "count": 56}, {"name": "Mano", "count": 45}, {"name": "Hariharan", "count": 44}, {"name": "A. R. Rahman", "count": 33}, {"name": "Swarnalatha", "count": 32}, {"name": "Srinivas", "count": 27}, {"name": "Udit Narayan", "count": 17}, {"name": "Shahul Hameed", "count": 17}, {"name": "Minmini", "count": 16}, {"name": "Suresh Peters", "count": 15}, {"name": "G. V. Prakash Kumar", "count": 15}, {"name": "P. Unnikrishnan", "count": 15}, {"name": "Anuradha Sriram", "count": 14}], "1999": [{"name": "S. P. Balasubrahmanyam", "count": 98}, {"name": "K. S. Chithra", "count": 66}, {"name": "Sujatha Mohan", "count": 59}, {"name": "Hariharan", "count": 52}, {"name": "Mano", "count": 47}, {"name": "Srinivas", "count": 40}, {"name": "A. R. Rahman", "count": 36}, {"name": "Swarnalatha", "count": 36}, {"name": "Udit Narayan", "count": 20}, {"name": "P. Unnikrishnan", "count": 20}, {"name": "Sukhwinder Singh", "count": 17}, {"name": "Shahul Hameed", "count": 17}, {"name": "S. Janaki", "count": 16}, {"name": "Minmini", "count": 16}, {"name": "Anuradha Sriram", "count": 15}], "2000": [{"name": "S. P. Balasubrahmanyam", "count": 99}, {"name": "K. S. Chithra", "count": 71}, {"name": "Sujatha Mohan", "count": 62}, {"name": "Hariharan", "count": 58}, {"name": "Srinivas", "count": 48}, {"name": "Mano", "count": 47}, {"name": "Swarnalatha", "count": 39}, {"name": "A. R. Rahman", "count": 37}, {"name": "Udit Narayan", "count": 25}, {"name": "P. Unnikrishnan", "count": 21}, {"name": "Kavita Krishnamurthy", "count": 20}, {"name": "Sukhwinder Singh", "count": 18}, {"name": "Unni Menon", "count": 18}, {"name": "Shankar Mahadevan", "count": 17}, {"name": "S. Janaki", "count": 17}], "2001": [{"name": "S. P. Balasubrahmanyam", "count": 99}, {"name": "K. S. Chithra", "count": 71}, {"name": "Sujatha Mohan", "count": 63}, {"name": "Hariharan", "count": 59}, {"name": "Srinivas", "count": 50}, {"name": "Mano", "count": 47}, {"name": "Swarnalatha", "count": 39}, {"name": "A. R. Rahman", "count": 38}, {"name": "Udit Narayan", "count": 33}, {"name": "Kavita Krishnamurthy", "count": 23}, {"name": "Shankar Mahadevan", "count": 21}, {"name": "P. Unnikrishnan", "count": 21}, {"name": "Sukhwinder Singh", "count": 20}, {"name": "Sadhana Sargam", "count": 18}, {"name": "Unni Menon", "count": 18}], "2002": [{"name": "S. P. Balasubrahmanyam", "count": 101}, {"name": "K. S. Chithra", "count": 72}, {"name": "Sujatha Mohan", "count": 64}, {"name": "Hariharan", "count": 60}, {"name": "Srinivas", "count": 54}, {"name": "Mano", "count": 48}, {"name": "Swarnalatha", "count": 42}, {"name": "A. R. Rahman", "count": 40}, {"name": "Udit Narayan", "count": 33}, {"name": "Shankar Mahadevan", "count": 23}, {"name": "Sukhwinder Singh", "count": 23}, {"name": "Kavita Krishnamurthy", "count": 23}, {"name": "P. Unnikrishnan", "count": 22}, {"name": "Sadhana Sargam", "count": 21}, {"name": "Harini", "count": 18}], "2003": [{"name": "S. P. Balasubrahmanyam", "count": 101}, {"name": "K. S. Chithra", "count": 72}, {"name": "Sujatha Mohan", "count": 64}, {"name": "Hariharan", "count": 60}, {"name": "Srinivas", "count": 56}, {"name": "Mano", "count": 50}, {"name": "Swarnalatha", "count": 43}, {"name": "A. R. Rahman", "count": 40}, {"name": "Udit Narayan", "count": 33}, {"name": "Shankar Mahadevan", "count": 24}, {"name": "Sukhwinder Singh", "count": 24}, {"name": "Sadhana Sargam", "count": 23}, {"name": "Kavita Krishnamurthy", "count": 23}, {"name": "Unni Menon", "count": 22}, {"name": "P. Unnikrishnan", "count": 22}], "2004": [{"name": "S. P. Balasubrahmanyam", "count": 103}, {"name": "K. S. Chithra", "count": 73}, {"name": "Sujatha Mohan", "count": 68}, {"name": "Hariharan", "count": 68}, {"name": "Srinivas", "count": 57}, {"name": "A. R. Rahman", "count": 50}, {"name": "Mano", "count": 50}, {"name": "Swarnalatha", "count": 43}, {"name": "Udit Narayan", "count": 36}, {"name": "Karthik", "count": 32}, {"name": "Shankar Mahadevan", "count": 27}, {"name": "Sukhwinder Singh", "count": 26}, {"name": "Sadhana Sargam", "count": 26}, {"name": "Kavita Krishnamurthy", "count": 24}, {"name": "P. Unnikrishnan", "count": 24}], "2005": [{"name": "S. P. Balasubrahmanyam", "count": 104}, {"name": "K. S. Chithra", "count": 73}, {"name": "Hariharan", "count": 70}, {"name": "Sujatha Mohan", "count": 68}, {"name": "Srinivas", "count": 57}, {"name": "A. R. Rahman", "count": 52}, {"name": "Mano", "count": 50}, {"name": "Swarnalatha", "count": 43}, {"name": "Udit Narayan", "count": 39}, {"name": "Sukhwinder Singh", "count": 37}, {"name": "Sadhana Sargam", "count": 33}, {"name": "Karthik", "count": 32}, {"name": "Shankar Mahadevan", "count": 28}, {"name": "Kavita Krishnamurthy", "count": 25}, {"name": "P. Unnikrishnan", "count": 24}], "2006": [{"name": "S. P. Balasubrahmanyam", "count": 105}, {"name": "K. S. Chithra", "count": 74}, {"name": "Hariharan", "count": 70}, {"name": "Sujatha Mohan", "count": 68}, {"name": "A. R. Rahman", "count": 58}, {"name": "Srinivas", "count": 57}, {"name": "Mano", "count": 50}, {"name": "Swarnalatha", "count": 44}, {"name": "Udit Narayan", "count": 39}, {"name": "Sukhwinder Singh", "count": 37}, {"name": "Sadhana Sargam", "count": 34}, {"name": "Karthik", "count": 32}, {"name": "Shankar Mahadevan", "count": 30}, {"name": "Kavita Krishnamurthy", "count": 25}, {"name": "P. Unnikrishnan", "count": 24}], "2007": [{"name": "S. P. Balasubrahmanyam", "count": 107}, {"name": "K. S. Chithra", "count": 76}, {"name": "Hariharan", "count": 75}, {"name": "A. R. Rahman", "count": 74}, {"name": "Sujatha Mohan", "count": 68}, {"name": "Srinivas", "count": 58}, {"name": "Mano", "count": 50}, {"name": "Udit Narayan", "count": 44}, {"name": "Swarnalatha", "count": 44}, {"name": "Sukhwinder Singh", "count": 37}, {"name": "Karthik", "count": 35}, {"name": "Sadhana Sargam", "count": 34}, {"name": "Shankar Mahadevan", "count": 30}, {"name": "Kavita Krishnamurthy", "count": 25}, {"name": "P. Unnikrishnan", "count": 24}], "2008": [{"name": "S. P. Balasubrahmanyam", "count": 107}, {"name": "A. R. Rahman", "count": 88}, {"name": "K. S. Chithra", "count": 77}, {"name": "Hariharan", "count": 75}, {"name": "Sujatha Mohan", "count": 68}, {"name": "Srinivas", "count": 62}, {"name": "Mano", "count": 50}, {"name": "Udit Narayan", "count": 45}, {"name": "Swarnalatha", "count": 44}, {"name": "Karthik", "count": 41}, {"name": "Sukhwinder Singh", "count": 40}, {"name": "Sadhana Sargam", "count": 36}, {"name": "Shankar Mahadevan", "count": 30}, {"name": "Alka Yagnik", "count": 26}, {"name": "Kavita Krishnamurthy", "count": 25}], "2009": [{"name": "S. P. Balasubrahmanyam", "count": 107}, {"name": "A. R. Rahman", "count": 90}, {"name": "K. S. Chithra", "count": 77}, {"name": "Hariharan", "count": 75}, {"name": "Sujatha Mohan", "count": 68}, {"name": "Srinivas", "count": 62}, {"name": "Mano", "count": 50}, {"name": "Udit Narayan", "count": 47}, {"name": "Swarnalatha", "count": 44}, {"name": "Karthik", "count": 43}, {"name": "Sukhwinder Singh", "count": 43}, {"name": "Sadhana Sargam", "count": 36}, {"name": "Shankar Mahadevan", "count": 30}, {"name": "Blaaze", "count": 27}, {"name": "Sonu Nigam", "count": 27}], "2010": [{"name": "S. P. Balasubrahmanyam", "count": 109}, {"name": "A. R. Rahman", "count": 107}, {"name": "Hariharan", "count": 78}, {"name": "K. S. Chithra", "count": 77}, {"name": "Sujatha Mohan", "count": 68}, {"name": "Srinivas", "count": 64}, {"name": "Mano", "count": 50}, {"name": "Karthik", "count": 49}, {"name": "Udit Narayan", "count": 47}, {"name": "Sukhwinder Singh", "count": 44}, {"name": "Swarnalatha", "count": 44}, {"name": "Sadhana Sargam", "count": 36}, {"name": "Shankar Mahadevan", "count": 31}, {"name": "Blaaze", "count": 29}, {"name": "Naresh Iyer", "count": 28}], "2011": [{"name": "A. R. Rahman", "count": 109}, {"name": "S. P. Balasubrahmanyam", "count": 109}, {"name": "Hariharan", "count": 78}, {"name": "K. S. Chithra", "count": 77}, {"name": "Sujatha Mohan", "count": 68}, {"name": "Srinivas", "count": 64}, {"name": "Karthik", "count": 50}, {"name": "Mano", "count": 50}, {"name": "Udit Narayan", "count": 47}, {"name": "Sukhwinder Singh", "count": 44}, {"name": "Swarnalatha", "count": 44}, {"name": "Sadhana Sargam", "count": 36}, {"name": "Shankar Mahadevan", "count": 31}, {"name": "Blaaze", "count": 29}, {"name": "Naresh Iyer", "count": 28}], "2012": [{"name": "A. R. Rahman", "count": 113}, {"name": "S. P. Balasubrahmanyam", "count": 109}, {"name": "Hariharan", "count": 78}, {"name": "K. S. Chithra", "count": 77}, {"name": "Sujatha Mohan", "count": 68}, {"name": "Srinivas", "count": 64}, {"name": "Karthik", "count": 50}, {"name": "Mano", "count": 50}, {"name": "Udit Narayan", "count": 47}, {"name": "Sukhwinder Singh", "count": 44}, {"name": "Swarnalatha", "count": 44}, {"name": "Sadhana Sargam", "count": 36}, {"name": "Shankar Mahadevan", "count": 31}, {"name": "Blaaze", "count": 29}, {"name": "Naresh Iyer", "count": 29}], "2013": [{"name": "A. R. Rahman", "count": 119}, {"name": "S. P. Balasubrahmanyam", "count": 109}, {"name": "Hariharan", "count": 79}, {"name": "K. S. Chithra", "count": 77}, {"name": "Sujatha Mohan", "count": 68}, {"name": "Srinivas", "count": 64}, {"name": "Karthik", "count": 53}, {"name": "Mano", "count": 50}, {"name": "Udit Narayan", "count": 47}, {"name": "Sukhwinder Singh", "count": 45}, {"name": "Swarnalatha", "count": 44}, {"name": "Sadhana Sargam", "count": 36}, {"name": "Shankar Mahadevan", "count": 31}, {"name": "Blaaze", "count": 30}, {"name": "Naresh Iyer", "count": 30}], "2014": [{"name": "A. R. Rahman", "count": 156}, {"name": "S. P. Balasubrahmanyam", "count": 118}, {"name": "K. S. Chithra", "count": 79}, {"name": "Hariharan", "count": 79}, {"name": "Srinivas", "count": 71}, {"name": "Sujatha Mohan", "count": 68}, {"name": "Karthik", "count": 54}, {"name": "Mano", "count": 53}, {"name": "Udit Narayan", "count": 47}, {"name": "Sukhwinder Singh", "count": 47}, {"name": "Swarnalatha", "count": 44}, {"name": "Sadhana Sargam", "count": 38}, {"name": "Shreya Ghoshal", "count": 33}, {"name": "Shankar Mahadevan", "count": 31}, {"name": "Blaaze", "count": 30}], "2015": [{"name": "A. R. Rahman", "count": 169}, {"name": "S. P. Balasubrahmanyam", "count": 118}, {"name": "K. S. Chithra", "count": 81}, {"name": "Hariharan", "count": 79}, {"name": "Srinivas", "count": 71}, {"name": "Sujatha Mohan", "count": 68}, {"name": "Karthik", "count": 59}, {"name": "Mano", "count": 53}, {"name": "Sukhwinder Singh", "count": 48}, {"name": "Udit Narayan", "count": 47}, {"name": "Swarnalatha", "count": 44}, {"name": "Sadhana Sargam", "count": 38}, {"name": "Shreya Ghoshal", "count": 33}, {"name": "Shankar Mahadevan", "count": 31}, {"name": "Blaaze", "count": 30}], "2016": [{"name": "A. R. Rahman", "count": 179}, {"name": "S. P. Balasubrahmanyam", "count": 118}, {"name": "K. S. Chithra", "count": 81}, {"name": "Hariharan", "count": 79}, {"name": "Srinivas", "count": 71}, {"name": "Sujatha Mohan", "count": 68}, {"name": "Karthik", "count": 59}, {"name": "Mano", "count": 53}, {"name": "Sukhwinder Singh", "count": 48}, {"name": "Udit Narayan", "count": 47}, {"name": "Swarnalatha", "count": 44}, {"name": "Sadhana Sargam", "count": 38}, {"name": "Shreya Ghoshal", "count": 33}, {"name": "Shankar Mahadevan", "count": 31}, {"name": "Blaaze", "count": 30}], "2017": [{"name": "A. R. Rahman", "count": 208}, {"name": "S. P. Balasubrahmanyam", "count": 118}, {"name": "K. S. Chithra", "count": 81}, {"name": "Hariharan", "count": 80}, {"name": "Srinivas", "count": 71}, {"name": "Sujatha Mohan", "count": 68}, {"name": "Karthik", "count": 59}, {"name": "Mano", "count": 53}, {"name": "Sukhwinder Singh", "count": 50}, {"name": "Udit Narayan", "count": 47}, {"name": "Swarnalatha", "count": 44}, {"name": "Sadhana Sargam", "count": 38}, {"name": "Shreya Ghoshal", "count": 35}, {"name": "Blaaze", "count": 34}, {"name": "Haricharan", "count": 32}], "2018": [{"name": "A. R. Rahman", "count": 212}, {"name": "S. P. Balasubrahmanyam", "count": 118}, {"name": "K. S. Chithra", "count": 81}, {"name": "Hariharan", "count": 80}, {"name": "Srinivas", "count": 71}, {"name": "Sujatha Mohan", "count": 68}, {"name": "Karthik", "count": 60}, {"name": "Mano", "count": 53}, {"name": "Sukhwinder Singh", "count": 50}, {"name": "Udit Narayan", "count": 47}, {"name": "Swarnalatha", "count": 44}, {"name": "Sadhana Sargam", "count": 38}, {"name": "Blaaze", "count": 35}, {"name": "Shreya Ghoshal", "count": 35}, {"name": "Haricharan", "count": 32}], "2019": [{"name": "A. R. Rahman", "count": 222}, {"name": "S. P. Balasubrahmanyam", "count": 118}, {"name": "K. S. Chithra", "count": 81}, {"name": "Hariharan", "count": 80}, {"name": "Srinivas", "count": 71}, {"name": "Sujatha Mohan", "count": 68}, {"name": "Karthik", "count": 60}, {"name": "Mano", "count": 53}, {"name": "Sukhwinder Singh", "count": 50}, {"name": "Udit Narayan", "count": 47}, {"name": "Swarnalatha", "count": 44}, {"name": "Sadhana Sargam", "count": 38}, {"name": "Shreya Ghoshal", "count": 37}, {"name": "Blaaze", "count": 35}, {"name": "Haricharan", "count": 34}], "2020": [{"name": "A. R. Rahman", "count": 224}, {"name": "S. P. Balasubrahmanyam", "count": 118}, {"name": "K. S. Chithra", "count": 81}, {"name": "Hariharan", "count": 80}, {"name": "Srinivas", "count": 71}, {"name": "Sujatha Mohan", "count": 68}, {"name": "Karthik", "count": 60}, {"name": "Mano", "count": 53}, {"name": "Sukhwinder Singh", "count": 50}, {"name": "Udit Narayan", "count": 47}, {"name": "Swarnalatha", "count": 44}, {"name": "Shreya Ghoshal", "count": 39}, {"name": "Sadhana Sargam", "count": 38}, {"name": "Blaaze", "count": 35}, {"name": "Haricharan", "count": 34}], "2021": [{"name": "A. R. Rahman", "count": 225}, {"name": "S. P. Balasubrahmanyam", "count": 118}, {"name": "K. S. Chithra", "count": 81}, {"name": "Hariharan", "count": 80}, {"name": "Srinivas", "count": 72}, {"name": "Sujatha Mohan", "count": 68}, {"name": "Karthik", "count": 60}, {"name": "Mano", "count": 54}, {"name": "Sukhwinder Singh", "count": 50}, {"name": "Udit Narayan", "count": 47}, {"name": "Swarnalatha", "count": 44}, {"name": "Shreya Ghoshal", "count": 42}, {"name": "Sadhana Sargam", "count": 38}, {"name": "Haricharan", "count": 36}, {"name": "Blaaze", "count": 35}], "2022": [{"name": "A. R. Rahman", "count": 235}, {"name": "S. P. Balasubrahmanyam", "count": 118}, {"name": "K. S. Chithra", "count": 81}, {"name": "Hariharan", "count": 80}, {"name": "Srinivas", "count": 72}, {"name": "Sujatha Mohan", "count": 68}, {"name": "Karthik", "count": 60}, {"name": "Mano", "count": 55}, {"name": "Shreya Ghoshal", "count": 51}, {"name": "Sukhwinder Singh", "count": 50}, {"name": "Udit Narayan", "count": 47}, {"name": "Swarnalatha", "count": 44}, {"name": "Haricharan", "count": 38}, {"name": "Sadhana Sargam", "count": 38}, {"name": "Blaaze", "count": 35}], "2023": [{"name": "A. R. Rahman", "count": 239}, {"name": "S. P. Balasubrahmanyam", "count": 118}, {"name": "K. S. Chithra", "count": 82}, {"name": "Hariharan", "count": 81}, {"name": "Srinivas", "count": 73}, {"name": "Sujatha Mohan", "count": 68}, {"name": "Karthik", "count": 60}, {"name": "Mano", "count": 55}, {"name": "Shreya Ghoshal", "count": 53}, {"name": "Sukhwinder Singh", "count": 50}, {"name": "Udit Narayan", "count": 47}, {"name": "Swarnalatha", "count": 44}, {"name": "Haricharan", "count": 40}, {"name": "Sadhana Sargam", "count": 38}, {"name": "Blaaze", "count": 35}], "2024": [{"name": "A. R. Rahman", "count": 245}, {"name": "S. P. Balasubrahmanyam", "count": 118}, {"name": "K. S. Chithra", "count": 82}, {"name": "Hariharan", "count": 81}, {"name": "Srinivas", "count": 73}, {"name": "Sujatha Mohan", "count": 68}, {"name": "Karthik", "count": 60}, {"name": "Mano", "count": 55}, {"name": "Shreya Ghoshal", "count": 53}, {"name": "Sukhwinder Singh", "count": 51}, {"name": "Udit Narayan", "count": 47}, {"name": "Swarnalatha", "count": 44}, {"name": "Haricharan", "count": 40}, {"name": "Sadhana Sargam", "count": 38}, {"name": "Shashaa Tirupati", "count": 35}], "2025": [{"name": "A. R. Rahman", "count": 251}, {"name": "S. P. Balasubrahmanyam", "count": 118}, {"name": "K. S. Chithra", "count": 82}, {"name": "Hariharan", "count": 81}, {"name": "Srinivas", "count": 73}, {"name": "Sujatha Mohan", "count": 68}, {"name": "Karthik", "count": 60}, {"name": "Mano", "count": 55}, {"name": "Shreya Ghoshal", "count": 53}, {"name": "Sukhwinder Singh", "count": 53}, {"name": "Udit Narayan", "count": 47}, {"name": "Swarnalatha", "count": 44}, {"name": "Haricharan", "count": 41}, {"name": "Sadhana Sargam", "count": 38}, {"name": "Shankar Mahadevan", "count": 37}], "2026": [{"name": "A. R. Rahman", "count": 251}, {"name": "S. P. Balasubrahmanyam", "count": 118}, {"name": "K. S. Chithra", "count": 82}, {"name": "Hariharan", "count": 81}, {"name": "Srinivas", "count": 73}, {"name": "Sujatha Mohan", "count": 68}, {"name": "Karthik", "count": 60}, {"name": "Mano", "count": 55}, {"name": "Shreya Ghoshal", "count": 54}, {"name": "Sukhwinder Singh", "count": 53}, {"name": "Udit Narayan", "count": 47}, {"name": "Swarnalatha", "count": 44}, {"name": "Haricharan", "count": 41}, {"name": "Sadhana Sargam", "count": 38}, {"name": "Shankar Mahadevan", "count": 37}]}, "heroSnapshots": {"1992": [{"name": "Arvind Swamy", "count": 1}, {"name": "Mohanlal", "count": 1}], "1993": [{"name": "Vijayakumar", "count": 1}, {"name": "Arvind Swamy", "count": 1}, {"name": "Prabhu", "count": 1}, {"name": "Arjun", "count": 1}, {"name": "Mohanlal", "count": 1}, {"name": "Prashanth", "count": 1}, {"name": "Nandamuri Balakrishna", "count": 1}], "1994": [{"name": "Prabhu", "count": 2}, {"name": "Vijayakumar", "count": 1}, {"name": "Arvind Swamy", "count": 1}, {"name": "Arjun", "count": 1}, {"name": "Mohanlal", "count": 1}, {"name": "Prashanth", "count": 1}, {"name": "Prabhu Deva", "count": 1}, {"name": "Raja", "count": 1}, {"name": "Vineeth", "count": 1}, {"name": "Nandamuri Balakrishna", "count": 1}, {"name": "Radhika", "count": 1}, {"name": "Vikram", "count": 1}, {"name": "Venkatesh", "count": 1}, {"name": "Sathyaraj", "count": 1}], "1995": [{"name": "Arvind Swamy", "count": 3}, {"name": "Prabhu", "count": 2}, {"name": "Vijayakumar", "count": 1}, {"name": "Arjun", "count": 1}, {"name": "Mohanlal", "count": 1}, {"name": "Prashanth", "count": 1}, {"name": "Prabhu Deva", "count": 1}, {"name": "Raja", "count": 1}, {"name": "Vineeth", "count": 1}, {"name": "Rajinikanth Meena Sarath Babu", "count": 1}, {"name": "Nandamuri Balakrishna", "count": 1}, {"name": "Radhika", "count": 1}, {"name": "Vikram", "count": 1}, {"name": "Jackie Shroff", "count": 1}, {"name": "Venkatesh", "count": 1}], "1996": [{"name": "Arvind Swamy", "count": 3}, {"name": "Vijayakumar", "count": 2}, {"name": "Prabhu", "count": 2}, {"name": "Arjun", "count": 1}, {"name": "Kamal Haasan  Manisha Koirala  Urmila Matondkar  Sukanya", "count": 1}, {"name": "Mohanlal", "count": 1}, {"name": "Prashanth", "count": 1}, {"name": "Prabhu Deva", "count": 1}, {"name": "Raja", "count": 1}, {"name": "Vineeth", "count": 1}, {"name": "Rajinikanth Meena Sarath Babu", "count": 1}, {"name": "Nandamuri Balakrishna", "count": 1}, {"name": "Radhika", "count": 1}, {"name": "Vikram", "count": 1}, {"name": "Jackie Shroff", "count": 1}], "1997": [{"name": "Arvind Swamy", "count": 3}, {"name": "Vijayakumar", "count": 2}, {"name": "Prabhu", "count": 2}, {"name": "Mohanlal", "count": 2}, {"name": "Sanjay Dutt", "count": 1}, {"name": "Arjun", "count": 1}, {"name": "Kamal Haasan  Manisha Koirala  Urmila Matondkar  Sukanya", "count": 1}, {"name": "Prashanth", "count": 1}, {"name": "Prabhu Deva", "count": 1}, {"name": "Raja", "count": 1}, {"name": "Vineeth", "count": 1}, {"name": "Arvind Swamy  Prabhu Deva  Kajol", "count": 1}, {"name": "Rajinikanth Meena Sarath Babu", "count": 1}, {"name": "Nandamuri Balakrishna", "count": 1}, {"name": "Radhika", "count": 1}], "1998": [{"name": "Arvind Swamy", "count": 3}, {"name": "Vijayakumar", "count": 2}, {"name": "Shah Rukh Khan", "count": 2}, {"name": "Prabhu", "count": 2}, {"name": "Mohanlal", "count": 2}, {"name": "Prashanth", "count": 2}, {"name": "Sanjay Dutt", "count": 1}, {"name": "Akshaye Khanna", "count": 1}, {"name": "Aamir Khan", "count": 1}, {"name": "Arjun", "count": 1}, {"name": "Kamal Haasan  Manisha Koirala  Urmila Matondkar  Sukanya", "count": 1}, {"name": "Prabhu Deva", "count": 1}, {"name": "Anil Kapoor", "count": 1}, {"name": "Raja", "count": 1}, {"name": "Vineeth", "count": 1}], "1999": [{"name": "Arvind Swamy", "count": 3}, {"name": "Vijayakumar", "count": 2}, {"name": "Shah Rukh Khan", "count": 2}, {"name": "Prabhu", "count": 2}, {"name": "Arjun", "count": 2}, {"name": "Mohanlal", "count": 2}, {"name": "Prashanth", "count": 2}, {"name": "Anil Kapoor", "count": 2}, {"name": "Sanjay Dutt", "count": 1}, {"name": "Akshaye Khanna", "count": 1}, {"name": "Aamir Khan", "count": 1}, {"name": "Kamal Haasan  Manisha Koirala  Urmila Matondkar  Sukanya", "count": 1}, {"name": "Prabhu Deva", "count": 1}, {"name": "Kunal", "count": 1}, {"name": "Raja", "count": 1}], "2000": [{"name": "Arvind Swamy", "count": 3}, {"name": "Arjun", "count": 3}, {"name": "Anil Kapoor", "count": 3}, {"name": "Vijayakumar", "count": 2}, {"name": "Shah Rukh Khan", "count": 2}, {"name": "Prabhu", "count": 2}, {"name": "Mohanlal", "count": 2}, {"name": "Prashanth", "count": 2}, {"name": "R. Madhavan", "count": 1}, {"name": "Sanjay Dutt", "count": 1}, {"name": "Akshaye Khanna", "count": 1}, {"name": "Aamir Khan", "count": 1}, {"name": "Kamal Haasan  Manisha Koirala  Urmila Matondkar  Sukanya", "count": 1}, {"name": "Prabhu Deva", "count": 1}, {"name": "Kunal", "count": 1}], "2001": [{"name": "Arvind Swamy", "count": 3}, {"name": "Arjun", "count": 3}, {"name": "Anil Kapoor", "count": 3}, {"name": "Vijayakumar", "count": 2}, {"name": "Shah Rukh Khan", "count": 2}, {"name": "Prabhu", "count": 2}, {"name": "Mohanlal", "count": 2}, {"name": "Prashanth", "count": 2}, {"name": "R. Madhavan", "count": 1}, {"name": "Sanjay Dutt", "count": 1}, {"name": "Akshaye Khanna", "count": 1}, {"name": "Aamir Khan", "count": 1}, {"name": "Kamal Haasan  Manisha Koirala  Urmila Matondkar  Sukanya", "count": 1}, {"name": "Prabhu Deva", "count": 1}, {"name": "Kunal", "count": 1}], "2002": [{"name": "Arvind Swamy", "count": 3}, {"name": "Arjun", "count": 3}, {"name": "Anil Kapoor", "count": 3}, {"name": "R. Madhavan", "count": 2}, {"name": "Vijayakumar", "count": 2}, {"name": "Shah Rukh Khan", "count": 2}, {"name": "Prabhu", "count": 2}, {"name": "Mohanlal", "count": 2}, {"name": "Prashanth", "count": 2}, {"name": "Manoj Bharathiraja", "count": 1}, {"name": "Rajinikanth", "count": 1}, {"name": "Sanjay Dutt", "count": 1}, {"name": "Akshaye Khanna", "count": 1}, {"name": "Aamir Khan", "count": 1}, {"name": "Kamal Haasan  Manisha Koirala  Urmila Matondkar  Sukanya", "count": 1}], "2003": [{"name": "Arjun", "count": 4}, {"name": "Arvind Swamy", "count": 3}, {"name": "Anil Kapoor", "count": 3}, {"name": "R. Madhavan", "count": 2}, {"name": "Vijayakumar", "count": 2}, {"name": "Shah Rukh Khan", "count": 2}, {"name": "Prabhu", "count": 2}, {"name": "Tarun", "count": 2}, {"name": "Mohanlal", "count": 2}, {"name": "Prashanth", "count": 2}, {"name": "Manoj Bharathiraja", "count": 1}, {"name": "Rajinikanth", "count": 1}, {"name": "Siddharth", "count": 1}, {"name": "Sanjay Dutt", "count": 1}, {"name": "Akshaye Khanna", "count": 1}], "2004": [{"name": "Arjun", "count": 4}, {"name": "Arvind Swamy", "count": 3}, {"name": "Shah Rukh Khan", "count": 3}, {"name": "Anil Kapoor", "count": 3}, {"name": "R. Madhavan", "count": 2}, {"name": "Vijayakumar", "count": 2}, {"name": "Prabhu", "count": 2}, {"name": "Tarun", "count": 2}, {"name": "Mohanlal", "count": 2}, {"name": "Prashanth", "count": 2}, {"name": "Suriya", "count": 1}, {"name": "Manoj Bharathiraja", "count": 1}, {"name": "S. J. Suryah", "count": 1}, {"name": "Vijay", "count": 1}, {"name": "Rajinikanth", "count": 1}], "2005": [{"name": "Arjun", "count": 4}, {"name": "Arvind Swamy", "count": 3}, {"name": "Shah Rukh Khan", "count": 3}, {"name": "Anil Kapoor", "count": 3}, {"name": "R. Madhavan", "count": 2}, {"name": "S. J. Suryah", "count": 2}, {"name": "Vijayakumar", "count": 2}, {"name": "Prabhu", "count": 2}, {"name": "Aamir Khan", "count": 2}, {"name": "Tarun", "count": 2}, {"name": "Mohanlal", "count": 2}, {"name": "Prashanth", "count": 2}, {"name": "Suriya", "count": 1}, {"name": "Manoj Bharathiraja", "count": 1}, {"name": "Vijay", "count": 1}], "2006": [{"name": "Arjun", "count": 4}, {"name": "Arvind Swamy", "count": 3}, {"name": "Shah Rukh Khan", "count": 3}, {"name": "Aamir Khan", "count": 3}, {"name": "Anil Kapoor", "count": 3}, {"name": "Suriya", "count": 2}, {"name": "R. Madhavan", "count": 2}, {"name": "S. J. Suryah", "count": 2}, {"name": "Vijayakumar", "count": 2}, {"name": "Prabhu", "count": 2}, {"name": "Tarun", "count": 2}, {"name": "Mohanlal", "count": 2}, {"name": "Prashanth", "count": 2}, {"name": "Manoj Bharathiraja", "count": 1}, {"name": "Vijay", "count": 1}], "2007": [{"name": "Arjun", "count": 4}, {"name": "Arvind Swamy", "count": 3}, {"name": "Shah Rukh Khan", "count": 3}, {"name": "Aamir Khan", "count": 3}, {"name": "Anil Kapoor", "count": 3}, {"name": "Suriya", "count": 2}, {"name": "R. Madhavan", "count": 2}, {"name": "S. J. Suryah", "count": 2}, {"name": "Vijayakumar", "count": 2}, {"name": "Vijay", "count": 2}, {"name": "Rajinikanth", "count": 2}, {"name": "Prabhu", "count": 2}, {"name": "Tarun", "count": 2}, {"name": "Mohanlal", "count": 2}, {"name": "Prashanth", "count": 2}], "2008": [{"name": "Arjun", "count": 4}, {"name": "Arvind Swamy", "count": 3}, {"name": "Shah Rukh Khan", "count": 3}, {"name": "Aamir Khan", "count": 3}, {"name": "Anil Kapoor", "count": 3}, {"name": "Suriya", "count": 2}, {"name": "R. Madhavan", "count": 2}, {"name": "S. J. Suryah", "count": 2}, {"name": "Vijayakumar", "count": 2}, {"name": "Vijay", "count": 2}, {"name": "Rajinikanth", "count": 2}, {"name": "Salman Khan", "count": 2}, {"name": "Prabhu", "count": 2}, {"name": "Tarun", "count": 2}, {"name": "Mohanlal", "count": 2}], "2009": [{"name": "Arjun", "count": 4}, {"name": "Arvind Swamy", "count": 3}, {"name": "Shah Rukh Khan", "count": 3}, {"name": "Aamir Khan", "count": 3}, {"name": "Anil Kapoor", "count": 3}, {"name": "Suriya", "count": 2}, {"name": "R. Madhavan", "count": 2}, {"name": "S. J. Suryah", "count": 2}, {"name": "Vijayakumar", "count": 2}, {"name": "Vijay", "count": 2}, {"name": "Rajinikanth", "count": 2}, {"name": "Abhishek Bachchan", "count": 2}, {"name": "Salman Khan", "count": 2}, {"name": "Prabhu", "count": 2}, {"name": "Tarun", "count": 2}], "2010": [{"name": "Arjun", "count": 4}, {"name": "Arvind Swamy", "count": 3}, {"name": "Abhishek Bachchan", "count": 3}, {"name": "Shah Rukh Khan", "count": 3}, {"name": "Aamir Khan", "count": 3}, {"name": "Anil Kapoor", "count": 3}, {"name": "Suriya", "count": 2}, {"name": "R. Madhavan", "count": 2}, {"name": "S. J. Suryah", "count": 2}, {"name": "Vijayakumar", "count": 2}, {"name": "Vijay", "count": 2}, {"name": "Rajinikanth", "count": 2}, {"name": "Salman Khan", "count": 2}, {"name": "Prabhu", "count": 2}, {"name": "Tarun", "count": 2}], "2011": [{"name": "Arjun", "count": 4}, {"name": "Arvind Swamy", "count": 3}, {"name": "Abhishek Bachchan", "count": 3}, {"name": "Shah Rukh Khan", "count": 3}, {"name": "Aamir Khan", "count": 3}, {"name": "Anil Kapoor", "count": 3}, {"name": "Suriya", "count": 2}, {"name": "R. Madhavan", "count": 2}, {"name": "S. J. Suryah", "count": 2}, {"name": "Vijayakumar", "count": 2}, {"name": "Vijay", "count": 2}, {"name": "Rajinikanth", "count": 2}, {"name": "Salman Khan", "count": 2}, {"name": "Prabhu", "count": 2}, {"name": "Tarun", "count": 2}], "2012": [{"name": "Arjun", "count": 4}, {"name": "Arvind Swamy", "count": 3}, {"name": "Abhishek Bachchan", "count": 3}, {"name": "Shah Rukh Khan", "count": 3}, {"name": "Aamir Khan", "count": 3}, {"name": "Anil Kapoor", "count": 3}, {"name": "Suriya", "count": 2}, {"name": "R. Madhavan", "count": 2}, {"name": "S. J. Suryah", "count": 2}, {"name": "Vijayakumar", "count": 2}, {"name": "Vijay", "count": 2}, {"name": "Rajinikanth", "count": 2}, {"name": "Salman Khan", "count": 2}, {"name": "Prabhu", "count": 2}, {"name": "Tarun", "count": 2}], "2013": [{"name": "Arjun", "count": 4}, {"name": "Arvind Swamy", "count": 3}, {"name": "Abhishek Bachchan", "count": 3}, {"name": "Shah Rukh Khan", "count": 3}, {"name": "Aamir Khan", "count": 3}, {"name": "Anil Kapoor", "count": 3}, {"name": "Suriya", "count": 2}, {"name": "R. Madhavan", "count": 2}, {"name": "S. J. Suryah", "count": 2}, {"name": "Vijayakumar", "count": 2}, {"name": "Vijay", "count": 2}, {"name": "Rajinikanth", "count": 2}, {"name": "Salman Khan", "count": 2}, {"name": "Prabhu", "count": 2}, {"name": "Tarun", "count": 2}], "2014": [{"name": "Arjun", "count": 4}, {"name": "Rajinikanth", "count": 3}, {"name": "Arvind Swamy", "count": 3}, {"name": "Abhishek Bachchan", "count": 3}, {"name": "Shah Rukh Khan", "count": 3}, {"name": "Aamir Khan", "count": 3}, {"name": "Anil Kapoor", "count": 3}, {"name": "Suriya", "count": 2}, {"name": "R. Madhavan", "count": 2}, {"name": "S. J. Suryah", "count": 2}, {"name": "Vijayakumar", "count": 2}, {"name": "Vijay", "count": 2}, {"name": "Salman Khan", "count": 2}, {"name": "Prabhu", "count": 2}, {"name": "Tarun", "count": 2}], "2015": [{"name": "Arjun", "count": 4}, {"name": "Rajinikanth", "count": 3}, {"name": "Arvind Swamy", "count": 3}, {"name": "Abhishek Bachchan", "count": 3}, {"name": "Shah Rukh Khan", "count": 3}, {"name": "Aamir Khan", "count": 3}, {"name": "Anil Kapoor", "count": 3}, {"name": "Suriya", "count": 2}, {"name": "R. Madhavan", "count": 2}, {"name": "S. J. Suryah", "count": 2}, {"name": "Vijayakumar", "count": 2}, {"name": "Vijay", "count": 2}, {"name": "Salman Khan", "count": 2}, {"name": "Prabhu", "count": 2}, {"name": "Tarun", "count": 2}], "2016": [{"name": "Arjun", "count": 4}, {"name": "Rajinikanth", "count": 3}, {"name": "Arvind Swamy", "count": 3}, {"name": "Abhishek Bachchan", "count": 3}, {"name": "Shah Rukh Khan", "count": 3}, {"name": "Aamir Khan", "count": 3}, {"name": "Anil Kapoor", "count": 3}, {"name": "Suriya", "count": 2}, {"name": "R. Madhavan", "count": 2}, {"name": "S. J. Suryah", "count": 2}, {"name": "Vijayakumar", "count": 2}, {"name": "Vijay", "count": 2}, {"name": "Salman Khan", "count": 2}, {"name": "Prabhu", "count": 2}, {"name": "Tarun", "count": 2}], "2017": [{"name": "Arjun", "count": 4}, {"name": "Rajinikanth", "count": 3}, {"name": "Arvind Swamy", "count": 3}, {"name": "Abhishek Bachchan", "count": 3}, {"name": "Shah Rukh Khan", "count": 3}, {"name": "Aamir Khan", "count": 3}, {"name": "Anil Kapoor", "count": 3}, {"name": "Suriya", "count": 2}, {"name": "R. Madhavan", "count": 2}, {"name": "S. J. Suryah", "count": 2}, {"name": "Vijayakumar", "count": 2}, {"name": "Vijay", "count": 2}, {"name": "Salman Khan", "count": 2}, {"name": "Prabhu", "count": 2}, {"name": "Tarun", "count": 2}], "2018": [{"name": "Arjun", "count": 4}, {"name": "Vijay", "count": 3}, {"name": "Rajinikanth", "count": 3}, {"name": "Arvind Swamy", "count": 3}, {"name": "Abhishek Bachchan", "count": 3}, {"name": "Shah Rukh Khan", "count": 3}, {"name": "Aamir Khan", "count": 3}, {"name": "Anil Kapoor", "count": 3}, {"name": "Suriya", "count": 2}, {"name": "R. Madhavan", "count": 2}, {"name": "S. J. Suryah", "count": 2}, {"name": "Vijayakumar", "count": 2}, {"name": "Salman Khan", "count": 2}, {"name": "Prabhu", "count": 2}, {"name": "Tarun", "count": 2}], "2019": [{"name": "Arjun", "count": 4}, {"name": "Vijay", "count": 3}, {"name": "Rajinikanth", "count": 3}, {"name": "Arvind Swamy", "count": 3}, {"name": "Abhishek Bachchan", "count": 3}, {"name": "Shah Rukh Khan", "count": 3}, {"name": "Aamir Khan", "count": 3}, {"name": "Anil Kapoor", "count": 3}, {"name": "Suriya", "count": 2}, {"name": "R. Madhavan", "count": 2}, {"name": "S. J. Suryah", "count": 2}, {"name": "Vijayakumar", "count": 2}, {"name": "Salman Khan", "count": 2}, {"name": "Prabhu", "count": 2}, {"name": "Tarun", "count": 2}], "2020": [{"name": "Arjun", "count": 4}, {"name": "Vijay", "count": 3}, {"name": "Rajinikanth", "count": 3}, {"name": "Arvind Swamy", "count": 3}, {"name": "Abhishek Bachchan", "count": 3}, {"name": "Shah Rukh Khan", "count": 3}, {"name": "Aamir Khan", "count": 3}, {"name": "Anil Kapoor", "count": 3}, {"name": "Suriya", "count": 2}, {"name": "R. Madhavan", "count": 2}, {"name": "S. J. Suryah", "count": 2}, {"name": "Vijayakumar", "count": 2}, {"name": "Salman Khan", "count": 2}, {"name": "Prabhu", "count": 2}, {"name": "Tarun", "count": 2}], "2021": [{"name": "Arjun", "count": 4}, {"name": "Vijay", "count": 3}, {"name": "Rajinikanth", "count": 3}, {"name": "Arvind Swamy", "count": 3}, {"name": "Abhishek Bachchan", "count": 3}, {"name": "Shah Rukh Khan", "count": 3}, {"name": "Aamir Khan", "count": 3}, {"name": "Anil Kapoor", "count": 3}, {"name": "Suriya", "count": 2}, {"name": "R. Madhavan", "count": 2}, {"name": "S. J. Suryah", "count": 2}, {"name": "Vijayakumar", "count": 2}, {"name": "Salman Khan", "count": 2}, {"name": "Prabhu", "count": 2}, {"name": "Tarun", "count": 2}], "2022": [{"name": "Arjun", "count": 4}, {"name": "Vijay", "count": 3}, {"name": "Rajinikanth", "count": 3}, {"name": "Arvind Swamy", "count": 3}, {"name": "Abhishek Bachchan", "count": 3}, {"name": "Shah Rukh Khan", "count": 3}, {"name": "Aamir Khan", "count": 3}, {"name": "Anil Kapoor", "count": 3}, {"name": "Suriya", "count": 2}, {"name": "R. Madhavan", "count": 2}, {"name": "S. J. Suryah", "count": 2}, {"name": "Vijayakumar", "count": 2}, {"name": "Salman Khan", "count": 2}, {"name": "Prabhu", "count": 2}, {"name": "Tarun", "count": 2}], "2023": [{"name": "Arjun", "count": 4}, {"name": "Vijay", "count": 3}, {"name": "Rajinikanth", "count": 3}, {"name": "Arvind Swamy", "count": 3}, {"name": "Abhishek Bachchan", "count": 3}, {"name": "Shah Rukh Khan", "count": 3}, {"name": "Aamir Khan", "count": 3}, {"name": "Anil Kapoor", "count": 3}, {"name": "Silambarasan", "count": 3}, {"name": "Vikram", "count": 3}, {"name": "Suriya", "count": 2}, {"name": "R. Madhavan", "count": 2}, {"name": "S. J. Suryah", "count": 2}, {"name": "Vijayakumar", "count": 2}, {"name": "Salman Khan", "count": 2}], "2024": [{"name": "Arjun", "count": 4}, {"name": "Vijay", "count": 3}, {"name": "Rajinikanth", "count": 3}, {"name": "Arvind Swamy", "count": 3}, {"name": "Abhishek Bachchan", "count": 3}, {"name": "Shah Rukh Khan", "count": 3}, {"name": "Aamir Khan", "count": 3}, {"name": "Anil Kapoor", "count": 3}, {"name": "Silambarasan", "count": 3}, {"name": "Vikram", "count": 3}, {"name": "Suriya", "count": 2}, {"name": "R. Madhavan", "count": 2}, {"name": "S. J. Suryah", "count": 2}, {"name": "Vijayakumar", "count": 2}, {"name": "Salman Khan", "count": 2}], "2025": [{"name": "Arjun", "count": 4}, {"name": "Vijay", "count": 3}, {"name": "Rajinikanth", "count": 3}, {"name": "Arvind Swamy", "count": 3}, {"name": "Abhishek Bachchan", "count": 3}, {"name": "Shah Rukh Khan", "count": 3}, {"name": "Aamir Khan", "count": 3}, {"name": "Anil Kapoor", "count": 3}, {"name": "Silambarasan", "count": 3}, {"name": "Vikram", "count": 3}, {"name": "Suriya", "count": 2}, {"name": "R. Madhavan", "count": 2}, {"name": "S. J. Suryah", "count": 2}, {"name": "Vijayakumar", "count": 2}, {"name": "Salman Khan", "count": 2}], "2026": [{"name": "Arjun", "count": 4}, {"name": "Vijay", "count": 3}, {"name": "Rajinikanth", "count": 3}, {"name": "Arvind Swamy", "count": 3}, {"name": "Abhishek Bachchan", "count": 3}, {"name": "Shah Rukh Khan", "count": 3}, {"name": "Aamir Khan", "count": 3}, {"name": "Anil Kapoor", "count": 3}, {"name": "Silambarasan", "count": 3}, {"name": "Vikram", "count": 3}, {"name": "Suriya", "count": 2}, {"name": "R. Madhavan", "count": 2}, {"name": "S. J. Suryah", "count": 2}, {"name": "Vijayakumar", "count": 2}, {"name": "Salman Khan", "count": 2}]}};
+
+const BAR_COLORS = [
+  '#B71C1C', '#C62828', '#D84315', '#E64A19', '#EF6C00',
+  '#F57C00', '#F9A825', '#FFB300', '#8D6E63', '#A1887F',
+  '#6D4C41', '#558B2F', '#D84315', '#C62828', '#B71C1C'
+];
+
+let mode = 'singers';
+let currentYearIdx = 0;
+let playing = false;
+let playInterval = null;
+
+const container = document.getElementById('chart-container');
+const yearDisplay = document.getElementById('year-display');
+
+function getSnapshots() {
+  return mode === 'singers' ? DATA.singerSnapshots : DATA.heroSnapshots;
+}
+
+function renderYear(yearIdx) {
+  const year = DATA.years[yearIdx];
+  const snapshots = getSnapshots();
+  const entries = snapshots[String(year)] || [];
+  const maxCount = entries.length ? entries[0].count : 1;
+  const barWidth = container.clientWidth - 200;
+
+  yearDisplay.textContent = year;
+
+  // Build or update bars
+  let existing = container.querySelectorAll('.bar-row');
+
+  // Clear and rebuild for simplicity during mode switches
+  if (existing.length === 0 || container.dataset.mode !== mode) {
+    container.innerHTML = '';
+    container.dataset.mode = mode;
+    existing = [];
+  }
+
+  // Ensure we have 15 rows
+  while (container.children.length < 15) {
+    const row = document.createElement('div');
+    row.className = 'bar-row';
+    row.innerHTML = `
+      <div class="bar-label"></div>
+      <div class="bar-track">
+        <div class="bar-fill">
+          <span class="bar-count"></span>
+        </div>
+      </div>
+    `;
+    container.appendChild(row);
+  }
+
+  const rows = container.querySelectorAll('.bar-row');
+  for (let i = 0; i < 15; i++) {
+    const row = rows[i];
+    const entry = entries[i];
+    const label = row.querySelector('.bar-label');
+    const fill = row.querySelector('.bar-fill');
+    const count = row.querySelector('.bar-count');
+
+    if (entry) {
+      label.textContent = entry.name;
+      const pct = (entry.count / maxCount) * 100;
+      fill.style.width = pct + '%';
+      fill.style.background = BAR_COLORS[i % BAR_COLORS.length];
+      count.textContent = entry.count;
+      row.style.opacity = 1;
+    } else {
+      label.textContent = '';
+      fill.style.width = '0%';
+      count.textContent = '';
+      row.style.opacity = 0;
+    }
+  }
+}
+
+function setMode(m) {
+  mode = m;
+  document.getElementById('singers-btn').classList.toggle('active', m === 'singers');
+  document.getElementById('heroes-btn').classList.toggle('active', m === 'heroes');
+  container.innerHTML = '';
+  renderYear(currentYearIdx);
+}
+
+function togglePlay() {
+  playing = !playing;
+  const btn = document.getElementById('play-btn');
+  if (playing) {
+    btn.innerHTML = '&#9632; Stop';
+    btn.classList.add('active');
+    if (currentYearIdx >= DATA.years.length - 1) currentYearIdx = 0;
+    advanceYear();
+  } else {
+    btn.innerHTML = '&#9654; Play';
+    btn.classList.remove('active');
+    clearTimeout(playInterval);
+  }
+}
+
+function advanceYear() {
+  if (!playing) return;
+  if (currentYearIdx < DATA.years.length - 1) {
+    currentYearIdx++;
+    renderYear(currentYearIdx);
+    const speed = parseInt(document.getElementById('speed').value);
+    playInterval = setTimeout(advanceYear, speed);
+  } else {
+    playing = false;
+    const btn = document.getElementById('play-btn');
+    btn.innerHTML = '&#9654; Play';
+    btn.classList.remove('active');
+  }
+}
+
+// Keyboard: left/right arrows, space for play/pause
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' && currentYearIdx < DATA.years.length - 1) {
+    currentYearIdx++;
+    renderYear(currentYearIdx);
+  }
+  if (e.key === 'ArrowLeft' && currentYearIdx > 0) {
+    currentYearIdx--;
+    renderYear(currentYearIdx);
+  }
+  if (e.key === ' ') { e.preventDefault(); togglePlay(); }
+});
+
+// Init
+renderYear(0);
+</script>
+</body>
+</html>
