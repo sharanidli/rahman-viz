@@ -151,15 +151,58 @@
 </header>
 
 <div class="grid">
-  <a class="card" href="album_network.html">
-    <span class="card-icon">&#11044;&#8212;&#11044;</span>
-    <h2>Album Network</h2>
+  <a class="card" href="racing_bar.html">
+    <span class="card-icon">&#9654;&#9646;</span>
+    <h2>Collaborators Over Time</h2>
     <p>
-      Each album is a node. Albums that share singers are connected, with
-      thicker edges meaning more singers in common. See how Rahman's early
-      Tamil films form a tight cluster.
+      Animated racing bar chart showing collaborations year by year.
+      Toggle cumulative totals vs. 5-year rolling window to see who's hot in each era.
+      Switch between singers and stars. Hit play and watch the rankings shift.
     </p>
-    <div class="card-meta">Network graph &middot; 164 albums &middot; Zoom, pan &amp; filter</div>
+    <div class="card-meta">Animation &middot; Singers + Stars &middot; Cumulative &amp; 5-year window</div>
+  </a>
+
+  <a class="card" href="collaborator_timeline.html">
+    <span class="card-icon">&#9476;&#9679;&#9476;&#9679;&#9476;</span>
+    <h2>Collaborator Timeline</h2>
+    <p>
+      Who sang for Rahman each year? Top 25 singers shown across 3 decades.
+      Dot size reflects total tracks that year. Watch SPB dominate early,
+      then new voices emerge.
+    </p>
+    <div class="card-meta">Timeline &middot; 25 singers &times; 34 years &middot; Hover for details</div>
+  </a>
+
+  <a class="card" href="director_timeline.html">
+    <span class="card-icon">&#9476;&#9654;&#9476;</span>
+    <h2>Director Timeline</h2>
+    <p>
+      Which directors has Rahman worked with across his career? Top 20 directors
+      shown year by year. Dot size reflects number of films that year. See Mani
+      Ratnam's consistent presence and Shankar's blockbuster clusters.
+    </p>
+    <div class="card-meta">Timeline &middot; 20 directors &times; 34 years &middot; Hover for details</div>
+  </a>
+
+  <a class="card" href="director_sound.html">
+    <span class="card-icon">&#11039;&#11039;</span>
+    <h2>Director Sound Profiles</h2>
+    <p>
+      How does Rahman's music differ by director? Overlapping radar charts
+      compare danceability, energy, valence, acousticness, and liveness.
+      Select 2-4 directors and see their sonic signatures overlap.
+    </p>
+    <div class="card-meta">Radar comparison &middot; 6 directors &middot; Select to compare</div>
+  </a>
+
+  <a class="card" href="lyricist_heatmap.html">
+    <span class="card-icon">&#9638;&#9638;&#9638;</span>
+    <h2>Lyricist &times; Singer</h2>
+    <p>
+      Who writes for whom? A heatmap with lyricists on one axis and singers
+      on the other. See which pairings define Rahman's sound across languages.
+    </p>
+    <div class="card-meta">Heatmap &middot; 71 lyricists &times; 66 singers &middot; Hover for details</div>
   </a>
 
   <a class="card" href="singer_network.html">
@@ -184,17 +227,6 @@
     <div class="card-meta">Scatter plot &middot; 883 tracks &middot; Axis selector + album filter</div>
   </a>
 
-  <a class="card" href="collaborator_timeline.html">
-    <span class="card-icon">&#9476;&#9679;&#9476;&#9679;&#9476;</span>
-    <h2>Collaborator Timeline</h2>
-    <p>
-      Who sang for Rahman each year? Top 25 singers shown across 3 decades.
-      Dot size reflects total tracks that year. Watch SPB dominate early,
-      then new voices emerge.
-    </p>
-    <div class="card-meta">Timeline &middot; 25 singers &times; 34 years &middot; Hover for details</div>
-  </a>
-
   <a class="card" href="sound_radar.html">
     <span class="card-icon">&#11039;</span>
     <h2>Sound Over Time</h2>
@@ -204,37 +236,6 @@
       Auto-generated summaries describe each album's character.
     </p>
     <div class="card-meta">Radar chart &middot; 109 albums &middot; Arrow keys or autoplay</div>
-  </a>
-
-  <a class="card" href="lyricist_heatmap.html">
-    <span class="card-icon">&#9638;&#9638;&#9638;</span>
-    <h2>Lyricist &times; Singer</h2>
-    <p>
-      Who writes for whom? A heatmap with lyricists on one axis and singers
-      on the other. See which pairings define Rahman's sound across languages.
-    </p>
-    <div class="card-meta">Heatmap &middot; 71 lyricists &times; 66 singers &middot; Hover for details</div>
-  </a>
-
-  <a class="card" href="key_wheel.html">
-    <span class="card-icon">&#9836;</span>
-    <h2>Key & Mode Wheel</h2>
-    <p>
-      Which musical keys does Rahman favour? A circular chart of major vs.
-      minor across all 12 keys. Click any segment to see the tracks.
-    </p>
-    <div class="card-meta">Polar chart &middot; 883 tracks &middot; Click to explore</div>
-  </a>
-
-  <a class="card" href="racing_bar.html">
-    <span class="card-icon">&#9654;&#9646;</span>
-    <h2>Collaborators Over Time</h2>
-    <p>
-      Animated racing bar chart showing cumulative collaborations year by year.
-      Toggle between singers (track count) and stars/actors (album count).
-      Hit play and watch the rankings shift.
-    </p>
-    <div class="card-meta">Animation &middot; Singers + Stars &middot; Play / arrow keys</div>
   </a>
 
   <a class="card" href="song_siblings.html">
@@ -248,26 +249,25 @@
     <div class="card-meta">Search &middot; 883 tracks &middot; Euclidean similarity</div>
   </a>
 
-  <a class="card" href="director_timeline.html">
-    <span class="card-icon">&#9476;&#9654;&#9476;</span>
-    <h2>Director Timeline</h2>
+  <a class="card" href="key_wheel.html">
+    <span class="card-icon">&#9836;</span>
+    <h2>Key & Mode Wheel</h2>
     <p>
-      Which directors has Rahman worked with across his career? Top 20 directors
-      shown year by year. Dot size reflects number of films that year. See Mani
-      Ratnam's consistent presence and Shankar's blockbuster clusters.
+      Which musical keys does Rahman favour? A circular chart of major vs.
+      minor across all 12 keys. Click any segment to see the tracks.
     </p>
-    <div class="card-meta">Timeline &middot; 20 directors &times; 34 years &middot; Hover for details</div>
+    <div class="card-meta">Polar chart &middot; 883 tracks &middot; Click to explore</div>
   </a>
 
-  <a class="card" href="director_sound.html">
-    <span class="card-icon">&#11039;&#11039;</span>
-    <h2>Director Sound Profiles</h2>
+  <a class="card" href="album_network.html">
+    <span class="card-icon">&#11044;&#8212;&#11044;</span>
+    <h2>Album Network</h2>
     <p>
-      How does Rahman's music differ by director? Overlapping radar charts
-      compare danceability, energy, valence, acousticness, and liveness.
-      Select 2-4 directors and see their sonic signatures overlap.
+      Each album is a node. Albums that share singers are connected, with
+      thicker edges meaning more singers in common. See how Rahman's early
+      Tamil films form a tight cluster.
     </p>
-    <div class="card-meta">Radar comparison &middot; 6 directors &middot; Select to compare</div>
+    <div class="card-meta">Network graph &middot; 164 albums &middot; Zoom, pan &amp; filter</div>
   </a>
 
   <a class="card" href="data_quality.html">
