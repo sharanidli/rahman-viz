@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AR Rahman &mdash; BPM Analysis</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #F5E6D3;
+    color: #3D1C11;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  #header {
+    padding: 24px 24px 8px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  #header h1 { font-size: 22px; font-weight: 700; color: #3D1C11; }
+  #header p { font-size: 13px; color: #6B4226; margin-top: 4px; }
+
+  .section-title {
+    font-size: 16px; font-weight: 700; color: #3D1C11;
+    padding: 24px 24px 8px; max-width: 960px; margin: 0 auto;
+  }
+
+  .chart-wrap {
+    max-width: 960px; margin: 0 auto; padding: 0 24px;
+  }
+
+  svg { display: block; }
+
+  #tooltip {
+    position: fixed; pointer-events: none;
+    background: rgba(237,224,212,0.97);
+    border: 1px solid rgba(61,28,17,0.15);
+    border-radius: 10px; padding: 14px 18px;
+    font-size: 13px; line-height: 1.6;
+    max-width: 300px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    display: none; z-index: 100;
+    backdrop-filter: blur(8px);
+  }
+  #tooltip .tt-title { font-size: 15px; font-weight: 700; margin-bottom: 2px; color: #3D1C11; }
+  #tooltip .tt-row { display: flex; justify-content: space-between; gap: 16px; }
+  #tooltip .tt-label { color: #6B4226; }
+  #tooltip .tt-val { color: #3D1C11; font-weight: 600; }
+  #tooltip .tt-examples { margin-top: 6px; font-size: 12px; color: #6B4226; }
+
+  .footer-spacer { height: 40px; }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <h1>AR Rahman &mdash; BPM Analysis</h1>
+  <p id="subtitle"></p>
+</div>
+
+<h2 class="section-title">Tempo Distribution</h2>
+<div class="chart-wrap"><svg id="histogram"></svg></div>
+
+<h2 class="section-title">Tempo Trends Over Time</h2>
+<div class="chart-wrap"><svg id="timeline"></svg></div>
+
+<div class="footer-spacer"></div>
+<div id="tooltip"></div>
+
+<script>
+const DATA = {"histogram": [{"label": "<80", "low": 0, "high": 80, "count": 68, "examples": ["Touch Of The Sun", "Acid Darbari", "Festival"]}, {"label": "80-90", "low": 80, "high": 90, "count": 104, "examples": ["The Canyon", "Jwalamukhi (Female Version)", "The Voice Without Words"]}, {"label": "90-100", "low": 90, "high": 100, "count": 124, "examples": ["Lovely Day", "Gum Sum", "Milo Wahan Wahan"]}, {"label": "100-110", "low": 100, "high": 110, "count": 102, "examples": ["Never Hear Surf Music Again", "Veere Kadh De", "MEHARBAAN O RAHMAAN"]}, {"label": "110-120", "low": 110, "high": 120, "count": 88, "examples": ["Liberation In A Dream", "Liberation", "If I Rise"]}, {"label": "120-130", "low": 120, "high": 130, "count": 116, "examples": ["Chopin: Nocturne No. 2 in E-Flat Major, Op. 9 No. 2", "Gori Godh Bhari", "KHATTI SI WOH IMLI"]}, {"label": "130-140", "low": 130, "high": 140, "count": 119, "examples": ["If You Love Me (Really Love Me)", "Sofia", "Nayi Nayi"]}, {"label": "140-160", "low": 140, "high": 160, "count": 79, "examples": ["R.I.P.", "Singappenney", "Zinda Rahey (From \"Chhaava\")"]}, {"label": "160+", "low": 160, "high": 999, "count": 83, "examples": ["Liberation Begins", "\u00c7a plane pour moi", "Jwalamukhi"]}], "yearly": [{"year": 1992, "count": 12, "median": 106.6, "p25": 89.4, "p75": 168.2}, {"year": 1993, "count": 18, "median": 112.5, "p25": 89.8, "p75": 129.9}, {"year": 1994, "count": 23, "median": 104.0, "p25": 89.8, "p75": 135.5}, {"year": 1995, "count": 15, "median": 124.0, "p25": 98.9, "p75": 129.9}, {"year": 1996, "count": 32, "median": 102.0, "p25": 88.2, "p75": 129.6}, {"year": 1997, "count": 15, "median": 100.2, "p25": 96.5, "p75": 125.0}, {"year": 1998, "count": 29, "median": 106.0, "p25": 95.0, "p75": 140.0}, {"year": 1999, "count": 38, "median": 114.0, "p25": 95.0, "p75": 135.2}, {"year": 2000, "count": 36, "median": 109.4, "p25": 88.7, "p75": 124.3}, {"year": 2001, "count": 17, "median": 99.0, "p25": 90.0, "p75": 115.1}, {"year": 2002, "count": 14, "median": 114.0, "p25": 101.0, "p75": 128.5}, {"year": 2003, "count": 19, "median": 118.0, "p25": 103.0, "p75": 131.9}, {"year": 2004, "count": 68, "median": 117.5, "p25": 99.9, "p75": 130.1}, {"year": 2005, "count": 10, "median": 113.4, "p25": 96.3, "p75": 125.0}, {"year": 2006, "count": 17, "median": 105.0, "p25": 97.1, "p75": 122.1}, {"year": 2007, "count": 7, "median": 122.0, "p25": 109.0, "p75": 139.5}, {"year": 2008, "count": 36, "median": 115.0, "p25": 95.8, "p75": 137.9}, {"year": 2009, "count": 17, "median": 110.0, "p25": 95.0, "p75": 123.4}, {"year": 2010, "count": 70, "median": 110.0, "p25": 93.0, "p75": 133.0}, {"year": 2011, "count": 15, "median": 97.0, "p25": 89.5, "p75": 134.4}, {"year": 2012, "count": 21, "median": 125.0, "p25": 98.9, "p75": 139.9}, {"year": 2013, "count": 16, "median": 107.8, "p25": 91.0, "p75": 116.3}, {"year": 2014, "count": 41, "median": 111.0, "p25": 95.0, "p75": 128.1}, {"year": 2015, "count": 10, "median": 130.0, "p25": 90.8, "p75": 156.0}, {"year": 2016, "count": 33, "median": 120.0, "p25": 93.4, "p75": 135.0}, {"year": 2017, "count": 71, "median": 100.0, "p25": 77.7, "p75": 130.8}, {"year": 2018, "count": 12, "median": 126.0, "p25": 88.6, "p75": 133.0}, {"year": 2019, "count": 25, "median": 134.0, "p25": 113.1, "p75": 139.9}, {"year": 2020, "count": 9, "median": 98.0, "p25": 89.0, "p75": 106.0}, {"year": 2021, "count": 14, "median": 124.0, "p25": 111.2, "p75": 135.8}, {"year": 2022, "count": 21, "median": 119.7, "p25": 89.5, "p75": 141.0}, {"year": 2023, "count": 25, "median": 124.0, "p25": 90.8, "p75": 139.9}, {"year": 2024, "count": 21, "median": 120.0, "p25": 100.0, "p75": 130.1}, {"year": 2025, "count": 12, "median": 129.4, "p25": 110.0, "p75": 135.3}], "totalTracks": 883, "overallMedian": 114.7};
+
+document.getElementById('subtitle').textContent =
+  'Tempo distribution and trends across ' + DATA.totalTracks + ' tracks';
+
+function svgEl(tag, attrs) {
+  const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const [k, v] of Object.entries(attrs || {})) el.setAttribute(k, v);
+  return el;
+}
+
+const tooltip = document.getElementById('tooltip');
+
+function showTip(ev, html) {
+  tooltip.innerHTML = html;
+  tooltip.style.display = 'block';
+  moveTip(ev);
+}
+function moveTip(ev) {
+  let x = ev.clientX + 16, y = ev.clientY + 16;
+  if (x + 300 > window.innerWidth) x = ev.clientX - 310;
+  if (y + 200 > window.innerHeight) y = ev.clientY - 210;
+  tooltip.style.left = x + 'px';
+  tooltip.style.top = y + 'px';
+}
+function hideTip() { tooltip.style.display = 'none'; }
+
+// ==============================
+// Section 1: BPM Histogram
+// ==============================
+(function() {
+  const W = 900, H = 350;
+  const margin = { top: 30, right: 30, bottom: 60, left: 55 };
+  const plotW = W - margin.left - margin.right;
+  const plotH = H - margin.top - margin.bottom;
+  const bins = DATA.histogram;
+  const maxCount = Math.max(...bins.map(b => b.count));
+
+  const svg = document.getElementById('histogram');
+  svg.setAttribute('width', W);
+  svg.setAttribute('height', H);
+  svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  svg.style.width = '100%';
+  svg.style.height = 'auto';
+
+  // Bar gradient colors: cinnamon (#8D6E63) -> chilli red (#C62828)
+  const colorStops = [
+    [141, 110, 99],   // #8D6E63
+    [198, 40, 40],    // #C62828
+  ];
+  function barColor(i, total) {
+    const t = total > 1 ? i / (total - 1) : 0;
+    const r = Math.round(colorStops[0][0] + t * (colorStops[1][0] - colorStops[0][0]));
+    const g = Math.round(colorStops[0][1] + t * (colorStops[1][1] - colorStops[0][1]));
+    const b = Math.round(colorStops[0][2] + t * (colorStops[1][2] - colorStops[0][2]));
+    return 'rgb(' + r + ',' + g + ',' + b + ')';
+  }
+
+  // Y-axis grid + labels
+  const yTicks = 5;
+  const yStep = Math.ceil(maxCount / yTicks / 10) * 10 || 10;
+  for (let v = 0; v <= maxCount + yStep; v += yStep) {
+    if (v > maxCount * 1.1) break;
+    const y = margin.top + plotH - (v / maxCount) * plotH;
+    if (y < margin.top - 5) continue;
+    svg.appendChild(svgEl('line', {
+      x1: margin.left, y1: y, x2: margin.left + plotW, y2: y,
+      stroke: 'rgba(61,28,17,0.08)', 'stroke-width': 1,
+    }));
+    const lbl = svgEl('text', {
+      x: margin.left - 10, y: y + 4,
+      'text-anchor': 'end', fill: '#8D6E63', 'font-size': '11px',
+      'font-family': 'Segoe UI, system-ui, sans-serif',
+    });
+    lbl.textContent = v;
+    svg.appendChild(lbl);
+  }
+
+  // Y-axis title
+  const yTitle = svgEl('text', {
+    x: 14, y: margin.top + plotH / 2,
+    'text-anchor': 'middle', fill: '#6B4226', 'font-size': '12px',
+    'font-family': 'Segoe UI, system-ui, sans-serif',
+    transform: 'rotate(-90, 14, ' + (margin.top + plotH / 2) + ')',
+  });
+  yTitle.textContent = 'Number of songs';
+  svg.appendChild(yTitle);
+
+  // Bars
+  const barGap = 6;
+  const barW = (plotW - barGap * (bins.length - 1)) / bins.length;
+
+  bins.forEach((bin, i) => {
+    const x = margin.left + i * (barW + barGap);
+    const barH = maxCount > 0 ? (bin.count / maxCount) * plotH : 0;
+    const y = margin.top + plotH - barH;
+    const color = barColor(i, bins.length);
+
+    const rect = svgEl('rect', {
+      x: x, y: y, width: barW, height: barH,
+      fill: color, rx: 3, ry: 3,
+      style: 'cursor:pointer; transition: opacity 0.15s;',
+    });
+    svg.appendChild(rect);
+
+    // Count label above bar
+    if (bin.count > 0) {
+      const countLbl = svgEl('text', {
+        x: x + barW / 2, y: y - 6,
+        'text-anchor': 'middle', fill: '#3D1C11', 'font-size': '11px',
+        'font-weight': '600', 'font-family': 'Segoe UI, system-ui, sans-serif',
+      });
+      countLbl.textContent = bin.count;
+      svg.appendChild(countLbl);
+    }
+
+    // X-axis label
+    const xLbl = svgEl('text', {
+      x: x + barW / 2, y: margin.top + plotH + 20,
+      'text-anchor': 'middle', fill: '#6B4226', 'font-size': '11px',
+      'font-family': 'Segoe UI, system-ui, sans-serif',
+    });
+    xLbl.textContent = bin.label;
+    svg.appendChild(xLbl);
+
+    // BPM label below
+    const bpmLbl = svgEl('text', {
+      x: x + barW / 2, y: margin.top + plotH + 34,
+      'text-anchor': 'middle', fill: '#8D6E63', 'font-size': '10px',
+      'font-family': 'Segoe UI, system-ui, sans-serif',
+    });
+    bpmLbl.textContent = 'BPM';
+    svg.appendChild(bpmLbl);
+
+    // Hover events
+    rect.addEventListener('mouseenter', function(ev) {
+      rect.setAttribute('opacity', '0.8');
+      let html = '<div class="tt-title">' + bin.label + ' BPM</div>';
+      html += '<div class="tt-row"><span class="tt-label">Songs</span><span class="tt-val">' + bin.count + '</span></div>';
+      if (bin.examples.length > 0) {
+        html += '<div class="tt-examples">Examples:<br>';
+        bin.examples.forEach(function(ex) { html += '&bull; ' + ex + '<br>'; });
+        html += '</div>';
+      }
+      showTip(ev, html);
+    });
+    rect.addEventListener('mousemove', moveTip);
+    rect.addEventListener('mouseleave', function() {
+      rect.setAttribute('opacity', '1');
+      hideTip();
+    });
+  });
+
+  // Median line
+  var medianFrac = (DATA.overallMedian - bins[0].low) / (bins[bins.length - 1].high === 999 ? 200 : bins[bins.length - 1].high - bins[0].low);
+  // More accurate: place median by finding which bin it falls in
+  var medianX = margin.left;
+  for (var mi = 0; mi < bins.length; mi++) {
+    var bLow = bins[mi].low;
+    var bHigh = bins[mi].high === 999 ? 200 : bins[mi].high;
+    if (DATA.overallMedian >= bLow && DATA.overallMedian < bHigh) {
+      var frac = (DATA.overallMedian - bLow) / (bHigh - bLow);
+      medianX = margin.left + mi * (barW + barGap) + frac * barW;
+      break;
+    }
+  }
+
+  svg.appendChild(svgEl('line', {
+    x1: medianX, y1: margin.top - 5, x2: medianX, y2: margin.top + plotH,
+    stroke: '#3D1C11', 'stroke-width': 1.5, 'stroke-dasharray': '6,4',
+  }));
+
+  var medLbl = svgEl('text', {
+    x: medianX, y: margin.top - 10,
+    'text-anchor': 'middle', fill: '#3D1C11', 'font-size': '11px',
+    'font-weight': '600', 'font-family': 'Segoe UI, system-ui, sans-serif',
+  });
+  medLbl.textContent = 'Median: ' + DATA.overallMedian + ' BPM';
+  svg.appendChild(medLbl);
+})();
+
+
+// ==============================
+// Section 2: BPM Over Time
+// ==============================
+(function() {
+  const W = 900, H = 350;
+  const margin = { top: 30, right: 30, bottom: 50, left: 55 };
+  const plotW = W - margin.left - margin.right;
+  const plotH = H - margin.top - margin.bottom;
+  const pts = DATA.yearly;
+
+  if (pts.length === 0) return;
+
+  const svg = document.getElementById('timeline');
+  svg.setAttribute('width', W);
+  svg.setAttribute('height', H);
+  svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  svg.style.width = '100%';
+  svg.style.height = 'auto';
+
+  // Ranges
+  const minYear = pts[0].year;
+  const maxYear = pts[pts.length - 1].year;
+  const yearSpan = maxYear - minYear || 1;
+
+  // Collect all BPM values for y range
+  var allBpm = [];
+  pts.forEach(function(p) { allBpm.push(p.p25, p.p75, p.median); });
+  var bpmMin = Math.floor(Math.min.apply(null, allBpm) / 10) * 10 - 10;
+  var bpmMax = Math.ceil(Math.max.apply(null, allBpm) / 10) * 10 + 10;
+  if (bpmMin < 50) bpmMin = 50;
+  if (bpmMax > 190) bpmMax = 190;
+  var bpmRange = bpmMax - bpmMin || 1;
+
+  function xPos(year) { return margin.left + ((year - minYear) / yearSpan) * plotW; }
+  function yPos(bpm) { return margin.top + plotH - ((bpm - bpmMin) / bpmRange) * plotH; }
+
+  // Y grid + labels
+  for (var bv = bpmMin; bv <= bpmMax; bv += 20) {
+    var gy = yPos(bv);
+    svg.appendChild(svgEl('line', {
+      x1: margin.left, y1: gy, x2: margin.left + plotW, y2: gy,
+      stroke: 'rgba(61,28,17,0.08)', 'stroke-width': 1,
+    }));
+    var yLbl = svgEl('text', {
+      x: margin.left - 10, y: gy + 4,
+      'text-anchor': 'end', fill: '#8D6E63', 'font-size': '11px',
+      'font-family': 'Segoe UI, system-ui, sans-serif',
+    });
+    yLbl.textContent = bv;
+    svg.appendChild(yLbl);
+  }
+
+  // Y-axis title
+  var yTitle2 = svgEl('text', {
+    x: 14, y: margin.top + plotH / 2,
+    'text-anchor': 'middle', fill: '#6B4226', 'font-size': '12px',
+    'font-family': 'Segoe UI, system-ui, sans-serif',
+    transform: 'rotate(-90, 14, ' + (margin.top + plotH / 2) + ')',
+  });
+  yTitle2.textContent = 'BPM';
+  svg.appendChild(yTitle2);
+
+  // X-axis labels (show every year that has data, skip some if too dense)
+  var labelEvery = pts.length > 20 ? 2 : 1;
+  pts.forEach(function(p, i) {
+    // Vertical tick
+    svg.appendChild(svgEl('line', {
+      x1: xPos(p.year), y1: margin.top + plotH,
+      x2: xPos(p.year), y2: margin.top + plotH + 5,
+      stroke: '#8D6E63', 'stroke-width': 1,
+    }));
+    if (i % labelEvery === 0) {
+      var xLbl = svgEl('text', {
+        x: xPos(p.year), y: margin.top + plotH + 20,
+        'text-anchor': 'middle', fill: '#6B4226', 'font-size': '10px',
+        'font-family': 'Segoe UI, system-ui, sans-serif',
+        transform: 'rotate(-45, ' + xPos(p.year) + ', ' + (margin.top + plotH + 20) + ')',
+      });
+      xLbl.textContent = p.year;
+      svg.appendChild(xLbl);
+    }
+  });
+
+  // Shaded p25-p75 band
+  var bandPoints = '';
+  // Forward pass: p75
+  pts.forEach(function(p) {
+    bandPoints += xPos(p.year) + ',' + yPos(p.p75) + ' ';
+  });
+  // Reverse pass: p25
+  for (var ri = pts.length - 1; ri >= 0; ri--) {
+    bandPoints += xPos(pts[ri].year) + ',' + yPos(pts[ri].p25) + ' ';
+  }
+  svg.appendChild(svgEl('polygon', {
+    points: bandPoints.trim(),
+    fill: 'rgba(198,40,40,0.1)', stroke: 'none',
+  }));
+
+  // Median line
+  var linePath = '';
+  pts.forEach(function(p, i) {
+    var prefix = i === 0 ? 'M' : 'L';
+    linePath += prefix + xPos(p.year) + ',' + yPos(p.median) + ' ';
+  });
+  svg.appendChild(svgEl('path', {
+    d: linePath.trim(),
+    fill: 'none', stroke: '#C62828', 'stroke-width': 2,
+    'stroke-linejoin': 'round', 'stroke-linecap': 'round',
+  }));
+
+  // Dots sized by sqrt(count)
+  var maxCount = Math.max.apply(null, pts.map(function(p) { return p.count; }));
+  var minR = 4, maxR = 12;
+
+  pts.forEach(function(p) {
+    var r = minR + (Math.sqrt(p.count) / Math.sqrt(maxCount)) * (maxR - minR);
+    var dot = svgEl('circle', {
+      cx: xPos(p.year), cy: yPos(p.median), r: r,
+      fill: '#C62828', opacity: 0.85,
+      stroke: '#F5E6D3', 'stroke-width': 1.5,
+      style: 'cursor:pointer; transition: opacity 0.15s;',
+    });
+    svg.appendChild(dot);
+
+    dot.addEventListener('mouseenter', function(ev) {
+      dot.setAttribute('opacity', '1');
+      dot.setAttribute('stroke', '#3D1C11');
+      var html = '<div class="tt-title">' + p.year + '</div>';
+      html += '<div class="tt-row"><span class="tt-label">Median BPM</span><span class="tt-val">' + p.median + '</span></div>';
+      html += '<div class="tt-row"><span class="tt-label">Range (25-75th)</span><span class="tt-val">' + p.p25 + ' &ndash; ' + p.p75 + '</span></div>';
+      html += '<div class="tt-row"><span class="tt-label">Tracks</span><span class="tt-val">' + p.count + '</span></div>';
+      showTip(ev, html);
+    });
+    dot.addEventListener('mousemove', moveTip);
+    dot.addEventListener('mouseleave', function() {
+      dot.setAttribute('opacity', '0.85');
+      dot.setAttribute('stroke', '#F5E6D3');
+      hideTip();
+    });
+  });
+})();
+</script>
+</body>
+</html>

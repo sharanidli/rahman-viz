@@ -122,6 +122,7 @@
   </div>
 </div>
 
+<div id="metric-label"></div>
 <div id="chart-container"></div>
 <div id="year-display"></div>
 
@@ -157,7 +158,14 @@ function renderYear(yearIdx) {
   const maxCount = entries.length ? entries[0].count : 1;
   const barWidth = container.clientWidth - 200;
 
-  yearDisplay.textContent = year;
+  if (metric === 'rolling') {
+    const startYear = Math.max(year - 4, DATA.years[0]);
+    yearDisplay.textContent = startYear + '–' + year;
+    yearDisplay.style.fontSize = '52px';
+  } else {
+    yearDisplay.textContent = year;
+    yearDisplay.style.fontSize = '72px';
+  }
 
   // Build or update bars
   let existing = container.querySelectorAll('.bar-row');
@@ -214,6 +222,17 @@ function setMode(m) {
   document.getElementById('heroes-btn').classList.toggle('active', m === 'heroes');
   container.innerHTML = '';
   renderYear(currentYearIdx);
+  updateMetricLabel();
+}
+
+function updateMetricLabel() {
+  const el = document.getElementById('metric-label');
+  const unit = mode === 'singers' ? 'tracks' : 'albums';
+  if (metric === 'cumulative') {
+    el.textContent = 'All-time total ' + unit + ' — who has collaborated the most across Rahman’s career';
+  } else {
+    el.textContent = 'Total ' + unit + ' in the past 5 years — showing who’s hot in each era';
+  }
 }
 
 function setMetric(m) {
@@ -222,6 +241,7 @@ function setMetric(m) {
   document.getElementById('roll-btn').classList.toggle('active', m === 'rolling');
   container.innerHTML = '';
   renderYear(currentYearIdx);
+  updateMetricLabel();
 }
 
 function togglePlay() {
@@ -269,6 +289,7 @@ document.addEventListener('keydown', (e) => {
 
 // Init
 renderYear(0);
+updateMetricLabel();
 </script>
 </body>
 </html>
