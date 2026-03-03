@@ -3,6 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="From Roja to Ponniyin Selvan — 34 years of AR Rahman's music, mapped. Interactive visualizations of 168 albums, 2100 tracks, and 763 singers.">
+<meta property="og:title" content="AR Rahman — Data Visualized">
+<meta property="og:description" content="From Roja to Ponniyin Selvan — 34 years of AR Rahman's music, mapped. Interactive visualizations of 168 albums, 2100 tracks, and 763 singers.">
+<meta property="og:image" content="https://sharanidli.github.io/rahman-viz/og-preview.png">
+<meta property="og:url" content="https://sharanidli.github.io/rahman-viz/">
+<meta name="twitter:card" content="summary_large_image">
 <title>AR Rahman — Data Visualized</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -11,66 +17,124 @@
     color: #3D1C11;
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    padding-top: 44px;
   }
 
-  header {
-    text-align: center;
-    padding: 60px 24px 40px;
-    max-width: 700px;
+  /* --- Site navigation --- */
+  .site-nav {
+    position: fixed; top: 0; left: 0; right: 0; height: 44px;
+    background: rgba(245,230,211,0.95);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    z-index: 10000; display: flex; align-items: center;
+    padding: 0 20px;
+    border-bottom: 1px solid rgba(61,28,17,0.1);
   }
-  header h1 {
-    font-size: 36px;
+  .site-nav .nav-brand {
+    text-decoration: none; color: #3D1C11; font-weight: 700; font-size: 14px;
+    white-space: nowrap;
+  }
+  .site-nav .nav-brand:hover { color: #C62828; }
+  .site-nav .nav-links { margin-left: auto; display: flex; gap: 20px; }
+  .site-nav .nav-links a {
+    text-decoration: none; color: #6B4226; font-size: 13px; font-weight: 500;
+  }
+  .site-nav .nav-links a:hover { color: #C62828; }
+  .site-nav .nav-toggle-input { display: none; }
+  .site-nav .nav-toggle-label {
+    display: none; cursor: pointer; font-size: 22px;
+    color: #3D1C11; margin-left: auto; line-height: 1;
+  }
+  @media (max-width: 600px) {
+    .site-nav .nav-brand { font-size: 13px; }
+    .site-nav .nav-toggle-label { display: block; }
+    .site-nav .nav-links {
+      display: none; position: absolute; top: 44px; left: 0; right: 0;
+      background: rgba(245,230,211,0.98);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      flex-direction: column; padding: 12px 20px; gap: 12px;
+      border-bottom: 1px solid rgba(61,28,17,0.1);
+    }
+    .site-nav .nav-toggle-input:checked ~ .nav-links { display: flex; }
+  }
+
+  /* --- Hero --- */
+  .hero {
+    text-align: center;
+    padding: 56px 24px 40px;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .hero h1 {
+    font-size: 38px;
     font-weight: 800;
     background: linear-gradient(135deg, #C62828, #E64A19, #F9A825);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
+    line-height: 1.2;
   }
-  header p {
-    font-size: 16px;
+  .hero .hook {
+    font-size: 17px;
     color: #6B4226;
-    line-height: 1.6;
+    line-height: 1.7;
+    margin-bottom: 24px;
   }
-  header .stats {
-    margin-top: 20px;
+  .hero .start-btn {
+    display: inline-block;
+    background: #C62828;
+    color: #F5E6D3;
+    text-decoration: none;
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    transition: background 0.2s ease, transform 0.1s ease;
+  }
+  .hero .start-btn:hover { background: #B71C1C; transform: translateY(-1px); }
+  .hero .stats {
+    margin-top: 32px;
     display: flex;
     gap: 32px;
     justify-content: center;
     flex-wrap: wrap;
   }
-  .stat {
-    text-align: center;
-  }
-  .stat-num {
-    font-size: 28px;
-    font-weight: 700;
-    color: #C62828;
-  }
+  .stat { text-align: center; }
+  .stat-num { font-size: 28px; font-weight: 700; color: #C62828; }
   .stat-label {
-    font-size: 12px;
-    color: #8D6E63;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    font-size: 12px; color: #8D6E63;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+
+  /* --- Sections --- */
+  .content { max-width: 900px; margin: 0 auto; padding: 0 24px 60px; }
+
+  .section { margin-bottom: 48px; }
+  .section-head {
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(61,28,17,0.08);
+  }
+  .section-head h2 {
+    font-size: 20px; font-weight: 700; color: #3D1C11;
+    margin-bottom: 4px;
+  }
+  .section-head p {
+    font-size: 14px; color: #6B4226; line-height: 1.5;
   }
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-    padding: 0 24px 60px;
-    max-width: 900px;
-    width: 100%;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
   }
 
+  /* --- Cards --- */
   .card {
     background: rgba(61, 28, 17, 0.04);
     border: 1px solid rgba(61, 28, 17, 0.08);
     border-radius: 12px;
-    padding: 28px;
+    padding: 24px;
     text-decoration: none;
     color: inherit;
     transition: all 0.2s ease;
@@ -81,220 +145,196 @@
     border-color: rgba(198, 40, 40, 0.2);
     transform: translateY(-2px);
   }
-  .card-icon {
-    font-size: 32px;
-    margin-bottom: 12px;
-    display: block;
-  }
-  .card h2 {
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 8px;
-    color: #3D1C11;
+  .card h3 {
+    font-size: 16px; font-weight: 700;
+    margin-bottom: 6px; color: #3D1C11;
   }
   .card p {
-    font-size: 13px;
-    color: #6B4226;
-    line-height: 1.5;
+    font-size: 13px; color: #6B4226; line-height: 1.5;
   }
   .card .card-meta {
-    margin-top: 12px;
-    font-size: 11px;
-    color: #8D6E63;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    margin-top: 10px;
+    font-size: 11px; color: #8D6E63;
+    text-transform: uppercase; letter-spacing: 0.5px;
   }
 
+  /* --- Footer --- */
   footer {
-    padding: 30px;
+    padding: 32px 24px;
     text-align: center;
     color: #8D6E63;
     font-size: 12px;
+    line-height: 1.6;
     border-top: 1px solid rgba(61,28,17,0.08);
-    width: 100%;
     max-width: 900px;
+    margin: 0 auto;
   }
   footer a { color: #6B4226; }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 28px; }
+    .hero .hook { font-size: 15px; }
+    .stat-num { font-size: 22px; }
+    .hero .stats { gap: 20px; }
+    .grid { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>AR Rahman — Data Visualized</h1>
-  <p>
-    Interactive explorations of AR Rahman's discography: who sings with whom,
-    how albums connect through shared collaborators, what his music sounds like
-    through audio data, and which lyricists write for which singers.
+<nav class="site-nav">
+  <a href="index.html" class="nav-brand">AR Rahman &mdash; Data Visualized</a>
+  <input type="checkbox" id="nav-toggle" class="nav-toggle-input">
+  <label for="nav-toggle" class="nav-toggle-label">&#9776;</label>
+  <div class="nav-links">
+    <a href="index.html">Explore</a>
+    <a href="about.html">About</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+  <h1>AR Rahman &mdash; Data Visualized</h1>
+  <p class="hook">
+    From Roja to Ponniyin Selvan &mdash; 34 years of magic, mapped.<br>
+    Who sang the most? Which decade hit hardest? Dive in.
   </p>
+  <a class="start-btn" href="racing_bar.html">Start Here &rarr;</a>
+  <!-- Stats: manually updated (see PROJECT_LOG.md for current counts) -->
   <div class="stats">
-    <div class="stat">
-      <div class="stat-num">168</div>
-      <div class="stat-label">Albums</div>
+    <div class="stat"><div class="stat-num">168</div><div class="stat-label">Albums</div></div>
+    <div class="stat"><div class="stat-num">2,100</div><div class="stat-label">Tracks</div></div>
+    <div class="stat"><div class="stat-num">763</div><div class="stat-label">Singers</div></div>
+    <div class="stat"><div class="stat-num">219</div><div class="stat-label">Lyricists</div></div>
+    <div class="stat"><div class="stat-num">1992&ndash;2026</div><div class="stat-label">Years</div></div>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- People -->
+  <div class="section">
+    <div class="section-head">
+      <h2>Who collaborates with Rahman?</h2>
+      <p>The voices, the directors, the lyricists &mdash; three decades of partnerships.</p>
     </div>
-    <div class="stat">
-      <div class="stat-num">2,100</div>
-      <div class="stat-label">Tracks</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">763</div>
-      <div class="stat-label">Singers</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">219</div>
-      <div class="stat-label">Lyricists</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">1992–2026</div>
-      <div class="stat-label">Years Covered</div>
+    <div class="grid">
+      <a class="card" href="racing_bar.html">
+        <h3>Collaborators Over Time</h3>
+        <p>Hit play and watch Rahman's collaborators race for the top spot, year by year.
+           Toggle between singers and stars, or switch to a 5-year rolling window to see who's hot in each era.</p>
+        <div class="card-meta">Animated &middot; Singers + Stars &middot; Play / Pause</div>
+      </a>
+      <a class="card" href="collaborator_timeline.html">
+        <h3>Collaborator Timeline</h3>
+        <p>Watch Hariharan and Mano dominate the 90s, then see Shreya Ghoshal and Benny Dayal take over.
+           Toggle between a dot matrix and a worm chart showing cumulative tracks.</p>
+        <div class="card-meta">Timeline &middot; Dot matrix + Worm chart</div>
+      </a>
+      <a class="card" href="director_timeline.html">
+        <h3>Director Timeline</h3>
+        <p>Mani Ratnam scored 18 films with Rahman. Shankar's blockbusters cluster in the 2000s.
+           See every director, every year, across 34 years.</p>
+        <div class="card-meta">Timeline &middot; 20 directors &times; 34 years</div>
+      </a>
+      <a class="card" href="lyricist_heatmap.html">
+        <h3>Lyricist &times; Singer</h3>
+        <p>Who writes for whom? See which lyricist-singer pairings define Rahman's sound,
+           from Vairamuthu's Tamil classics to Gulzar's Hindi poetry.</p>
+        <div class="card-meta">Heatmap &middot; 71 lyricists &times; 66 singers</div>
+      </a>
+      <a class="card" href="singer_network.html">
+        <h3>Singer Network</h3>
+        <p>Which singers always show up together on Rahman's albums? See the clusters &mdash;
+           voices that travel in packs across hundreds of tracks.</p>
+        <div class="card-meta">Network &middot; 358 singers &middot; Zoom + filter</div>
+      </a>
     </div>
   </div>
-</header>
 
-<div class="grid">
-  <a class="card" href="racing_bar.html">
-    <span class="card-icon">&#9654;&#9646;</span>
-    <h2>Collaborators Over Time</h2>
-    <p>
-      Animated racing bar chart showing collaborations year by year.
-      Toggle cumulative totals vs. 5-year rolling window to see who's hot in each era.
-      Switch between singers and stars. Hit play and watch the rankings shift.
-    </p>
-    <div class="card-meta">Animation &middot; Singers + Stars &middot; Cumulative &amp; 5-year window</div>
-  </a>
+  <!-- Sound -->
+  <div class="section">
+    <div class="section-head">
+      <h2>What does his music sound like?</h2>
+      <p>Audio features from Spotify, visualized &mdash; energy, mood, tempo, and more.</p>
+    </div>
+    <div class="grid">
+      <a class="card" href="mood_map.html">
+        <h3>Audio Mood Map</h3>
+        <p>Every Rahman song plotted on a scatter chart. Pick your own axes &mdash;
+           energy vs. danceability, valence vs. tempo &mdash; and explore 883 tracks.</p>
+        <div class="card-meta">Scatter plot &middot; 883 tracks &middot; Choose your axes</div>
+      </a>
+      <a class="card" href="sound_radar.html">
+        <h3>Sound Over Time</h3>
+        <p>Each album gets a radar chart showing its audio personality.
+           Browse from Roja (1992) to today and watch the sound evolve.</p>
+        <div class="card-meta">Radar charts &middot; 109 albums &middot; Arrow keys or autoplay</div>
+      </a>
+      <a class="card" href="director_sound.html">
+        <h3>Director Sound Profiles</h3>
+        <p>Does Rahman write different music for different directors?
+           Compare overlapping radar charts and see how Mani Ratnam's palette differs from Shankar's.</p>
+        <div class="card-meta">Radar comparison &middot; Select 2&ndash;4 directors</div>
+      </a>
+      <a class="card" href="bpm_analysis.html">
+        <h3>BPM Analysis</h3>
+        <p>How fast is Rahman's music? Most tracks sit between 100&ndash;130 BPM, but the range
+           stretches from 46 to 217. See the tempo distribution and how it shifts over 3 decades.</p>
+        <div class="card-meta">Histogram + trend &middot; 883 tracks &middot; Median 115 BPM</div>
+      </a>
+      <a class="card" href="key_wheel.html">
+        <h3>Key &amp; Mode Wheel</h3>
+        <p>Which musical keys does Rahman favour? A circular chart of major vs. minor
+           across all 12 keys. Click any segment to see the tracks in that key.</p>
+        <div class="card-meta">Polar chart &middot; 883 tracks &middot; Click to explore</div>
+      </a>
+      <a class="card" href="song_siblings.html">
+        <h3>Song Siblings</h3>
+        <p>Pick any Rahman song and find the 3 tracks that sound most like it.
+           Search by name and discover unexpected connections across albums and decades.</p>
+        <div class="card-meta">Search &middot; 883 tracks &middot; Audio similarity</div>
+      </a>
+    </div>
+  </div>
 
-  <a class="card" href="collaborator_timeline.html">
-    <span class="card-icon">&#9476;&#9679;&#9476;&#9679;&#9476;</span>
-    <h2>Collaborator Timeline</h2>
-    <p>
-      Who sang for Rahman each year? Toggle between a dot matrix (25 singers,
-      dot size = tracks) and a worm chart showing cumulative track accumulation
-      for the top 15. Watch the lines diverge over 3 decades.
-    </p>
-    <div class="card-meta">Timeline &middot; Dot matrix + worm chart &middot; Hover for details</div>
-  </a>
+  <!-- Connections -->
+  <div class="section">
+    <div class="section-head">
+      <h2>How does it all fit together?</h2>
+      <p>Albums connected through shared singers &mdash; see the web of collaborations.</p>
+    </div>
+    <div class="grid">
+      <a class="card" href="album_network.html">
+        <h3>Album Network</h3>
+        <p>Each album is a node. Albums that share singers are connected &mdash;
+           thicker edges mean more voices in common. See how Rahman's early Tamil films form a tight cluster.</p>
+        <div class="card-meta">Network &middot; 164 albums &middot; Zoom, pan &amp; filter</div>
+      </a>
+    </div>
+  </div>
 
-  <a class="card" href="director_timeline.html">
-    <span class="card-icon">&#9476;&#9654;&#9476;</span>
-    <h2>Director Timeline</h2>
-    <p>
-      Which directors has Rahman worked with across his career? Top 20 directors
-      shown year by year. Dot size reflects number of films that year. See Mani
-      Ratnam's consistent presence and Shankar's blockbuster clusters.
-    </p>
-    <div class="card-meta">Timeline &middot; 20 directors &times; 34 years &middot; Hover for details</div>
-  </a>
+  <!-- Under the Hood -->
+  <div class="section">
+    <div class="section-head">
+      <h2>Under the Hood</h2>
+    </div>
+    <div class="grid">
+      <a class="card" href="data_quality.html">
+        <h3>Data Sources &amp; Completeness</h3>
+        <p>How complete is the dataset? See which albums have singer credits, lyricist data,
+           and Spotify audio features. Color-coded completeness for every album.</p>
+        <div class="card-meta">Report &middot; 168 albums &middot; Completeness overview</div>
+      </a>
+    </div>
+  </div>
 
-  <a class="card" href="director_sound.html">
-    <span class="card-icon">&#11039;&#11039;</span>
-    <h2>Director Sound Profiles</h2>
-    <p>
-      How does Rahman's music differ by director? Overlapping radar charts
-      compare danceability, energy, valence, acousticness, and liveness.
-      Select 2-4 directors and see their sonic signatures overlap.
-    </p>
-    <div class="card-meta">Radar comparison &middot; 6 directors &middot; Select to compare</div>
-  </a>
-
-  <a class="card" href="lyricist_heatmap.html">
-    <span class="card-icon">&#9638;&#9638;&#9638;</span>
-    <h2>Lyricist &times; Singer</h2>
-    <p>
-      Who writes for whom? A heatmap with lyricists on one axis and singers
-      on the other. See which pairings define Rahman's sound across languages.
-    </p>
-    <div class="card-meta">Heatmap &middot; 71 lyricists &times; 66 singers &middot; Hover for details</div>
-  </a>
-
-  <a class="card" href="singer_network.html">
-    <span class="card-icon">&#9673; &#9673; &#9673;</span>
-    <h2>Singer Network</h2>
-    <p>
-      Singers who appear on the same track are linked. Community detection
-      colors clusters automatically. Use the slider to filter by minimum tracks,
-      zoom in to explore crowded areas.
-    </p>
-    <div class="card-meta">Network graph &middot; 358 singers &middot; Slider + zoom + communities</div>
-  </a>
-
-  <a class="card" href="mood_map.html">
-    <span class="card-icon">&#9679; &#9675; &#9679;</span>
-    <h2>Audio Mood Map</h2>
-    <p>
-      Every song plotted by audio features. Choose your own axes — energy,
-      valence, danceability, acousticness, or tempo. Click albums in the
-      sidebar to filter, or deselect all at once.
-    </p>
-    <div class="card-meta">Scatter plot &middot; 883 tracks &middot; Axis selector + album filter</div>
-  </a>
-
-  <a class="card" href="sound_radar.html">
-    <span class="card-icon">&#11039;</span>
-    <h2>Sound Over Time</h2>
-    <p>
-      Radar charts showing each album's audio profile: danceability,
-      energy, valence, acousticness, and liveness.
-      Auto-generated summaries describe each album's character.
-    </p>
-    <div class="card-meta">Radar chart &middot; 109 albums &middot; Arrow keys or autoplay</div>
-  </a>
-
-  <a class="card" href="bpm_analysis.html">
-    <span class="card-icon">&#9835;&#8644;</span>
-    <h2>BPM Analysis</h2>
-    <p>
-      How fast is Rahman's music? A histogram shows the tempo distribution
-      across 883 tracks, while a trend line reveals how BPM shifts over
-      3 decades. Shaded band shows the 25th–75th percentile spread.
-    </p>
-    <div class="card-meta">Histogram + trend &middot; 883 tracks &middot; Median 115 BPM</div>
-  </a>
-
-  <a class="card" href="song_siblings.html">
-    <span class="card-icon">&#9835;&#8776;&#9835;</span>
-    <h2>Song Siblings</h2>
-    <p>
-      Find the 3 most sonically similar tracks for any song. Search by name,
-      see feature comparisons, and click siblings to explore further.
-      Similarity based on 6 audio dimensions.
-    </p>
-    <div class="card-meta">Search &middot; 883 tracks &middot; Euclidean similarity</div>
-  </a>
-
-  <a class="card" href="key_wheel.html">
-    <span class="card-icon">&#9836;</span>
-    <h2>Key & Mode Wheel</h2>
-    <p>
-      Which musical keys does Rahman favour? A circular chart of major vs.
-      minor across all 12 keys. Click any segment to see the tracks.
-    </p>
-    <div class="card-meta">Polar chart &middot; 883 tracks &middot; Click to explore</div>
-  </a>
-
-  <a class="card" href="album_network.html">
-    <span class="card-icon">&#11044;&#8212;&#11044;</span>
-    <h2>Album Network</h2>
-    <p>
-      Each album is a node. Albums that share singers are connected, with
-      thicker edges meaning more singers in common. See how Rahman's early
-      Tamil films form a tight cluster.
-    </p>
-    <div class="card-meta">Network graph &middot; 164 albums &middot; Zoom, pan &amp; filter</div>
-  </a>
-
-  <a class="card" href="data_quality.html">
-    <span class="card-icon">&#9745;</span>
-    <h2>Data Quality</h2>
-    <p>
-      How complete is the dataset? See which albums have singers, lyricists,
-      and audio features. Color-coded completeness bars for every album.
-    </p>
-    <div class="card-meta">Report &middot; 168 albums &middot; Completeness overview</div>
-  </a>
 </div>
 
 <footer>
-  Data scraped from Wikipedia and Spotify (via ReccoBeats).
-  Visualizations built with vanilla JS and SVG.
+  Data scraped from Wikipedia and Spotify audio features (via ReccoBeats).<br>
+  Visualizations built with vanilla JavaScript and SVG &mdash; no frameworks, no dependencies.<br>
+  <a href="about.html">About this project</a>
 </footer>
 
 </body>

@@ -3,10 +3,66 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Watch Rahman's collaborators race for the top spot, year by year. 3 decades of singers and stars.">
+<meta property="og:title" content="AR Rahman — Collaborators Over Time">
+<meta property="og:description" content="Watch Rahman's collaborators race for the top spot, year by year. 3 decades of singers and stars.">
+<meta property="og:image" content="https://sharanidli.github.io/rahman-viz/og-preview.png">
+<meta property="og:url" content="https://sharanidli.github.io/rahman-viz/">
+<meta name="twitter:card" content="summary_large_image">
 <title>AR Rahman — Collaborators Over Time</title>
 <style>
+  /* --- Site navigation --- */
+  .site-nav {
+    position: fixed; top: 0; left: 0; right: 0; height: 44px;
+    background: rgba(245,230,211,0.95);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    z-index: 10000; display: flex; align-items: center;
+    padding: 0 20px;
+    border-bottom: 1px solid rgba(61,28,17,0.1);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+  .site-nav .nav-brand {
+    text-decoration: none; color: #3D1C11; font-weight: 700; font-size: 14px;
+    white-space: nowrap;
+  }
+  .site-nav .nav-brand:hover { color: #C62828; }
+  .site-nav .nav-links { margin-left: auto; display: flex; gap: 20px; }
+  .site-nav .nav-links a {
+    text-decoration: none; color: #6B4226; font-size: 13px; font-weight: 500;
+  }
+  .site-nav .nav-links a:hover { color: #C62828; }
+  .site-nav .nav-toggle-input { display: none; }
+  .site-nav .nav-toggle-label {
+    display: none; cursor: pointer; font-size: 22px;
+    color: #3D1C11; margin-left: auto; line-height: 1;
+    -webkit-tap-highlight-color: transparent;
+  }
+  @media (max-width: 600px) {
+    .site-nav .nav-brand { font-size: 13px; }
+    .site-nav .nav-toggle-label { display: block; }
+    .site-nav .nav-links {
+      display: none; position: absolute; top: 44px; left: 0; right: 0;
+      background: rgba(245,230,211,0.98);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      flex-direction: column; padding: 12px 20px; gap: 12px;
+      border-bottom: 1px solid rgba(61,28,17,0.1);
+    }
+    .site-nav .nav-toggle-input:checked ~ .nav-links { display: flex; }
+  }
+
+  /* --- Mobile notice banner --- */
+  .mobile-notice { display: none; }
+  @media (max-width: 768px) {
+    .mobile-notice {
+      display: block; background: rgba(249,168,37,0.12);
+      color: #6B4226; text-align: center;
+      padding: 6px 16px; font-size: 11px; line-height: 1.4;
+    }
+  }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
+    padding-top: 48px;
     background: #F5E6D3;
     color: #3D1C11;
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -100,6 +156,17 @@
 </style>
 </head>
 <body>
+<nav class="site-nav">
+  <a href="index.html" class="nav-brand">AR Rahman &mdash; Data Visualized</a>
+  <input type="checkbox" id="nav-toggle" class="nav-toggle-input">
+  <label for="nav-toggle" class="nav-toggle-label">&#9776;</label>
+  <div class="nav-links">
+    <a href="index.html">Explore</a>
+    <a href="about.html">About</a>
+  </div>
+</nav>
+<div class="mobile-notice">Best viewed on desktop for full interactivity.</div>
+
 
 <div id="header">
   <h1>AR Rahman — Collaborators Over Time</h1>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="About the AR Rahman Data Visualized project — data sources, methodology, and audio features glossary.">
+<meta property="og:title" content="About — AR Rahman Data Visualized">
+<meta property="og:description" content="About the AR Rahman Data Visualized project — data sources, methodology, and audio features glossary.">
+<meta property="og:image" content="https://sharanidli.github.io/rahman-viz/og-preview.png">
+<meta property="og:url" content="https://sharanidli.github.io/rahman-viz/about.html">
+<meta name="twitter:card" content="summary_large_image">
+<title>About &mdash; AR Rahman Data Visualized</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #F5E6D3;
+    color: #3D1C11;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    padding-top: 44px;
+  }
+
+  /* --- Site navigation --- */
+  .site-nav {
+    position: fixed; top: 0; left: 0; right: 0; height: 44px;
+    background: rgba(245,230,211,0.95);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    z-index: 10000; display: flex; align-items: center;
+    padding: 0 20px;
+    border-bottom: 1px solid rgba(61,28,17,0.1);
+  }
+  .site-nav .nav-brand {
+    text-decoration: none; color: #3D1C11; font-weight: 700; font-size: 14px;
+    white-space: nowrap;
+  }
+  .site-nav .nav-brand:hover { color: #C62828; }
+  .site-nav .nav-links { margin-left: auto; display: flex; gap: 20px; }
+  .site-nav .nav-links a {
+    text-decoration: none; color: #6B4226; font-size: 13px; font-weight: 500;
+  }
+  .site-nav .nav-links a:hover { color: #C62828; }
+  .site-nav .nav-toggle-input { display: none; }
+  .site-nav .nav-toggle-label {
+    display: none; cursor: pointer; font-size: 22px;
+    color: #3D1C11; margin-left: auto; line-height: 1;
+  }
+  @media (max-width: 600px) {
+    .site-nav .nav-brand { font-size: 13px; }
+    .site-nav .nav-toggle-label { display: block; }
+    .site-nav .nav-links {
+      display: none; position: absolute; top: 44px; left: 0; right: 0;
+      background: rgba(245,230,211,0.98);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      flex-direction: column; padding: 12px 20px; gap: 12px;
+      border-bottom: 1px solid rgba(61,28,17,0.1);
+    }
+    .site-nav .nav-toggle-input:checked ~ .nav-links { display: flex; }
+  }
+
+  /* --- Content --- */
+  .page {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 48px 24px 60px;
+  }
+  .page h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: #C62828;
+    margin-bottom: 24px;
+  }
+  .page h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #3D1C11;
+    margin-top: 36px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(61,28,17,0.08);
+  }
+  .page p {
+    font-size: 15px;
+    color: #3D1C11;
+    line-height: 1.7;
+    margin-bottom: 12px;
+  }
+  .page ul {
+    margin: 8px 0 16px 24px;
+    font-size: 15px;
+    line-height: 1.7;
+    color: #3D1C11;
+  }
+  .page li { margin-bottom: 4px; }
+  .page a { color: #C62828; }
+
+  .glossary-term {
+    font-weight: 700;
+    color: #C62828;
+  }
+  .glossary-desc {
+    color: #6B4226;
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-top: 32px;
+    color: #6B4226;
+    text-decoration: none;
+    font-size: 14px;
+  }
+  .back-link:hover { color: #C62828; }
+
+  @media (max-width: 600px) {
+    .page h1 { font-size: 24px; }
+    .page { padding: 32px 20px 40px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <a href="index.html" class="nav-brand">AR Rahman &mdash; Data Visualized</a>
+  <input type="checkbox" id="nav-toggle" class="nav-toggle-input">
+  <label for="nav-toggle" class="nav-toggle-label">&#9776;</label>
+  <div class="nav-links">
+    <a href="index.html">Explore</a>
+    <a href="about.html">About</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <h1>About This Project</h1>
+
+  <p>
+    This is a collection of interactive visualizations exploring AR Rahman's discography &mdash;
+    who he works with, what his music sounds like, and how it all connects across 34 years
+    and more than 2,000 tracks. It started as a side project and grew into 13 visualizations
+    covering singers, directors, lyricists, audio features, and more.
+  </p>
+  <p>
+    Everything here is built with vanilla JavaScript and SVG &mdash; no frameworks, no libraries,
+    no build tools. Each page is a single self-contained HTML file.
+  </p>
+
+  <h2>Data Sources</h2>
+
+  <p><strong>Track and film metadata</strong> was scraped from Wikipedia's discography pages for
+    AR Rahman. This includes album names, track listings, singer credits, lyricist credits,
+    director, cast, release year, and language.</p>
+
+  <p><strong>Audio features</strong> come from Spotify's audio analysis, accessed via
+    <a href="https://reccobeats.com">ReccoBeats</a>. These include danceability, energy,
+    valence, acousticness, liveness, and tempo for each track that has a Spotify match.</p>
+
+  <p>The dataset currently covers <strong>168 albums</strong>, <strong>2,100 tracks</strong>,
+    and audio features for about <strong>42%</strong> of those tracks. Coverage varies by album &mdash;
+    the <a href="data_quality.html">Data Quality</a> page shows completeness for each one.</p>
+
+  <h2>Audio Features Glossary</h2>
+
+  <p>These features come from Spotify's audio analysis API. Each is a number between 0 and 1
+    (except tempo, which is in BPM).</p>
+
+  <ul>
+    <li><span class="glossary-term">Danceability</span> &mdash;
+      <span class="glossary-desc">How suitable a track is for dancing. Combines tempo, rhythm stability,
+      beat strength, and regularity. Higher = more danceable.</span></li>
+    <li><span class="glossary-term">Energy</span> &mdash;
+      <span class="glossary-desc">Perceptual intensity and activity. Energetic tracks feel fast, loud, and noisy.
+      A Bach prelude scores low; a metal track scores high.</span></li>
+    <li><span class="glossary-term">Valence</span> &mdash;
+      <span class="glossary-desc">Musical positivity. High valence = happy, cheerful, euphoric.
+      Low valence = sad, depressed, angry.</span></li>
+    <li><span class="glossary-term">Acousticness</span> &mdash;
+      <span class="glossary-desc">Confidence that a track is acoustic (no electronic amplification).
+      1.0 = high confidence the track is acoustic.</span></li>
+    <li><span class="glossary-term">Liveness</span> &mdash;
+      <span class="glossary-desc">Detects the presence of a live audience. Higher values mean greater likelihood
+      the track was performed live.</span></li>
+    <li><span class="glossary-term">Tempo (BPM)</span> &mdash;
+      <span class="glossary-desc">The estimated tempo in beats per minute. Rahman's tracks range from
+      46 to 217 BPM, with a median around 115.</span></li>
+  </ul>
+
+  <h2>Limitations</h2>
+
+  <ul>
+    <li><strong>Not every album has audio features.</strong> Spotify matching depends on
+      track availability, which varies by region and rights. About 58% of tracks are missing
+      audio data.</li>
+    <li><strong>Wikipedia credits may be incomplete.</strong> Singer and lyricist credits
+      on Wikipedia are community-maintained and may have gaps, especially for older or
+      lesser-known albums.</li>
+    <li><strong>Language data has noise.</strong> The language column in track CSVs sometimes
+      contains Wikipedia section headers instead of actual languages. We filter these out
+      where possible.</li>
+    <li><strong>Audio features are algorithmic.</strong> Spotify's analysis is automated, not
+      human-curated. Valence in particular can feel subjective &mdash; a raga-based track
+      may score low on "happiness" while being deeply uplifting in its cultural context.</li>
+  </ul>
+
+  <a class="back-link" href="index.html">&larr; Back to Explore</a>
+
+</div>
+
+</body>
+</html>
