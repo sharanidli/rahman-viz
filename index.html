@@ -115,7 +115,11 @@
     margin-bottom: 20px;
     padding-bottom: 12px;
     border-bottom: 1px solid rgba(61,28,17,0.08);
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
   }
+  .section-head.visible { opacity: 1; transform: translateY(0); }
   .section-head h2 {
     font-size: 20px; font-weight: 700; color: #3D1C11;
     margin-bottom: 4px;
@@ -138,13 +142,20 @@
     padding: 24px;
     text-decoration: none;
     color: inherit;
-    transition: all 0.2s ease;
+    transition: all 0.25s ease;
     display: block;
+    opacity: 0;
+    transform: translateY(24px);
   }
-  .card:hover {
-    background: rgba(61, 28, 17, 0.08);
-    border-color: rgba(198, 40, 40, 0.2);
-    transform: translateY(-2px);
+  .card.visible { opacity: 1; transform: translateY(0); }
+  @media (hover: hover) {
+    .card:hover {
+      background: rgba(61, 28, 17, 0.08);
+      border-color: rgba(198, 40, 40, 0.2);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(61, 28, 17, 0.1);
+      border-left: 3px solid #C62828;
+    }
   }
   .card h3 {
     font-size: 16px; font-weight: 700;
@@ -172,12 +183,43 @@
   }
   footer a { color: #6B4226; }
 
+  /* --- Hero entrance animation --- */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .hero .logo      { animation: fadeUp 0.5s ease-out 0.05s both; }
+  .hero h1         { animation: fadeUp 0.5s ease-out 0.15s both; }
+  .hero .hook      { animation: fadeUp 0.5s ease-out 0.25s both; }
+  .hero .intro     { animation: fadeUp 0.5s ease-out 0.3s both; }
+  .hero .start-btn { animation: fadeUp 0.5s ease-out 0.35s both; }
+  .hero .stats     { animation: fadeUp 0.5s ease-out 0.45s both; }
+
+  /* --- Intro blurb --- */
+  .intro {
+    font-size: 14px; color: #3D1C11; max-width: 520px;
+    margin: 0 auto 20px; padding: 0 20px; line-height: 1.6; text-align: center;
+  }
+  .intro a { color: #C62828; }
+
+  /* --- Accessibility --- */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+    .card, .section-head { opacity: 1; transform: none; }
+  }
+
   @media (max-width: 600px) {
     .hero h1 { font-size: 28px; }
     .hero .hook { font-size: 15px; }
     .stat-num { font-size: 22px; }
     .hero .stats { gap: 20px; }
     .grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 480px) {
+    .intro { font-size: 15px; }
   }
 </style>
 </head>
@@ -201,7 +243,14 @@
   <p class="hook">
     34 years. 168 albums. 2,100 tracks. One composer &mdash; explored through data.
   </p>
-  <a class="start-btn" href="racing_bar.html">Start Here &rarr;</a>
+  <p class="intro">
+    An interactive exploration of AR Rahman's complete discography.
+    Browse sonic fingerprints, trace collaborator networks, and discover patterns
+    across three decades of one of cinema's most inventive composers.
+    Built by <strong>Swaroop</strong> and <strong>Sharan</strong> of the
+    <a href="about.html">Brothers in Music</a> podcast.
+  </p>
+  <a class="start-btn" href="racing_bar.html">Start Exploring &rarr;</a>
   <!-- Stats: manually updated (see PROJECT_LOG.md for current counts) -->
   <div class="stats">
     <div class="stat"><div class="stat-num">168</div><div class="stat-label">Albums</div></div>
@@ -352,5 +401,23 @@
   <a href="about.html">About this project</a>
 </footer>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var targets = document.querySelectorAll('.card, .section-head');
+  if ('IntersectionObserver' in window) {
+    var obs = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    targets.forEach(function(t) { obs.observe(t); });
+  } else {
+    targets.forEach(function(t) { t.classList.add('visible'); });
+  }
+});
+</script>
 </body>
 </html>
