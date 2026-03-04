@@ -33,7 +33,7 @@
     text-decoration: none; color: #3D1C11; font-weight: 700; font-size: 14px;
     white-space: nowrap;
   }
-  .site-nav .nav-brand:hover { color: #C62828; }
+  .site-nav .nav-brand:hover { color: #2D5DA1; }
   .site-nav .nav-links { margin-left: auto; display: flex; gap: 20px; }
   .site-nav .nav-links a {
     text-decoration: none; color: #6B4226; font-size: 13px; font-weight: 500;
@@ -91,7 +91,8 @@
     font-weight: 600;
     transition: background 0.2s ease, transform 0.1s ease;
   }
-  .hero .start-btn:hover { background: #B71C1C; transform: translateY(-1px); }
+  .hero .start-btn:hover { background: #2D5DA1; transform: translateY(-1px); }
+  .hero .logo { width: 120px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
   .hero .stats {
     margin-top: 32px;
     display: flex;
@@ -183,7 +184,7 @@
 <body>
 
 <nav class="site-nav">
-  <a href="index.html" class="nav-brand">AR Rahman &mdash; Data Visualized</a>
+  <a href="index.html" class="nav-brand">Inside the Sound of Rahman</a>
   <input type="checkbox" id="nav-toggle" class="nav-toggle-input">
   <label for="nav-toggle" class="nav-toggle-label">&#9776;</label>
   <div class="nav-links">
@@ -195,10 +196,10 @@
 
 <!-- Hero -->
 <div class="hero">
-  <h1>AR Rahman &mdash; Data Visualized</h1>
+  <img src="logo.jpg" alt="Brothers in Music podcast logo" class="logo">
+  <h1>Inside the Sound of Rahman</h1>
   <p class="hook">
-    From Roja to Ponniyin Selvan &mdash; 34 years of magic, mapped.<br>
-    Who sang the most? Which decade hit hardest? Dive in.
+    34 years. 168 albums. 2,100 tracks. One composer &mdash; explored through data.
   </p>
   <a class="start-btn" href="racing_bar.html">Start Here &rarr;</a>
   <!-- Stats: manually updated (see PROJECT_LOG.md for current counts) -->
