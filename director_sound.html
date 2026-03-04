@@ -205,7 +205,70 @@
     color: #8D6E63;
     font-size: 15px;
   }
+
+  /* --- Mobile: Director Sound --- */
+  @media (max-width: 768px) {
+    #main { flex-direction: column; padding: 8px 12px; gap: 12px; }
+    #sidebar { width: 100%; display: flex; flex-wrap: wrap; gap: 4px; }
+    #sidebar h3 { width: 100%; margin-bottom: 4px; }
+    .dir-item { padding: 6px 8px; font-size: 12px; min-height: 44px; }
+  }
 </style>
+<style>
+  /* --- Responsive: Tablet (1024px) --- */
+  @media (max-width: 1024px) {
+    #year-display { font-size: 48px; }
+    #legend { width: 140px; font-size: 10px; }
+    #instructions { display: none; }
+  }
+
+  /* --- Responsive: Large phone / small tablet (768px) --- */
+  @media (max-width: 768px) {
+    #controls {
+      flex-direction: column; gap: 6px; padding: 6px 12px;
+      align-items: stretch;
+    }
+    #controls > * { text-align: center; }
+    #legend {
+      position: static; width: 100%; max-height: 120px;
+      overflow-y: auto; margin: 4px 0;
+    }
+    #axis-controls {
+      position: relative; top: auto; left: auto;
+      transform: none; flex-wrap: wrap;
+      justify-content: center; gap: 6px;
+      padding: 4px 8px; font-size: 12px;
+    }
+    #header { padding: 12px 16px 4px; }
+    #header h1 { font-size: 20px; }
+    #header p { font-size: 12px; line-height: 1.4; }
+    #main {
+      flex-direction: column; padding: 8px 12px; gap: 12px;
+    }
+    #sidebar {
+      width: 100%; display: flex; flex-wrap: wrap; gap: 4px;
+    }
+  }
+
+  /* --- Responsive: Phone (480px) --- */
+  @media (max-width: 480px) {
+    #year-display {
+      font-size: 32px; bottom: 8px; right: 8px; opacity: 0.6;
+    }
+    #header h1 { font-size: 18px; }
+    #header p { font-size: 11px; }
+    #speed-control { display: none; }
+  }
+
+  /* --- Touch device helpers --- */
+  .touch-device circle,
+  .touch-device .bar-row,
+  .touch-device .dir-item,
+  .touch-device .cell {
+    cursor: pointer;
+  }
+</style>
+
 </head>
 <body>
 <nav class="site-nav">
@@ -218,7 +281,35 @@
     <a href="about.html">About</a>
   </div>
 </nav>
-<div class="mobile-notice">Best viewed on desktop for full interactivity.</div>
+<div class="mobile-notice">Tap elements for details. Rotate for wider view.</div>
+<script>
+(function() {
+  // Detect touch device
+  if (!('ontouchstart' in window)) return;
+  document.body.classList.add('touch-device');
+
+  // Dismiss tooltips on tap-away
+  document.addEventListener('click', function(e) {
+    // Don't dismiss if tapping the tooltip itself
+    if (e.target.closest('#tooltip') || e.target.closest('#edge-tooltip')) return;
+    // Don't dismiss if tapping an interactive element (page handler will show new tooltip)
+    if (e.target.closest('circle') || e.target.closest('.bar-row') ||
+        e.target.closest('.dir-item') || e.target.closest('.cell') ||
+        e.target.closest('line[style]') || e.target.closest('.dot') ||
+        e.target.closest('.segment') || e.target.closest('rect[data-info]')) return;
+    // Dismiss all tooltips
+    var tt = document.getElementById('tooltip');
+    var ett = document.getElementById('edge-tooltip');
+    if (tt) tt.style.display = 'none';
+    if (ett) ett.style.display = 'none';
+  });
+
+  // Recalculate SVG dimensions on orientation change
+  window.addEventListener('orientationchange', function() {
+    setTimeout(function() { window.dispatchEvent(new Event('resize')); }, 200);
+  });
+})();
+</script>
 
 
 <div id="header">
@@ -260,9 +351,12 @@ const DIRECTOR_COLORS = [
 ];
 
 const svg = document.getElementById('chart');
-const W = 560, H = 500;
+const W = Math.min(560, window.innerWidth - 32);
+const H = Math.min(500, W * 0.9);
+svg.setAttribute('width', W);
+svg.setAttribute('height', H);
 const cx = W / 2, cy = H / 2 + 10;
-const R = 185;
+const R = Math.min(185, (W - 80) / 2);
 const features = DATA.features;
 const featureLabels = DATA.featureLabels;
 const N = features.length;
@@ -485,10 +579,17 @@ function renderChart() {
         cx: p.x, cy: p.y, r: 4,
         fill: color, stroke: '#F5E6D3', 'stroke-width': 1.5,
       });
-      // Tooltip on hover
-      dot.addEventListener('mouseenter', (e) => showTooltip(e, d, i));
+      // Tooltip on hover (desktop) + tap (mobile)
+      dot.addEventListener('mouseenter', (e) => {
+        if (document.body.classList.contains('touch-device')) return;
+        showTooltip(e, d, i);
+      });
       dot.addEventListener('mouseleave', hideTooltip);
-      dot.style.cursor = 'default';
+      dot.addEventListener('click', (e) => {
+        if (!document.body.classList.contains('touch-device')) return;
+        showTooltip(e, d, i);
+      });
+      dot.style.cursor = 'pointer';
       polyGroup.appendChild(dot);
     }
 

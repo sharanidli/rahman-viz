@@ -155,6 +155,61 @@
     line-height: 1.6;
   }
 </style>
+<style>
+  /* --- Responsive: Tablet (1024px) --- */
+  @media (max-width: 1024px) {
+    #year-display { font-size: 48px; }
+    #legend { width: 140px; font-size: 10px; }
+    #instructions { display: none; }
+  }
+
+  /* --- Responsive: Large phone / small tablet (768px) --- */
+  @media (max-width: 768px) {
+    #controls {
+      flex-direction: column; gap: 6px; padding: 6px 12px;
+      align-items: stretch;
+    }
+    #controls > * { text-align: center; }
+    #legend {
+      position: static; width: 100%; max-height: 120px;
+      overflow-y: auto; margin: 4px 0;
+    }
+    #axis-controls {
+      position: relative; top: auto; left: auto;
+      transform: none; flex-wrap: wrap;
+      justify-content: center; gap: 6px;
+      padding: 4px 8px; font-size: 12px;
+    }
+    #header { padding: 12px 16px 4px; }
+    #header h1 { font-size: 20px; }
+    #header p { font-size: 12px; line-height: 1.4; }
+    #main {
+      flex-direction: column; padding: 8px 12px; gap: 12px;
+    }
+    #sidebar {
+      width: 100%; display: flex; flex-wrap: wrap; gap: 4px;
+    }
+  }
+
+  /* --- Responsive: Phone (480px) --- */
+  @media (max-width: 480px) {
+    #year-display {
+      font-size: 32px; bottom: 8px; right: 8px; opacity: 0.6;
+    }
+    #header h1 { font-size: 18px; }
+    #header p { font-size: 11px; }
+    #speed-control { display: none; }
+  }
+
+  /* --- Touch device helpers --- */
+  .touch-device circle,
+  .touch-device .bar-row,
+  .touch-device .dir-item,
+  .touch-device .cell {
+    cursor: pointer;
+  }
+</style>
+
 </head>
 <body>
 <nav class="site-nav">
@@ -167,7 +222,35 @@
     <a href="about.html">About</a>
   </div>
 </nav>
-<div class="mobile-notice">Best viewed on desktop for full interactivity.</div>
+<div class="mobile-notice">Tap elements for details. Rotate for wider view.</div>
+<script>
+(function() {
+  // Detect touch device
+  if (!('ontouchstart' in window)) return;
+  document.body.classList.add('touch-device');
+
+  // Dismiss tooltips on tap-away
+  document.addEventListener('click', function(e) {
+    // Don't dismiss if tapping the tooltip itself
+    if (e.target.closest('#tooltip') || e.target.closest('#edge-tooltip')) return;
+    // Don't dismiss if tapping an interactive element (page handler will show new tooltip)
+    if (e.target.closest('circle') || e.target.closest('.bar-row') ||
+        e.target.closest('.dir-item') || e.target.closest('.cell') ||
+        e.target.closest('line[style]') || e.target.closest('.dot') ||
+        e.target.closest('.segment') || e.target.closest('rect[data-info]')) return;
+    // Dismiss all tooltips
+    var tt = document.getElementById('tooltip');
+    var ett = document.getElementById('edge-tooltip');
+    if (tt) tt.style.display = 'none';
+    if (ett) ett.style.display = 'none';
+  });
+
+  // Recalculate SVG dimensions on orientation change
+  window.addEventListener('orientationchange', function() {
+    setTimeout(function() { window.dispatchEvent(new Event('resize')); }, 200);
+  });
+})();
+</script>
 
 
 <div id="header">
@@ -61211,9 +61294,16 @@ const edgeEls = edgesData.map(e => {
   });
   edgeGroup.appendChild(hitLine);
 
-  hitLine.addEventListener('mouseenter', (ev) => showEdgeTooltip(ev, e));
+  hitLine.addEventListener('mouseenter', (ev) => {
+    if (document.body.classList.contains('touch-device')) return;
+    showEdgeTooltip(ev, e);
+  });
   hitLine.addEventListener('mousemove', (ev) => moveEdgeTooltip(ev));
   hitLine.addEventListener('mouseleave', hideEdgeTooltip);
+  hitLine.addEventListener('click', (ev) => {
+    if (!document.body.classList.contains('touch-device')) return;
+    showEdgeTooltip(ev, e);
+  });
 
   return { line, hitLine, data: e, visible: true };
 });
@@ -61275,10 +61365,17 @@ const nodeEls = nodes.map(n => {
 
   nodeGroup.appendChild(g);
 
-  // Hover events
-  g.addEventListener('mouseenter', (ev) => showTooltip(ev, n));
+  // Hover events (desktop) + tap events (mobile)
+  g.addEventListener('mouseenter', (ev) => {
+    if (document.body.classList.contains('touch-device')) return;
+    showTooltip(ev, n);
+  });
   g.addEventListener('mousemove', (ev) => moveTooltip(ev));
   g.addEventListener('mouseleave', hideTooltip);
+  g.addEventListener('click', (ev) => {
+    if (!document.body.classList.contains('touch-device')) return;
+    showTooltip(ev, n);
+  });
 
   const texts = g.querySelectorAll('text');
   return { g, glow, circle, texts, data: n, isTop10, visible: true };
@@ -61405,6 +61502,49 @@ function resetZoom() {
   viewBox = { x: 0, y: 0, w: WIDTH, h: HEIGHT };
   updateViewBox();
 }
+
+// --- Touch zoom/pan ---
+svg.style.touchAction = 'none';
+let lastPinchDist = 0;
+svg.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 1) {
+        isPanning = true;
+        panStart = { x: e.touches[0].clientX, y: e.touches[0].clientY, vx: viewBox.x, vy: viewBox.y };
+    }
+    if (e.touches.length === 2) {
+        isPanning = false;
+        lastPinchDist = Math.hypot(
+            e.touches[1].clientX - e.touches[0].clientX,
+            e.touches[1].clientY - e.touches[0].clientY
+        );
+    }
+}, { passive: true });
+svg.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    if (e.touches.length === 1 && isPanning) {
+        const dx = (e.touches[0].clientX - panStart.x) * viewBox.w / svg.clientWidth;
+        const dy = (e.touches[0].clientY - panStart.y) * viewBox.h / svg.clientHeight;
+        viewBox.x = panStart.vx - dx;
+        viewBox.y = panStart.vy - dy;
+        updateViewBox();
+    } else if (e.touches.length === 2 && lastPinchDist > 0) {
+        const curDist = Math.hypot(
+            e.touches[1].clientX - e.touches[0].clientX,
+            e.touches[1].clientY - e.touches[0].clientY
+        );
+        const scale = lastPinchDist / curDist;
+        const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+        const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+        const pt = svgPoint({ clientX: midX, clientY: midY });
+        viewBox.x = pt.x - (pt.x - viewBox.x) * scale;
+        viewBox.y = pt.y - (pt.y - viewBox.y) * scale;
+        viewBox.w *= scale;
+        viewBox.h *= scale;
+        updateViewBox();
+        lastPinchDist = curDist;
+    }
+}, { passive: false });
+svg.addEventListener('touchend', () => { isPanning = false; lastPinchDist = 0; });
 
 // --- Tooltips ---
 
