@@ -110,9 +110,82 @@
   }
   .back-link:hover { color: #C62828; }
 
+  /* --- Listen buttons --- */
+  .listen-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 16px 0 24px;
+  }
+  .listen-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 24px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid rgba(61,28,17,0.15);
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .listen-btn:hover {
+    border-color: #C62828;
+    transform: translateY(-1px);
+  }
+  .listen-btn.spotify {
+    background: #1DB954;
+    color: #fff;
+    border-color: #1DB954;
+  }
+  .listen-btn.spotify:hover { background: #1aa34a; }
+  .listen-btn.apple {
+    background: #FC3C44;
+    color: #fff;
+    border-color: #FC3C44;
+  }
+  .listen-btn.apple:hover { background: #e0353c; }
+  .listen-btn.rss {
+    background: #EDE0D4;
+    color: #6B4226;
+  }
+
+  /* --- Episode list --- */
+  .episode-list {
+    list-style: none;
+    margin: 12px 0 20px 0;
+    padding: 0;
+  }
+  .episode-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(61,28,17,0.06);
+    font-size: 14px;
+  }
+  .episode-list li:last-child { border-bottom: none; }
+  .episode-num {
+    display: inline-block;
+    width: 28px;
+    font-weight: 700;
+    color: #C62828;
+    font-size: 13px;
+  }
+
+  /* --- Social --- */
+  .social-handles {
+    display: flex;
+    gap: 24px;
+    margin: 12px 0 20px;
+    font-size: 15px;
+  }
+  .social-handles a { text-decoration: none; color: #C62828; font-weight: 600; }
+  .social-handles a:hover { text-decoration: underline; }
+
   @media (max-width: 600px) {
     .page h1 { font-size: 24px; }
     .page { padding: 32px 20px 40px; }
+    .listen-buttons { flex-direction: column; }
+    .social-handles { flex-direction: column; gap: 8px; }
   }
 </style>
 </head>
@@ -134,15 +207,56 @@
   <h1>About This Project</h1>
 
   <p>
-    This is a collection of interactive visualizations exploring AR Rahman's discography &mdash;
-    who he works with, what his music sounds like, and how it all connects across 34 years
-    and more than 2,000 tracks. It started as a side project and grew into 13 visualizations
-    covering singers, directors, lyricists, audio features, and more.
+    Built by <strong>Swaroop</strong> and <strong>Sharan</strong>, hosts of
+    <em>Brothers in Music: The AR Rahman Edition</em> &mdash; a podcast where
+    two brothers methodically explore Rahman's discography year by year,
+    from 1992 to 2024. This site is the data companion to the podcast.
   </p>
-  <p>
-    Everything here is built with vanilla JavaScript and SVG &mdash; no frameworks, no libraries,
-    no build tools. Each page is a single self-contained HTML file.
-  </p>
+
+  <h2>Listen</h2>
+
+  <div class="listen-buttons">
+    <a class="listen-btn spotify" href="https://open.spotify.com/show/2xK9pHsQVMyMuu9y6FJWFz" target="_blank" rel="noopener">
+      &#9654; Spotify
+    </a>
+    <a class="listen-btn apple" href="https://podcasts.apple.com/us/podcast/brothers-in-music-the-ar-rahman-edition/id1721595218" target="_blank" rel="noopener">
+      &#9654; Apple Podcasts
+    </a>
+    <a class="listen-btn rss" href="https://feeds.buzzsprout.com/2289931.rss" target="_blank" rel="noopener">
+      RSS Feed
+    </a>
+  </div>
+
+  <h2>Episodes</h2>
+
+  <ol class="episode-list">
+    <li><span class="episode-num">1.</span> 1992</li>
+    <li><span class="episode-num">2.</span> 1993</li>
+    <li><span class="episode-num">3.</span> 1994 (Part 1)</li>
+    <li><span class="episode-num">4.</span> 1994 (Part 2)</li>
+    <li><span class="episode-num">5.</span> 1995 (Part 1)</li>
+    <li><span class="episode-num">6.</span> 1995 (Part 2)</li>
+    <li><span class="episode-num">7.</span> 1996</li>
+    <li><span class="episode-num">8.</span> 1997 (Part 1)</li>
+    <li><span class="episode-num">9.</span> 1997 (Part 2)</li>
+    <li><span class="episode-num">10.</span> 1997: Vande Mataram</li>
+    <li><span class="episode-num">11.</span> 1998 (Part 1: Dil Se)</li>
+    <li><span class="episode-num">12.</span> 1998 (Part 2: 1947 Earth)</li>
+    <li><span class="episode-num">13.</span> 1999 (Part 1)</li>
+  </ol>
+
+  <h2>Find Us</h2>
+
+  <div class="social-handles">
+    <div>
+      <strong>Swaroop:</strong>
+      <a href="https://instagram.com/tnagartornado" target="_blank" rel="noopener">@TnagarTornado</a>
+    </div>
+    <div>
+      <strong>Sharan:</strong>
+      <a href="https://twitter.com/sharanidli" target="_blank" rel="noopener">@sharanidli</a>
+    </div>
+  </div>
 
   <h2>Data Sources</h2>
 
