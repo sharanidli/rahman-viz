@@ -236,11 +236,12 @@
   <div id="chart-area">
     <div id="legend"></div>
     <div id="axis-descriptions">
-      <div class="axis-desc"><strong>Danceability:</strong> Tempo, rhythm stability, beat strength</div>
       <div class="axis-desc"><strong>Energy:</strong> Perceived intensity and activity</div>
+      <div class="axis-desc"><strong>Danceability:</strong> Tempo, rhythm stability, beat strength</div>
       <div class="axis-desc"><strong>Valence:</strong> Musical positivity (happy vs. sad)</div>
       <div class="axis-desc"><strong>Acousticness:</strong> Acoustic vs. electronic production</div>
-      <div class="axis-desc"><strong>Liveness:</strong> Presence of a live audience</div>
+      <div class="axis-desc"><strong>Rhythmic Complexity:</strong> Intricacy of rhythmic patterns</div>
+      <div class="axis-desc"><strong>Tempo:</strong> Relative speed (0 = slowest, 1 = fastest)</div>
     </div>
     <div id="chart-container">
       <svg id="chart" width="560" height="500"></svg>
@@ -251,7 +252,7 @@
 </div>
 
 <script>
-const DATA = {"directors": [{"name": "Mani Ratnam", "albums": 14, "tracks": 119, "features": {"danceability": 0.638, "energy": 0.524, "valence": 0.512, "acousticness": 0.354, "liveness": 0.178}}, {"name": "Gautham Vasudev Menon", "albums": 5, "tracks": 36, "features": {"danceability": 0.579, "energy": 0.574, "valence": 0.504, "acousticness": 0.483, "liveness": 0.119}}, {"name": "Deepa Mehta", "albums": 3, "tracks": 27, "features": {"danceability": 0.449, "energy": 0.26, "valence": 0.256, "acousticness": 0.373, "liveness": 0.139}}, {"name": "Ashutosh Gowariker", "albums": 3, "tracks": 24, "features": {"danceability": 0.555, "energy": 0.438, "valence": 0.36, "acousticness": 0.59, "liveness": 0.111}}, {"name": "Imtiaz Ali", "albums": 3, "tracks": 22, "features": {"danceability": 0.557, "energy": 0.549, "valence": 0.501, "acousticness": 0.479, "liveness": 0.136}}, {"name": "K. S. Ravikumar", "albums": 3, "tracks": 14, "features": {"danceability": 0.628, "energy": 0.66, "valence": 0.483, "acousticness": 0.274, "liveness": 0.241}}], "features": ["danceability", "energy", "valence", "acousticness", "liveness"], "featureLabels": ["Danceability", "Energy", "Valence", "Acousticness", "Liveness"]};
+const DATA = {"directors": [{"name": "Mani Ratnam", "albums": 14, "tracks": 79, "features": {"energy": 0.531, "danceability": 0.644, "valence": 0.473, "acousticness": 0.331, "rhythm_complexity": 0.348, "tempo": 0.513}}, {"name": "Gautham Vasudev Menon", "albums": 5, "tracks": 30, "features": {"energy": 0.58, "danceability": 0.576, "valence": 0.503, "acousticness": 0.447, "rhythm_complexity": 0.41, "tempo": 0.605}}, {"name": "Deepa Mehta", "albums": 3, "tracks": 18, "features": {"energy": 0.3, "danceability": 0.47, "valence": 0.266, "acousticness": 0.35, "rhythm_complexity": 0.391, "tempo": 0.525}}], "features": ["energy", "danceability", "valence", "acousticness", "rhythm_complexity", "tempo"], "featureLabels": ["Energy", "Danceability", "Valence", "Acousticness", "Rhythmic Complexity", "Tempo"]};
 
 const DIRECTOR_COLORS = [
     '#C62828', '#E64A19', '#558B2F', '#1565C0',
