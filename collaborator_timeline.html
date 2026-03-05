@@ -193,7 +193,7 @@
   /* --- Responsive: Phone (480px) --- */
   @media (max-width: 480px) {
     #year-display {
-      font-size: 32px; bottom: 8px; right: 8px; opacity: 0.6;
+      font-size: 32px; bottom: 52px; right: 8px; opacity: 0.6;
     }
     #header h1 { font-size: 18px; }
     #header p { font-size: 11px; }
@@ -596,23 +596,24 @@ document.addEventListener('keydown', function(e) {
 (function() {
   var nav = document.getElementById('tour-nav');
   if (!nav) return;
-  var lastY = window.pageYOffset;
-  var ticking = false;
+  var lastY = window.scrollY || window.pageYOffset;
+  var delta = 0;
+  var THRESHOLD = 10;
   window.addEventListener('scroll', function() {
-    if (!ticking) {
-      window.requestAnimationFrame(function() {
-        var y = window.pageYOffset;
-        if (y > lastY && y > 60) {
-          nav.classList.add('hidden');
-        } else {
-          nav.classList.remove('hidden');
-        }
-        lastY = y;
-        ticking = false;
-      });
-      ticking = true;
+    var y = window.scrollY || window.pageYOffset;
+    var diff = y - lastY;
+    if ((delta > 0 && diff > 0) || (delta < 0 && diff < 0)) {
+      delta += diff;
+    } else {
+      delta = diff;
     }
-  });
+    if (delta > THRESHOLD && y > 60) {
+      nav.classList.add('hidden');
+    } else if (delta < -THRESHOLD) {
+      nav.classList.remove('hidden');
+    }
+    lastY = y;
+  }, { passive: true });
 })();
 </script>
 </body>

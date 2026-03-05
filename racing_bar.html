@@ -191,14 +191,14 @@
 
   /* --- Mobile: Racing Bar --- */
   @media (max-width: 768px) {
-    #year-display { font-size: 42px; bottom: 12px; right: 12px; }
+    #year-display { font-size: 42px; bottom: 56px; right: 12px; }
     .bar-label { width: 110px; font-size: 12px; padding-right: 8px; }
     .bar-count { right: -30px; font-size: 11px; }
     .bar-row { height: 28px; margin-bottom: 3px; }
     #speed-control { display: none; }
   }
   @media (max-width: 480px) {
-    #year-display { font-size: 32px; bottom: 8px; right: 8px; opacity: 0.6; }
+    #year-display { font-size: 32px; bottom: 52px; right: 8px; opacity: 0.6; }
     .bar-label { width: 90px; font-size: 11px; }
     .bar-count { right: -28px; font-size: 10px; }
     .bar-row { height: 26px; margin-bottom: 2px; }
@@ -244,7 +244,7 @@
   /* --- Responsive: Phone (480px) --- */
   @media (max-width: 480px) {
     #year-display {
-      font-size: 32px; bottom: 8px; right: 8px; opacity: 0.6;
+      font-size: 32px; bottom: 52px; right: 8px; opacity: 0.6;
     }
     #header h1 { font-size: 18px; }
     #header p { font-size: 11px; }
@@ -517,23 +517,24 @@ document.addEventListener('keydown', function(e) {
 (function() {
   var nav = document.getElementById('tour-nav');
   if (!nav) return;
-  var lastY = window.pageYOffset;
-  var ticking = false;
+  var lastY = window.scrollY || window.pageYOffset;
+  var delta = 0;
+  var THRESHOLD = 10;
   window.addEventListener('scroll', function() {
-    if (!ticking) {
-      window.requestAnimationFrame(function() {
-        var y = window.pageYOffset;
-        if (y > lastY && y > 60) {
-          nav.classList.add('hidden');
-        } else {
-          nav.classList.remove('hidden');
-        }
-        lastY = y;
-        ticking = false;
-      });
-      ticking = true;
+    var y = window.scrollY || window.pageYOffset;
+    var diff = y - lastY;
+    if ((delta > 0 && diff > 0) || (delta < 0 && diff < 0)) {
+      delta += diff;
+    } else {
+      delta = diff;
     }
-  });
+    if (delta > THRESHOLD && y > 60) {
+      nav.classList.add('hidden');
+    } else if (delta < -THRESHOLD) {
+      nav.classList.remove('hidden');
+    }
+    lastY = y;
+  }, { passive: true });
 })();
 </script>
 </body>
