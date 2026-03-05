@@ -62390,5 +62390,98 @@ document.addEventListener('keydown', function(e) {
   }, { passive: true });
 })();
 </script>
+
+<style>
+#feedback-btn {
+  position: fixed; bottom: 52px; right: 16px; z-index: 9999;
+  background: #C62828; color: #F5E6D3; border: none; border-radius: 50%;
+  width: 44px; height: 44px; font-size: 20px; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2); transition: transform 0.2s;
+  font-family: system-ui, sans-serif; line-height: 1;
+}
+#feedback-btn:hover { transform: scale(1.1); }
+#feedback-panel {
+  display: none; position: fixed; bottom: 104px; right: 16px; z-index: 9999;
+  background: #F5E6D3; border: 1px solid rgba(61,28,17,0.15);
+  border-radius: 12px; padding: 20px; width: 300px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+#feedback-panel.open { display: block; }
+#feedback-panel h3 {
+  margin: 0 0 12px; font-size: 15px; color: #3D1C11; font-weight: 700;
+}
+#feedback-panel textarea {
+  width: 100%; height: 80px; border: 1px solid rgba(61,28,17,0.15);
+  border-radius: 8px; padding: 10px; font-size: 13px; resize: vertical;
+  font-family: inherit; background: #fff; color: #3D1C11;
+}
+#feedback-panel textarea:focus { outline: 2px solid #C62828; border-color: transparent; }
+#feedback-panel input[type=email] {
+  width: 100%; border: 1px solid rgba(61,28,17,0.15);
+  border-radius: 8px; padding: 8px 10px; font-size: 13px; margin-top: 8px;
+  font-family: inherit; background: #fff; color: #3D1C11;
+}
+#feedback-panel input[type=email]:focus { outline: 2px solid #C62828; border-color: transparent; }
+#feedback-panel .fb-hint { font-size: 11px; color: #8D6E63; margin-top: 4px; }
+#feedback-panel button[type=submit] {
+  margin-top: 12px; background: #C62828; color: #F5E6D3; border: none;
+  border-radius: 8px; padding: 10px 20px; font-size: 13px; font-weight: 600;
+  cursor: pointer; width: 100%; transition: background 0.2s;
+}
+#feedback-panel button[type=submit]:hover { background: #A51B1B; }
+#feedback-panel .fb-thanks {
+  text-align: center; padding: 20px 0; font-size: 14px; color: #3D1C11;
+}
+@media (max-width: 480px) {
+  #feedback-panel { width: calc(100vw - 32px); right: 16px; bottom: 96px; }
+  #feedback-btn { bottom: 52px; right: 12px; }
+}
+</style>
+
+<button id="feedback-btn" onclick="toggleFeedback()" aria-label="Send feedback" title="Send feedback">&#9993;</button>
+<div id="feedback-panel">
+  <form id="feedback-form" action="https://formspree.io/f/xojkalry" method="POST">
+    <h3>Send us feedback</h3>
+    <textarea name="message" placeholder="What did you like? What could be better?" required></textarea>
+    <input type="email" name="_replyto" placeholder="Email (optional)">
+    <div class="fb-hint">We read every message.</div>
+    <input type="hidden" name="_subject" value="Rahman Viz Feedback">
+    <input type="hidden" name="page" id="fb-page">
+    <button type="submit">Send Feedback</button>
+  </form>
+</div>
+<script>
+function toggleFeedback() {
+  var p = document.getElementById('feedback-panel');
+  p.classList.toggle('open');
+  document.getElementById('fb-page').value = location.pathname;
+}
+document.getElementById('feedback-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  var form = this;
+  fetch(form.action, {
+    method: 'POST',
+    body: new FormData(form),
+    headers: { 'Accept': 'application/json' }
+  }).then(function(r) {
+    if (r.ok) {
+      form.innerHTML = '<div class="fb-thanks">Thanks for your feedback!</div>';
+      setTimeout(function() {
+        document.getElementById('feedback-panel').classList.remove('open');
+      }, 2000);
+    }
+  });
+});
+document.addEventListener('click', function(e) {
+  var panel = document.getElementById('feedback-panel');
+  var btn = document.getElementById('feedback-btn');
+  if (panel.classList.contains('open') && !panel.contains(e.target) && e.target !== btn) {
+    panel.classList.remove('open');
+  }
+});
+</script>
+
+<script data-goatcounter="https://brothersinmusic.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
