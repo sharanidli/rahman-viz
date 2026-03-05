@@ -125,6 +125,38 @@
   }
 
   svg { display: block; margin-top: 118px; }
+
+  /* Mobile card view */
+  #mobile-cards { display: none; margin-top: 100px; padding: 0 12px 80px 12px; }
+  .dir-card {
+    background: rgba(237,224,212,0.6); border: 1px solid rgba(61,28,17,0.1);
+    border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; cursor: pointer;
+    transition: background 0.2s;
+  }
+  .dir-card.expanded { background: rgba(237,224,212,0.9); }
+  .dir-header { display: flex; justify-content: space-between; align-items: baseline; }
+  .dir-name { font-weight: 700; font-size: 15px; color: #3D1C11; }
+  .dir-count { font-size: 12px; color: #8D6E63; font-weight: 600; }
+  .sparkline { position: relative; width: 100%; height: 14px; margin: 8px 0 4px 0; }
+  .spark-dot {
+    position: absolute; top: 50%; border-radius: 50%;
+    transform: translate(-50%, -50%); opacity: 0.85;
+  }
+  .dir-meta { display: flex; justify-content: space-between; font-size: 10px; color: #8D6E63; }
+  .dir-langs { font-size: 11px; color: #6B4226; margin-top: 2px; }
+  .dir-details { display: none; margin-top: 10px; border-top: 1px solid rgba(61,28,17,0.1); padding-top: 8px; }
+  .dir-card.expanded .dir-details { display: block; }
+  .film-entry { font-size: 12px; color: #3D1C11; padding: 3px 0; }
+  .film-year { color: #C62828; font-weight: 600; display: inline-block; width: 36px; }
+  .film-lang { color: #8D6E63; font-size: 11px; }
+
+  @media (max-width: 768px) {
+    #mobile-cards { display: block; }
+    svg#chart { display: none !important; }
+    #header { padding: 10px 16px; }
+    #header h1 { font-size: 18px; }
+    #header p { font-size: 11px; }
+  }
 </style>
 <style>
   /* --- Responsive: Tablet (1024px) --- */
@@ -232,6 +264,7 @@
 <div id="tooltip"></div>
 
 <svg id="chart"></svg>
+<div id="mobile-cards"></div>
 
 <script>
 const DATA = {"directors": ["Mani Ratnam", "Shankar", "Gautham Vasudev Menon", "Bharathiraja", "K. S. Ravikumar", "Kathir", "S. J. Suryah", "Aanand L. Rai", "Deepa Mehta", "Rajkumar Santoshi", "Ashutosh Gowariker", "Rajiv Menon", "Subhash Ghai", "Danny Boyle", "Suresh Krissna", "Majid Majidi", "Atlee", "Gurinder Chadha", "Laxman Utekar", "Ram Gopal Varma"], "years": [1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025], "directorTotals": {"Mani Ratnam": 17, "Shankar": 10, "Gautham Vasudev Menon": 6, "Bharathiraja": 5, "K. S. Ravikumar": 5, "Kathir": 4, "S. J. Suryah": 3, "Aanand L. Rai": 3, "Deepa Mehta": 3, "Rajkumar Santoshi": 3, "Ashutosh Gowariker": 3, "Rajiv Menon": 3, "Subhash Ghai": 3, "Danny Boyle": 2, "Suresh Krissna": 2, "Majid Majidi": 2, "Atlee": 2, "Gurinder Chadha": 2, "Laxman Utekar": 2, "Ram Gopal Varma": 2}, "cells": [{"director": "Mani Ratnam", "year": 1992, "count": 1, "albumDetails": [{"album": "Roja", "language": "Tamil"}]}, {"director": "Mani Ratnam", "year": 1993, "count": 1, "albumDetails": [{"album": "Thiruda Thiruda", "language": "Tamil"}]}, {"director": "Mani Ratnam", "year": 1994, "count": 1, "albumDetails": [{"album": "Bombay", "language": "Tamil"}]}, {"director": "Mani Ratnam", "year": 1997, "count": 1, "albumDetails": [{"album": "Iruvar", "language": "Tamil"}]}, {"director": "Mani Ratnam", "year": 1998, "count": 1, "albumDetails": [{"album": "Dil Se...", "language": "Original version"}]}, {"director": "Mani Ratnam", "year": 2000, "count": 1, "albumDetails": [{"album": "Alai Payuthey", "language": "Tamil"}]}, {"director": "Mani Ratnam", "year": 2002, "count": 1, "albumDetails": [{"album": "Kannathil Muthamittal", "language": "Tamil"}]}, {"director": "Mani Ratnam", "year": 2004, "count": 2, "albumDetails": [{"album": "Aaytha Ezhuthu", "language": "Tamil"}, {"album": "Yuva", "language": "Tamil"}]}, {"director": "Mani Ratnam", "year": 2006, "count": 1, "albumDetails": [{"album": "Guru", "language": "Hindi"}]}, {"director": "Mani Ratnam", "year": 2010, "count": 2, "albumDetails": [{"album": "Raavan", "language": "Hindi"}, {"album": "Raavanan", "language": "Tamil"}]}, {"director": "Mani Ratnam", "year": 2015, "count": 1, "albumDetails": [{"album": "O Kadhal Kanmani", "language": "Tamil"}]}, {"director": "Mani Ratnam", "year": 2017, "count": 1, "albumDetails": [{"album": "Kaatru Veliyidai", "language": "Tamil"}]}, {"director": "Mani Ratnam", "year": 2018, "count": 1, "albumDetails": [{"album": "Chekka Chivantha Vaanam", "language": "Original"}]}, {"director": "Mani Ratnam", "year": 2022, "count": 1, "albumDetails": [{"album": "Ponniyin Selvan: I", "language": "BGM Songs"}]}, {"director": "Mani Ratnam", "year": 2023, "count": 1, "albumDetails": [{"album": "Ponniyin Selvan: II", "language": "Tamil"}]}, {"director": "Shankar", "year": 1993, "count": 1, "albumDetails": [{"album": "Gentleman", "language": "Tamil"}]}, {"director": "Shankar", "year": 1994, "count": 1, "albumDetails": [{"album": "Kaadhalan", "language": "Tamil"}]}, {"director": "Shankar", "year": 1996, "count": 1, "albumDetails": [{"album": "Indian", "language": "Tamil"}]}, {"director": "Shankar", "year": 1998, "count": 1, "albumDetails": [{"album": "Jeans", "language": "Tamil"}]}, {"director": "Shankar", "year": 1999, "count": 1, "albumDetails": [{"album": "Mudhalvan", "language": "Tamil"}]}, {"director": "Shankar", "year": 2001, "count": 1, "albumDetails": [{"album": "Nayak: The Real Hero", "language": "Tamil"}]}, {"director": "Shankar", "year": 2002, "count": 1, "albumDetails": [{"album": "Boys", "language": "Tamil"}]}, {"director": "Shankar", "year": 2007, "count": 1, "albumDetails": [{"album": "Sivaji: The Boss", "language": "Tamil"}]}, {"director": "Shankar", "year": 2010, "count": 1, "albumDetails": [{"album": "Enthiran", "language": "Tamil"}]}, {"director": "Shankar", "year": 2017, "count": 1, "albumDetails": [{"album": "2.0 (Original Motion Picture Soundtrack)", "language": "Tamil"}]}, {"director": "Gautham Vasudev Menon", "year": 2010, "count": 2, "albumDetails": [{"album": "Vinnaithaandi Varuvaayaa", "language": "Hindi version"}, {"album": "Ye Maaya Chesave", "language": "Tamil"}]}, {"director": "Gautham Vasudev Menon", "year": 2011, "count": 1, "albumDetails": [{"album": "Ekk Deewana Tha", "language": "Hindi, Malayalam, English"}]}, {"director": "Gautham Vasudev Menon", "year": 2016, "count": 2, "albumDetails": [{"album": "Achcham Yenbadhu Madamaiyada", "language": "Tamil"}, {"album": "Sahasam Swasaga Sagipo", "language": "Telugu"}]}, {"director": "Gautham Vasudev Menon", "year": 2022, "count": 1, "albumDetails": [{"album": "Vendhu Thanindhathu Kaadu", "language": "Tamil"}]}, {"director": "Bharathiraja", "year": 1993, "count": 1, "albumDetails": [{"album": "Kizhakku Cheemayile", "language": "Tamil"}]}, {"director": "Bharathiraja", "year": 1994, "count": 1, "albumDetails": [{"album": "Karuththamma", "language": "Tamil"}]}, {"director": "Bharathiraja", "year": 1996, "count": 1, "albumDetails": [{"album": "Anthimanthaarai", "language": "Tamil"}]}, {"director": "Bharathiraja", "year": 1999, "count": 1, "albumDetails": [{"album": "Taj Mahal", "language": "Tamil"}]}, {"director": "Bharathiraja", "year": 2004, "count": 1, "albumDetails": [{"album": "Kangalal Kaidhu Sei", "language": "Tamil"}]}, {"director": "K. S. Ravikumar", "year": 1995, "count": 1, "albumDetails": [{"album": "Muthu", "language": "Tamil"}]}, {"director": "K. S. Ravikumar", "year": 1999, "count": 1, "albumDetails": [{"album": "Padayappa", "language": "Tamil"}]}, {"director": "K. S. Ravikumar", "year": 2000, "count": 1, "albumDetails": [{"album": "Thenali", "language": "Tamil"}]}, {"director": "K. S. Ravikumar", "year": 2006, "count": 1, "albumDetails": [{"album": "Varalaaru", "language": "Tamil"}]}, {"director": "K. S. Ravikumar", "year": 2014, "count": 1, "albumDetails": [{"album": "Lingaa", "language": "Original Version"}]}, {"director": "Kathir", "year": 1993, "count": 1, "albumDetails": [{"album": "Uzhavan", "language": "Tamil"}]}, {"director": "Kathir", "year": 1996, "count": 1, "albumDetails": [{"album": "Kadhal Desam", "language": "Tamil"}]}, {"director": "Kathir", "year": 1999, "count": 1, "albumDetails": [{"album": "Kadhalar Dhinam", "language": "Tamil"}]}, {"director": "Kathir", "year": 2002, "count": 1, "albumDetails": [{"album": "Kadhal Virus", "language": "Tamil"}]}, {"director": "S. J. Suryah", "year": 2004, "count": 2, "albumDetails": [{"album": "Naani", "language": "Tamil"}, {"album": "New", "language": "Tamil"}]}, {"director": "S. J. Suryah", "year": 2005, "count": 1, "albumDetails": [{"album": "Anbe Aaruyire", "language": "Tamil"}]}, {"director": "Aanand L. Rai", "year": 2013, "count": 1, "albumDetails": [{"album": "Raanjhanaa", "language": "Original version"}]}, {"director": "Aanand L. Rai", "year": 2021, "count": 1, "albumDetails": [{"album": "Atrangi Re", "language": "Hindi"}]}, {"director": "Aanand L. Rai", "year": 2025, "count": 1, "albumDetails": [{"album": "Tere Ishk Mein", "language": "Hindi"}]}, {"director": "Deepa Mehta", "year": 1996, "count": 1, "albumDetails": [{"album": "Fire: Original Motion Picture Soundtrack", "language": "Tamil"}]}, {"director": "Deepa Mehta", "year": 1998, "count": 1, "albumDetails": [{"album": "Earth", "language": "Tamil"}]}, {"director": "Deepa Mehta", "year": 2005, "count": 1, "albumDetails": [{"album": "Water", "language": "''Indian Release''"}]}, {"director": "Rajkumar Santoshi", "year": 1999, "count": 1, "albumDetails": [{"album": "Pukar", "language": "Track list"}]}, {"director": "Rajkumar Santoshi", "year": 2002, "count": 1, "albumDetails": [{"album": "The Legend of Bhagat Singh (Original Motion Picture Soundtrack)", "language": "Tamil"}]}, {"director": "Rajkumar Santoshi", "year": 2023, "count": 1, "albumDetails": [{"album": "Gandhi Godse Ek Yudh", "language": "Tamil"}]}, {"director": "Ashutosh Gowariker", "year": 2004, "count": 1, "albumDetails": [{"album": "Swades", "language": "Tamil"}]}, {"director": "Ashutosh Gowariker", "year": 2008, "count": 1, "albumDetails": [{"album": "Jodhaa Akbar", "language": "Hindi"}]}, {"director": "Ashutosh Gowariker", "year": 2016, "count": 1, "albumDetails": [{"album": "Mohenjo Daro", "language": "Tamil"}]}, {"director": "Rajiv Menon", "year": 1997, "count": 1, "albumDetails": [{"album": "Minsara Kanavu", "language": "Tamil"}]}, {"director": "Rajiv Menon", "year": 2000, "count": 1, "albumDetails": [{"album": "Kandukondain Kandukondain", "language": "Tamil"}]}, {"director": "Rajiv Menon", "year": 2019, "count": 1, "albumDetails": [{"album": "Sarvam Thaala Mayam", "language": "Tamil"}]}, {"director": "Subhash Ghai", "year": 1999, "count": 1, "albumDetails": [{"album": "Taal", "language": "Track listing"}]}, {"director": "Subhash Ghai", "year": 2005, "count": 1, "albumDetails": [{"album": "Kisna: The Warrior Poet", "language": "Tamil"}]}, {"director": "Subhash Ghai", "year": 2008, "count": 1, "albumDetails": [{"album": "Yuvvraaj", "language": "Box office"}]}, {"director": "Danny Boyle", "year": 2008, "count": 1, "albumDetails": [{"album": "Slumdog Millionaire: Music from the Motion Picture", "language": "Tamil"}]}, {"director": "Danny Boyle", "year": 2010, "count": 1, "albumDetails": [{"album": "127 Hours: Music from the Motion Picture", "language": "Tamil"}]}, {"director": "Suresh Krissna", "year": 1999, "count": 1, "albumDetails": [{"album": "Sangamam", "language": "Tamil"}]}, {"director": "Suresh Krissna", "year": 2002, "count": 1, "albumDetails": [{"album": "Baba", "language": "Tamil"}]}, {"director": "Majid Majidi", "year": 2015, "count": 1, "albumDetails": [{"album": "Muhammad: The Messenger of God (Original Motion Picture Soundtrack)", "language": "Tamil"}]}, {"director": "Majid Majidi", "year": 2018, "count": 1, "albumDetails": [{"album": "Beyond the Clouds", "language": "Tamil"}]}, {"director": "Atlee", "year": 2017, "count": 1, "albumDetails": [{"album": "Mersal", "language": "Tamil"}]}, {"director": "Atlee", "year": 2019, "count": 1, "albumDetails": [{"album": "Bigil", "language": "Telugu"}]}, {"director": "Gurinder Chadha", "year": 2017, "count": 1, "albumDetails": [{"album": "Viceroy's House (Original Motion Picture Soundtrack)", "language": "=Original score"}]}, {"director": "Gurinder Chadha", "year": 2019, "count": 1, "albumDetails": [{"album": "Blinded by the Light", "language": "Track listing"}]}, {"director": "Laxman Utekar", "year": 2021, "count": 1, "albumDetails": [{"album": "Mimi", "language": "Tamil"}]}, {"director": "Laxman Utekar", "year": 2025, "count": 1, "albumDetails": [{"album": "Chhaava", "language": "Tamil"}]}, {"director": "Ram Gopal Varma", "year": 1995, "count": 1, "albumDetails": [{"album": "Rangeela", "language": "Hindi"}]}, {"director": "Ram Gopal Varma", "year": 1997, "count": 1, "albumDetails": [{"album": "Daud", "language": "Hindi"}]}]};
@@ -387,11 +420,75 @@ DATA.cells.forEach(c => {
 });
 
 function moveTooltip(ev) {
+  if (window.innerWidth < 768) {
+    tooltip.style.left = '8px';
+    tooltip.style.right = '8px';
+    tooltip.style.width = 'auto';
+    tooltip.style.maxWidth = 'none';
+    tooltip.style.bottom = '56px';
+    tooltip.style.top = 'auto';
+    return;
+  }
   let x = ev.clientX + 14, y = ev.clientY + 14;
   if (x + 340 > window.innerWidth) x = ev.clientX - 350;
   if (y + 200 > window.innerHeight) y = ev.clientY - 200;
   tooltip.style.left = x + 'px';
   tooltip.style.top = y + 'px';
+}
+
+// --- Mobile card view ---
+if (window.innerWidth < 768) {
+  const container = document.getElementById('mobile-cards');
+  const dirCells = {};
+  DATA.cells.forEach(c => {
+    if (!dirCells[c.director]) dirCells[c.director] = [];
+    dirCells[c.director].push(c);
+  });
+  const minY = Math.min(...DATA.years);
+  const maxY = Math.max(...DATA.years);
+  const yearSpan = maxY - minY || 1;
+
+  DATA.directors.forEach(d => {
+    const total = DATA.directorTotals[d];
+    const cells = (dirCells[d] || []).sort((a, b) => a.year - b.year);
+    const color = dotColor(total);
+
+    const langs = new Set();
+    cells.forEach(c => c.albumDetails.forEach(a => {
+      if (a.language && a.language !== '\u2014') langs.add(a.language);
+    }));
+
+    let spark = '<div class="sparkline">';
+    cells.forEach(c => {
+      const pct = ((c.year - minY) / yearSpan * 100).toFixed(1);
+      const size = 6 + Math.sqrt(c.count) * 4;
+      spark += '<div class="spark-dot" style="left:' + pct + '%;width:' + size + 'px;height:' + size + 'px;background:' + color + ';"></div>';
+    });
+    spark += '</div>';
+
+    let details = '<div class="dir-details">';
+    cells.forEach(c => {
+      c.albumDetails.forEach(a => {
+        details += '<div class="film-entry"><span class="film-year">' + c.year + '</span>' + a.album;
+        if (a.language && a.language !== '\u2014') details += ' <span class="film-lang">(' + a.language + ')</span>';
+        details += '</div>';
+      });
+    });
+    details += '</div>';
+
+    const firstY = cells.length ? cells[0].year : minY;
+    const lastY = cells.length ? cells[cells.length - 1].year : maxY;
+
+    const card = document.createElement('div');
+    card.className = 'dir-card';
+    card.innerHTML = '<div class="dir-header"><span class="dir-name">' + d + '</span><span class="dir-count">' + total + ' film' + (total > 1 ? 's' : '') + '</span></div>'
+      + spark
+      + '<div class="dir-meta"><span>\u2019' + String(firstY).slice(2) + '</span><span>\u2019' + String(lastY).slice(2) + '</span></div>'
+      + '<div class="dir-langs">' + [...langs].join(', ') + '</div>'
+      + details;
+    card.addEventListener('click', function() { this.classList.toggle('expanded'); });
+    container.appendChild(card);
+  });
 }
 </script>
 <div id="tour-nav">
