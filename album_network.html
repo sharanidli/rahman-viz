@@ -189,6 +189,27 @@
     color: #6B4226; font-size: 11px; text-align: right;
     line-height: 1.6;
   }
+
+  /* Legend toggle (mobile only) */
+  #legend-toggle {
+    display: none;
+    background: rgba(237,224,212,0.95);
+    border: 1px solid rgba(61,28,17,0.15);
+    border-radius: 6px; padding: 5px 12px;
+    font-size: 12px; color: #3D1C11; font-weight: 600;
+    cursor: pointer; font-family: inherit;
+  }
+
+  @media (max-width: 768px) {
+    #legend {
+      display: none; position: fixed; bottom: 56px; left: 8px; right: 8px;
+      width: auto; max-height: 40vh; z-index: 25;
+    }
+    #legend.legend-open { display: block; }
+    #legend-toggle { display: inline-block; }
+    #album-search { display: none; }
+    #controls { gap: 8px; padding: 6px 12px; }
+  }
 </style>
 <style>
   /* --- Responsive: Tablet (1024px) --- */
@@ -300,6 +321,7 @@
   <input type="text" id="album-search" list="album-datalist" placeholder="Search album..." style="padding:5px 10px; border:1px solid rgba(61,28,17,0.2); border-radius:6px; font-size:12px; background:rgba(255,255,255,0.5); color:#3D1C11; width:160px;">
   <datalist id="album-datalist"></datalist>
   <button onclick="resetZoom()" style="background:rgba(61,28,17,0.08); border:1px solid rgba(61,28,17,0.15); color:#6B4226; padding:5px 12px; border-radius:6px; cursor:pointer; font-size:12px;">Reset Zoom</button>
+  <button id="legend-toggle" onclick="document.getElementById('legend').classList.toggle('legend-open'); this.textContent = document.getElementById('legend').classList.contains('legend-open') ? 'Hide Legend' : 'Legend'">Legend</button>
 </div>
 
 <div id="tooltip"></div>
@@ -61777,7 +61799,7 @@ document.addEventListener('keydown', function(e) {
   if (!nav) return;
   var lastY = window.scrollY || window.pageYOffset;
   var delta = 0;
-  var THRESHOLD = 10;
+  var THRESHOLD = 50;
   window.addEventListener('scroll', function() {
     var y = window.scrollY || window.pageYOffset;
     var diff = y - lastY;

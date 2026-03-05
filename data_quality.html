@@ -361,7 +361,7 @@ document.addEventListener('keydown', function(e) {
   if (!nav) return;
   var lastY = window.scrollY || window.pageYOffset;
   var delta = 0;
-  var THRESHOLD = 10;
+  var THRESHOLD = 50;
   window.addEventListener('scroll', function() {
     var y = window.scrollY || window.pageYOffset;
     var diff = y - lastY;

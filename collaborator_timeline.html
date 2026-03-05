@@ -427,8 +427,11 @@ function drawWorm() {
     wormDrawn = true;
 
     const wormSvg = document.getElementById('worm-chart');
-    const W = 900, H = 500;
-    const M = {top: 40, right: 200, bottom: 50, left: 65};
+    const W = isMobile ? Math.min(400, window.innerWidth - 16) : 900;
+    const H = isMobile ? 380 : 500;
+    const M = isMobile
+        ? {top: 30, right: 90, bottom: 40, left: 45}
+        : {top: 40, right: 200, bottom: 50, left: 65};
     const plotW = W - M.left - M.right;
     const plotH = H - M.top - M.bottom;
 
@@ -533,22 +536,24 @@ function drawWorm() {
             'font-family': 'Segoe UI, system-ui, sans-serif',
             style: 'transition: opacity 0.2s;'
         });
-        endLabel.textContent = s.singer + ' (' + lastPt.cum + ')';
+        const displayName = isMobile && s.singer.length > 10
+            ? s.singer.substring(0, 10) + '…'
+            : s.singer;
+        endLabel.textContent = displayName + ' (' + lastPt.cum + ')';
         endLabel.dataset.idx = i;
         wormSvg.appendChild(endLabel);
 
-        // Hover interactions
-        line.addEventListener('mouseenter', () => {
+        // Highlight function (shared by hover and touch)
+        function highlightLine(idx) {
             lines.forEach((l, j) => {
-                l.setAttribute('opacity', j === i ? 1 : 0.1);
-                l.setAttribute('stroke-width', j === i ? 4 : 1.5);
+                l.setAttribute('opacity', j === idx ? 1 : 0.1);
+                l.setAttribute('stroke-width', j === idx ? 4 : 1.5);
             });
             wormSvg.querySelectorAll('text[data-idx]').forEach(t => {
-                t.setAttribute('opacity', parseInt(t.dataset.idx) === i ? 1 : 0.15);
+                t.setAttribute('opacity', parseInt(t.dataset.idx) === idx ? 1 : 0.15);
             });
-        });
-
-        line.addEventListener('mouseleave', () => {
+        }
+        function resetLines() {
             lines.forEach(l => {
                 l.setAttribute('opacity', 0.8);
                 l.setAttribute('stroke-width', 2.5);
@@ -556,6 +561,23 @@ function drawWorm() {
             wormSvg.querySelectorAll('text[data-idx]').forEach(t => {
                 t.setAttribute('opacity', 1);
             });
+        }
+
+        // Touch: tap to highlight, tap again to reset
+        line.addEventListener('click', () => {
+            if (!document.body.classList.contains('touch-device')) return;
+            const isHighlighted = line.getAttribute('opacity') === '1' && line.getAttribute('stroke-width') === '4';
+            if (isHighlighted) { resetLines(); } else { highlightLine(i); }
+        });
+
+        // Hover interactions (desktop only)
+        line.addEventListener('mouseenter', () => {
+            if (document.body.classList.contains('touch-device')) return;
+            highlightLine(i);
+        });
+        line.addEventListener('mouseleave', () => {
+            if (document.body.classList.contains('touch-device')) return;
+            resetLines();
         });
     });
 }
@@ -571,6 +593,9 @@ function setView(v) {
         : 'Cumulative tracks over time &middot; Top 15 singers &middot; Hover to highlight';
     if (v === 'worm') drawWorm();
 }
+
+// Default to worm chart on mobile (dot matrix is too wide)
+if (isMobile) setView('worm');
 </script>
 <div id="tour-nav">
   <a href="index.html" class="tour-home">&larr; Explore</a>
@@ -598,7 +623,7 @@ document.addEventListener('keydown', function(e) {
   if (!nav) return;
   var lastY = window.scrollY || window.pageYOffset;
   var delta = 0;
-  var THRESHOLD = 10;
+  var THRESHOLD = 50;
   window.addEventListener('scroll', function() {
     var y = window.scrollY || window.pageYOffset;
     var diff = y - lastY;
