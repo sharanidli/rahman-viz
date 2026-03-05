@@ -441,6 +441,7 @@ function moveTooltip(ev) {
 
 // --- Mobile drill-down view ---
 if (window.innerWidth < 768) {
+  document.querySelector('#header p').textContent = 'Who writes for whom · Tap to explore collaborations';
   // Group cells by lyricist and by singer
   var byLyricist = {};
   var bySinger = {};

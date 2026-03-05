@@ -438,6 +438,7 @@ function moveTooltip(ev) {
 
 // --- Mobile card view ---
 if (window.innerWidth < 768) {
+  document.querySelector('#header p').textContent = 'Which directors, which years \u00B7 Tap a card to see films';
   const container = document.getElementById('mobile-cards');
   const dirCells = {};
   DATA.cells.forEach(c => {
@@ -476,14 +477,11 @@ if (window.innerWidth < 768) {
     });
     details += '</div>';
 
-    const firstY = cells.length ? cells[0].year : minY;
-    const lastY = cells.length ? cells[cells.length - 1].year : maxY;
-
     const card = document.createElement('div');
     card.className = 'dir-card';
     card.innerHTML = '<div class="dir-header"><span class="dir-name">' + d + '</span><span class="dir-count">' + total + ' film' + (total > 1 ? 's' : '') + '</span></div>'
       + spark
-      + '<div class="dir-meta"><span>\u2019' + String(firstY).slice(2) + '</span><span>\u2019' + String(lastY).slice(2) + '</span></div>'
+      + '<div class="dir-meta"><span>\u2019' + String(minY).slice(2) + '</span><span>\u2019' + String(maxY).slice(2) + '</span></div>'
       + '<div class="dir-langs">' + [...langs].join(', ') + '</div>'
       + details;
     card.addEventListener('click', function() { this.classList.toggle('expanded'); });
