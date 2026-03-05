@@ -13,8 +13,8 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    background: #F5E6D3;
-    color: #3D1C11;
+    background: #FFFFFF;
+    color: #1A1A2E;
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     min-height: 100vh;
     padding-top: 44px;
@@ -23,36 +23,36 @@
   /* --- Site navigation --- */
   .site-nav {
     position: fixed; top: 0; left: 0; right: 0; height: 44px;
-    background: rgba(245,230,211,0.95);
+    background: rgba(255,255,255,0.95);
     backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
     z-index: 10000; display: flex; align-items: center;
     padding: 0 20px;
-    border-bottom: 1px solid rgba(61,28,17,0.1);
+    border-bottom: 1px solid rgba(26,26,46,0.1);
   }
   .site-nav .nav-brand {
-    text-decoration: none; color: #3D1C11; font-weight: 700; font-size: 14px;
+    text-decoration: none; color: #1A1A2E; font-weight: 700; font-size: 14px;
     white-space: nowrap;
   }
-  .site-nav .nav-brand:hover { color: #2D5DA1; }
+  .site-nav .nav-brand:hover { color: #7B2D8E; }
   .site-nav .nav-links { margin-left: auto; display: flex; gap: 20px; }
   .site-nav .nav-links a {
-    text-decoration: none; color: #6B4226; font-size: 13px; font-weight: 500;
+    text-decoration: none; color: #555570; font-size: 13px; font-weight: 500;
   }
-  .site-nav .nav-links a:hover { color: #C62828; }
+  .site-nav .nav-links a:hover { color: #C02068; }
   .site-nav .nav-toggle-input { display: none; }
   .site-nav .nav-toggle-label {
     display: none; cursor: pointer; font-size: 22px;
-    color: #3D1C11; margin-left: auto; line-height: 1;
+    color: #1A1A2E; margin-left: auto; line-height: 1;
   }
   @media (max-width: 600px) {
     .site-nav .nav-brand { font-size: 13px; }
     .site-nav .nav-toggle-label { display: block; }
     .site-nav .nav-links {
       display: none; position: absolute; top: 44px; left: 0; right: 0;
-      background: rgba(245,230,211,0.98);
+      background: rgba(255,255,255,0.98);
       backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
       flex-direction: column; padding: 12px 20px; gap: 12px;
-      border-bottom: 1px solid rgba(61,28,17,0.1);
+      border-bottom: 1px solid rgba(26,26,46,0.1);
     }
     .site-nav .nav-toggle-input:checked ~ .nav-links { display: flex; }
   }
@@ -66,21 +66,21 @@
   .page h1 {
     font-size: 28px;
     font-weight: 800;
-    color: #C62828;
+    color: #C02068;
     margin-bottom: 24px;
   }
   .page h2 {
     font-size: 18px;
     font-weight: 700;
-    color: #3D1C11;
+    color: #1A1A2E;
     margin-top: 36px;
     margin-bottom: 12px;
     padding-bottom: 8px;
-    border-bottom: 1px solid rgba(61,28,17,0.08);
+    border-bottom: 1px solid rgba(26,26,46,0.08);
   }
   .page p {
     font-size: 15px;
-    color: #3D1C11;
+    color: #1A1A2E;
     line-height: 1.7;
     margin-bottom: 12px;
   }
@@ -88,27 +88,27 @@
     margin: 8px 0 16px 24px;
     font-size: 15px;
     line-height: 1.7;
-    color: #3D1C11;
+    color: #1A1A2E;
   }
   .page li { margin-bottom: 4px; }
-  .page a { color: #C62828; }
+  .page a { color: #C02068; }
 
   .glossary-term {
     font-weight: 700;
-    color: #C62828;
+    color: #C02068;
   }
   .glossary-desc {
-    color: #6B4226;
+    color: #555570;
   }
 
   .back-link {
     display: inline-block;
     margin-top: 32px;
-    color: #6B4226;
+    color: #555570;
     text-decoration: none;
     font-size: 14px;
   }
-  .back-link:hover { color: #C62828; }
+  .back-link:hover { color: #C02068; }
 
   /* --- Listen buttons --- */
   .listen-buttons {
@@ -126,12 +126,12 @@
     font-size: 14px;
     font-weight: 600;
     text-decoration: none;
-    border: 1px solid rgba(61,28,17,0.15);
+    border: 1px solid rgba(26,26,46,0.15);
     transition: all 0.15s;
     font-family: inherit;
   }
   .listen-btn:hover {
-    border-color: #C62828;
+    border-color: #C02068;
     transform: translateY(-1px);
   }
   .listen-btn.spotify {
@@ -147,8 +147,8 @@
   }
   .listen-btn.apple:hover { background: #e0353c; }
   .listen-btn.rss {
-    background: #EDE0D4;
-    color: #6B4226;
+    background: #FAFAFE;
+    color: #555570;
   }
 
   /* --- Episode accordion --- */
@@ -159,10 +159,10 @@
     cursor: pointer;
     font-size: 14px;
     font-weight: 600;
-    color: #6B4226;
+    color: #555570;
     padding: 8px 0;
   }
-  .episode-panel summary:hover { color: #C62828; }
+  .episode-panel summary:hover { color: #C02068; }
   .episode-list {
     list-style: none;
     margin: 8px 0 0 0;
@@ -170,7 +170,7 @@
   }
   .episode-list li {
     padding: 6px 0;
-    border-bottom: 1px solid rgba(61,28,17,0.06);
+    border-bottom: 1px solid rgba(26,26,46,0.06);
     font-size: 13px;
   }
   .episode-list li:last-child { border-bottom: none; }
@@ -178,7 +178,7 @@
     display: inline-block;
     width: 28px;
     font-weight: 700;
-    color: #C62828;
+    color: #C02068;
     font-size: 12px;
   }
 
@@ -189,7 +189,7 @@
     margin: 12px 0 20px;
     font-size: 15px;
   }
-  .social-handles a { text-decoration: none; color: #C62828; font-weight: 600; }
+  .social-handles a { text-decoration: none; color: #C02068; font-weight: 600; }
   .social-handles a:hover { text-decoration: underline; }
 
   @media (max-width: 600px) {

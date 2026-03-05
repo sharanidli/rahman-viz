@@ -14,8 +14,8 @@
   /* --- Tour navigation --- */
   #tour-nav {
     position: fixed; bottom: 0; left: 0; right: 0; z-index: 20;
-    background: rgba(245,230,211,0.95);
-    border-top: 1px solid rgba(61,28,17,0.1);
+    background: rgba(255,255,255,0.95);
+    border-top: 1px solid rgba(26,26,46,0.1);
     display: flex; align-items: center; justify-content: space-between;
     padding: 8px 16px; font-size: 13px;
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -23,11 +23,11 @@
   }
   #tour-nav.hidden { transform: translateY(100%); }
   #tour-nav a {
-    color: #C62828; text-decoration: none; font-weight: 600;
+    color: #C02068; text-decoration: none; font-weight: 600;
     min-height: 36px; display: inline-flex; align-items: center;
   }
   #tour-nav a:hover { text-decoration: underline; }
-  .tour-pos { color: #8D6E63; font-size: 12px; }
+  .tour-pos { color: #888898; font-size: 12px; }
   .tour-arrows { display: flex; gap: 16px; }
   @media (max-width: 480px) {
     #tour-nav { padding: 8px 10px; font-size: 12px; min-height: 48px; }
@@ -49,27 +49,27 @@
   /* --- Site navigation --- */
   .site-nav {
     position: fixed; top: 0; left: 0; right: 0; height: 44px;
-    background: rgba(245,230,211,0.95);
+    background: rgba(255,255,255,0.95);
     backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
     z-index: 10000; display: flex; align-items: center;
     padding: 0 20px;
-    border-bottom: 1px solid rgba(61,28,17,0.1);
+    border-bottom: 1px solid rgba(26,26,46,0.1);
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   }
   .site-nav .nav-brand {
-    text-decoration: none; color: #3D1C11; font-weight: 700; font-size: 14px;
+    text-decoration: none; color: #1A1A2E; font-weight: 700; font-size: 14px;
     white-space: nowrap;
   }
-  .site-nav .nav-brand:hover { color: #2D5DA1; }
+  .site-nav .nav-brand:hover { color: #7B2D8E; }
   .site-nav .nav-links { margin-left: auto; display: flex; gap: 20px; }
   .site-nav .nav-links a {
-    text-decoration: none; color: #6B4226; font-size: 13px; font-weight: 500;
+    text-decoration: none; color: #555570; font-size: 13px; font-weight: 500;
   }
-  .site-nav .nav-links a:hover { color: #C62828; }
+  .site-nav .nav-links a:hover { color: #C02068; }
   .site-nav .nav-toggle-input { display: none; }
   .site-nav .nav-toggle-label {
     display: none; cursor: pointer; font-size: 22px;
-    color: #3D1C11; margin-left: auto; line-height: 1;
+    color: #1A1A2E; margin-left: auto; line-height: 1;
     -webkit-tap-highlight-color: transparent;
   }
   @media (max-width: 600px) {
@@ -77,10 +77,10 @@
     .site-nav .nav-toggle-label { display: block; }
     .site-nav .nav-links {
       display: none; position: absolute; top: 44px; left: 0; right: 0;
-      background: rgba(245,230,211,0.98);
+      background: rgba(255,255,255,0.98);
       backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
       flex-direction: column; padding: 12px 20px; gap: 12px;
-      border-bottom: 1px solid rgba(61,28,17,0.1);
+      border-bottom: 1px solid rgba(26,26,46,0.1);
     }
     .site-nav .nav-toggle-input:checked ~ .nav-links { display: flex; }
   }
@@ -89,8 +89,8 @@
   .mobile-notice { display: none; }
   @media (max-width: 768px) {
     .mobile-notice {
-      display: block; background: rgba(249,168,37,0.12);
-      color: #6B4226; text-align: center;
+      display: block; background: rgba(232,93,32,0.08);
+      color: #555570; text-align: center;
       padding: 6px 16px; font-size: 11px; line-height: 1.4;
     }
   }
@@ -98,8 +98,8 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
     padding-top: 48px;
-    background: #F5E6D3;
-    color: #3D1C11;
+    background: #FFFFFF;
+    color: #1A1A2E;
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     overflow-x: hidden;
     overflow-y: auto;
@@ -109,11 +109,11 @@
     max-width: 960px;
     margin: 0 auto;
   }
-  #header h1 { font-size: 22px; font-weight: 700; color: #3D1C11; }
-  #header p { font-size: 13px; color: #6B4226; margin-top: 4px; }
+  #header h1 { font-size: 22px; font-weight: 700; color: #1A1A2E; }
+  #header p { font-size: 13px; color: #555570; margin-top: 4px; }
 
   .section-title {
-    font-size: 16px; font-weight: 700; color: #3D1C11;
+    font-size: 16px; font-weight: 700; color: #1A1A2E;
     padding: 24px 24px 8px; max-width: 960px; margin: 0 auto;
   }
 
@@ -125,8 +125,8 @@
 
   #tooltip {
     position: fixed; pointer-events: none;
-    background: rgba(237,224,212,0.97);
-    border: 1px solid rgba(61,28,17,0.15);
+    background: rgba(250,250,254,0.97);
+    border: 1px solid rgba(26,26,46,0.15);
     border-radius: 10px; padding: 14px 18px;
     font-size: 13px; line-height: 1.6;
     max-width: 300px;
@@ -134,11 +134,11 @@
     display: none; z-index: 100;
     backdrop-filter: blur(8px);
   }
-  #tooltip .tt-title { font-size: 15px; font-weight: 700; margin-bottom: 2px; color: #3D1C11; }
+  #tooltip .tt-title { font-size: 15px; font-weight: 700; margin-bottom: 2px; color: #1A1A2E; }
   #tooltip .tt-row { display: flex; justify-content: space-between; gap: 16px; }
-  #tooltip .tt-label { color: #6B4226; }
-  #tooltip .tt-val { color: #3D1C11; font-weight: 600; }
-  #tooltip .tt-examples { margin-top: 6px; font-size: 12px; color: #6B4226; }
+  #tooltip .tt-label { color: #555570; }
+  #tooltip .tt-val { color: #1A1A2E; font-weight: 600; }
+  #tooltip .tt-examples { margin-top: 6px; font-size: 12px; color: #555570; }
 
   .footer-spacer { height: 40px; }
 </style>
@@ -300,10 +300,10 @@ function hideTip() { tooltip.style.display = 'none'; }
   svg.style.width = '100%';
   svg.style.height = 'auto';
 
-  // Bar gradient colors: cinnamon (#8D6E63) -> chilli red (#C62828)
+  // Bar gradient colors: cinnamon (#888898) -> chilli red (#C02068)
   const colorStops = [
-    [141, 110, 99],   // #8D6E63
-    [198, 40, 40],    // #C62828
+    [136, 136, 152],  // #888898
+    [192, 32, 104],   // #C02068
   ];
   function barColor(i, total) {
     const t = total > 1 ? i / (total - 1) : 0;
@@ -322,11 +322,11 @@ function hideTip() { tooltip.style.display = 'none'; }
     if (y < margin.top - 5) continue;
     svg.appendChild(svgEl('line', {
       x1: margin.left, y1: y, x2: margin.left + plotW, y2: y,
-      stroke: 'rgba(61,28,17,0.08)', 'stroke-width': 1,
+      stroke: 'rgba(26,26,46,0.08)', 'stroke-width': 1,
     }));
     const lbl = svgEl('text', {
       x: margin.left - 10, y: y + 4,
-      'text-anchor': 'end', fill: '#8D6E63', 'font-size': '11px',
+      'text-anchor': 'end', fill: '#888898', 'font-size': '11px',
       'font-family': 'Segoe UI, system-ui, sans-serif',
     });
     lbl.textContent = v;
@@ -336,7 +336,7 @@ function hideTip() { tooltip.style.display = 'none'; }
   // Y-axis title
   const yTitle = svgEl('text', {
     x: 14, y: margin.top + plotH / 2,
-    'text-anchor': 'middle', fill: '#6B4226', 'font-size': '12px',
+    'text-anchor': 'middle', fill: '#555570', 'font-size': '12px',
     'font-family': 'Segoe UI, system-ui, sans-serif',
     transform: 'rotate(-90, 14, ' + (margin.top + plotH / 2) + ')',
   });
@@ -364,7 +364,7 @@ function hideTip() { tooltip.style.display = 'none'; }
     if (bin.count > 0) {
       const countLbl = svgEl('text', {
         x: x + barW / 2, y: y - 6,
-        'text-anchor': 'middle', fill: '#3D1C11', 'font-size': '11px',
+        'text-anchor': 'middle', fill: '#1A1A2E', 'font-size': '11px',
         'font-weight': '600', 'font-family': 'Segoe UI, system-ui, sans-serif',
       });
       countLbl.textContent = bin.count;
@@ -374,7 +374,7 @@ function hideTip() { tooltip.style.display = 'none'; }
     // X-axis label
     const xLbl = svgEl('text', {
       x: x + barW / 2, y: margin.top + plotH + 20,
-      'text-anchor': 'middle', fill: '#6B4226', 'font-size': '11px',
+      'text-anchor': 'middle', fill: '#555570', 'font-size': '11px',
       'font-family': 'Segoe UI, system-ui, sans-serif',
     });
     xLbl.textContent = bin.label;
@@ -383,7 +383,7 @@ function hideTip() { tooltip.style.display = 'none'; }
     // BPM label below
     const bpmLbl = svgEl('text', {
       x: x + barW / 2, y: margin.top + plotH + 34,
-      'text-anchor': 'middle', fill: '#8D6E63', 'font-size': '10px',
+      'text-anchor': 'middle', fill: '#888898', 'font-size': '10px',
       'font-family': 'Segoe UI, system-ui, sans-serif',
     });
     bpmLbl.textContent = 'BPM';
@@ -432,12 +432,12 @@ function hideTip() { tooltip.style.display = 'none'; }
 
   svg.appendChild(svgEl('line', {
     x1: medianX, y1: margin.top - 5, x2: medianX, y2: margin.top + plotH,
-    stroke: '#3D1C11', 'stroke-width': 1.5, 'stroke-dasharray': '6,4',
+    stroke: '#1A1A2E', 'stroke-width': 1.5, 'stroke-dasharray': '6,4',
   }));
 
   var medLbl = svgEl('text', {
     x: medianX, y: margin.top - 10,
-    'text-anchor': 'middle', fill: '#3D1C11', 'font-size': '11px',
+    'text-anchor': 'middle', fill: '#1A1A2E', 'font-size': '11px',
     'font-weight': '600', 'font-family': 'Segoe UI, system-ui, sans-serif',
   });
   medLbl.textContent = 'Median: ' + DATA.overallMedian + ' BPM';
@@ -486,11 +486,11 @@ function hideTip() { tooltip.style.display = 'none'; }
     var gy = yPos(bv);
     svg.appendChild(svgEl('line', {
       x1: margin.left, y1: gy, x2: margin.left + plotW, y2: gy,
-      stroke: 'rgba(61,28,17,0.08)', 'stroke-width': 1,
+      stroke: 'rgba(26,26,46,0.08)', 'stroke-width': 1,
     }));
     var yLbl = svgEl('text', {
       x: margin.left - 10, y: gy + 4,
-      'text-anchor': 'end', fill: '#8D6E63', 'font-size': '11px',
+      'text-anchor': 'end', fill: '#888898', 'font-size': '11px',
       'font-family': 'Segoe UI, system-ui, sans-serif',
     });
     yLbl.textContent = bv;
@@ -500,7 +500,7 @@ function hideTip() { tooltip.style.display = 'none'; }
   // Y-axis title
   var yTitle2 = svgEl('text', {
     x: 14, y: margin.top + plotH / 2,
-    'text-anchor': 'middle', fill: '#6B4226', 'font-size': '12px',
+    'text-anchor': 'middle', fill: '#555570', 'font-size': '12px',
     'font-family': 'Segoe UI, system-ui, sans-serif',
     transform: 'rotate(-90, 14, ' + (margin.top + plotH / 2) + ')',
   });
@@ -514,12 +514,12 @@ function hideTip() { tooltip.style.display = 'none'; }
     svg.appendChild(svgEl('line', {
       x1: xPos(p.year), y1: margin.top + plotH,
       x2: xPos(p.year), y2: margin.top + plotH + 5,
-      stroke: '#8D6E63', 'stroke-width': 1,
+      stroke: '#888898', 'stroke-width': 1,
     }));
     if (i % labelEvery === 0) {
       var xLbl = svgEl('text', {
         x: xPos(p.year), y: margin.top + plotH + 20,
-        'text-anchor': 'middle', fill: '#6B4226', 'font-size': '10px',
+        'text-anchor': 'middle', fill: '#555570', 'font-size': '10px',
         'font-family': 'Segoe UI, system-ui, sans-serif',
         transform: 'rotate(-45, ' + xPos(p.year) + ', ' + (margin.top + plotH + 20) + ')',
       });
@@ -540,7 +540,7 @@ function hideTip() { tooltip.style.display = 'none'; }
   }
   svg.appendChild(svgEl('polygon', {
     points: bandPoints.trim(),
-    fill: 'rgba(198,40,40,0.1)', stroke: 'none',
+    fill: 'rgba(192,32,104,0.1)', stroke: 'none',
   }));
 
   // Median line
@@ -551,7 +551,7 @@ function hideTip() { tooltip.style.display = 'none'; }
   });
   svg.appendChild(svgEl('path', {
     d: linePath.trim(),
-    fill: 'none', stroke: '#C62828', 'stroke-width': 2,
+    fill: 'none', stroke: '#C02068', 'stroke-width': 2,
     'stroke-linejoin': 'round', 'stroke-linecap': 'round',
   }));
 
@@ -563,15 +563,15 @@ function hideTip() { tooltip.style.display = 'none'; }
     var r = minR + (Math.sqrt(p.count) / Math.sqrt(maxCount)) * (maxR - minR);
     var dot = svgEl('circle', {
       cx: xPos(p.year), cy: yPos(p.median), r: r,
-      fill: '#C62828', opacity: 0.85,
-      stroke: '#F5E6D3', 'stroke-width': 1.5,
+      fill: '#C02068', opacity: 0.85,
+      stroke: '#FFFFFF', 'stroke-width': 1.5,
       style: 'cursor:pointer; transition: opacity 0.15s;',
     });
     svg.appendChild(dot);
 
     function showDotTip(ev) {
       dot.setAttribute('opacity', '1');
-      dot.setAttribute('stroke', '#3D1C11');
+      dot.setAttribute('stroke', '#1A1A2E');
       var html = '<div class="tt-title">' + p.year + '</div>';
       html += '<div class="tt-row"><span class="tt-label">Median BPM</span><span class="tt-val">' + p.median + '</span></div>';
       html += '<div class="tt-row"><span class="tt-label">Range (25-75th)</span><span class="tt-val">' + p.p25 + ' &ndash; ' + p.p75 + '</span></div>';
@@ -589,7 +589,7 @@ function hideTip() { tooltip.style.display = 'none'; }
     });
     dot.addEventListener('mouseleave', function() {
       dot.setAttribute('opacity', '0.85');
-      dot.setAttribute('stroke', '#F5E6D3');
+      dot.setAttribute('stroke', '#FFFFFF');
       hideTip();
     });
   });
@@ -643,7 +643,7 @@ document.addEventListener('keydown', function(e) {
 <style>
 #feedback-btn {
   position: fixed; bottom: 52px; right: 16px; z-index: 9999;
-  background: #C62828; color: #F5E6D3; border: none; border-radius: 50%;
+  background: #7B2D8E; color: #fff; border: none; border-radius: 50%;
   width: 44px; height: 44px; font-size: 20px; cursor: pointer;
   box-shadow: 0 2px 8px rgba(0,0,0,0.2); transition: transform 0.2s;
   font-family: system-ui, sans-serif; line-height: 1;
@@ -651,36 +651,36 @@ document.addEventListener('keydown', function(e) {
 #feedback-btn:hover { transform: scale(1.1); }
 #feedback-panel {
   display: none; position: fixed; bottom: 104px; right: 16px; z-index: 9999;
-  background: #F5E6D3; border: 1px solid rgba(61,28,17,0.15);
+  background: #FAFAFE; border: 1px solid rgba(26,26,46,0.15);
   border-radius: 12px; padding: 20px; width: 300px;
   box-shadow: 0 4px 24px rgba(0,0,0,0.15);
   font-family: 'Segoe UI', system-ui, sans-serif;
 }
 #feedback-panel.open { display: block; }
 #feedback-panel h3 {
-  margin: 0 0 12px; font-size: 15px; color: #3D1C11; font-weight: 700;
+  margin: 0 0 12px; font-size: 15px; color: #1A1A2E; font-weight: 700;
 }
 #feedback-panel textarea {
-  width: 100%; height: 80px; border: 1px solid rgba(61,28,17,0.15);
+  width: 100%; height: 80px; border: 1px solid rgba(26,26,46,0.15);
   border-radius: 8px; padding: 10px; font-size: 13px; resize: vertical;
-  font-family: inherit; background: #fff; color: #3D1C11;
+  font-family: inherit; background: #fff; color: #1A1A2E;
 }
-#feedback-panel textarea:focus { outline: 2px solid #C62828; border-color: transparent; }
+#feedback-panel textarea:focus { outline: 2px solid #7B2D8E; border-color: transparent; }
 #feedback-panel input[type=email] {
-  width: 100%; border: 1px solid rgba(61,28,17,0.15);
+  width: 100%; border: 1px solid rgba(26,26,46,0.15);
   border-radius: 8px; padding: 8px 10px; font-size: 13px; margin-top: 8px;
-  font-family: inherit; background: #fff; color: #3D1C11;
+  font-family: inherit; background: #fff; color: #1A1A2E;
 }
-#feedback-panel input[type=email]:focus { outline: 2px solid #C62828; border-color: transparent; }
-#feedback-panel .fb-hint { font-size: 11px; color: #8D6E63; margin-top: 4px; }
+#feedback-panel input[type=email]:focus { outline: 2px solid #7B2D8E; border-color: transparent; }
+#feedback-panel .fb-hint { font-size: 11px; color: #888898; margin-top: 4px; }
 #feedback-panel button[type=submit] {
-  margin-top: 12px; background: #C62828; color: #F5E6D3; border: none;
+  margin-top: 12px; background: #7B2D8E; color: #fff; border: none;
   border-radius: 8px; padding: 10px 20px; font-size: 13px; font-weight: 600;
   cursor: pointer; width: 100%; transition: background 0.2s;
 }
-#feedback-panel button[type=submit]:hover { background: #A51B1B; }
+#feedback-panel button[type=submit]:hover { background: #C02068; }
 #feedback-panel .fb-thanks {
-  text-align: center; padding: 20px 0; font-size: 14px; color: #3D1C11;
+  text-align: center; padding: 20px 0; font-size: 14px; color: #1A1A2E;
 }
 @media (max-width: 480px) {
   #feedback-panel { width: calc(100vw - 32px); right: 16px; bottom: 96px; }

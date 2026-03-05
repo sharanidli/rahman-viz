@@ -14,8 +14,8 @@
   /* --- Tour navigation --- */
   #tour-nav {
     position: fixed; bottom: 0; left: 0; right: 0; z-index: 20;
-    background: rgba(245,230,211,0.95);
-    border-top: 1px solid rgba(61,28,17,0.1);
+    background: rgba(255,255,255,0.95);
+    border-top: 1px solid rgba(26,26,46,0.1);
     display: flex; align-items: center; justify-content: space-between;
     padding: 8px 16px; font-size: 13px;
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -23,11 +23,11 @@
   }
   #tour-nav.hidden { transform: translateY(100%); }
   #tour-nav a {
-    color: #C62828; text-decoration: none; font-weight: 600;
+    color: #C02068; text-decoration: none; font-weight: 600;
     min-height: 36px; display: inline-flex; align-items: center;
   }
   #tour-nav a:hover { text-decoration: underline; }
-  .tour-pos { color: #8D6E63; font-size: 12px; }
+  .tour-pos { color: #888898; font-size: 12px; }
   .tour-arrows { display: flex; gap: 16px; }
   @media (max-width: 480px) {
     #tour-nav { padding: 8px 10px; font-size: 12px; min-height: 48px; }
@@ -49,27 +49,27 @@
   /* --- Site navigation --- */
   .site-nav {
     position: fixed; top: 0; left: 0; right: 0; height: 44px;
-    background: rgba(245,230,211,0.95);
+    background: rgba(255,255,255,0.95);
     backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
     z-index: 10000; display: flex; align-items: center;
     padding: 0 20px;
-    border-bottom: 1px solid rgba(61,28,17,0.1);
+    border-bottom: 1px solid rgba(26,26,46,0.1);
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   }
   .site-nav .nav-brand {
-    text-decoration: none; color: #3D1C11; font-weight: 700; font-size: 14px;
+    text-decoration: none; color: #1A1A2E; font-weight: 700; font-size: 14px;
     white-space: nowrap;
   }
-  .site-nav .nav-brand:hover { color: #2D5DA1; }
+  .site-nav .nav-brand:hover { color: #7B2D8E; }
   .site-nav .nav-links { margin-left: auto; display: flex; gap: 20px; }
   .site-nav .nav-links a {
-    text-decoration: none; color: #6B4226; font-size: 13px; font-weight: 500;
+    text-decoration: none; color: #555570; font-size: 13px; font-weight: 500;
   }
-  .site-nav .nav-links a:hover { color: #C62828; }
+  .site-nav .nav-links a:hover { color: #C02068; }
   .site-nav .nav-toggle-input { display: none; }
   .site-nav .nav-toggle-label {
     display: none; cursor: pointer; font-size: 22px;
-    color: #3D1C11; margin-left: auto; line-height: 1;
+    color: #1A1A2E; margin-left: auto; line-height: 1;
     -webkit-tap-highlight-color: transparent;
   }
   @media (max-width: 600px) {
@@ -77,10 +77,10 @@
     .site-nav .nav-toggle-label { display: block; }
     .site-nav .nav-links {
       display: none; position: absolute; top: 44px; left: 0; right: 0;
-      background: rgba(245,230,211,0.98);
+      background: rgba(255,255,255,0.98);
       backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
       flex-direction: column; padding: 12px 20px; gap: 12px;
-      border-bottom: 1px solid rgba(61,28,17,0.1);
+      border-bottom: 1px solid rgba(26,26,46,0.1);
     }
     .site-nav .nav-toggle-input:checked ~ .nav-links { display: flex; }
   }
@@ -89,8 +89,8 @@
   .mobile-notice { display: none; }
   @media (max-width: 768px) {
     .mobile-notice {
-      display: block; background: rgba(249,168,37,0.12);
-      color: #6B4226; text-align: center;
+      display: block; background: rgba(232,93,32,0.08);
+      color: #555570; text-align: center;
       padding: 6px 16px; font-size: 11px; line-height: 1.4;
     }
   }
@@ -98,8 +98,8 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
     padding-top: 48px;
-    background: #F5E6D3;
-    color: #3D1C11;
+    background: #FFFFFF;
+    color: #1A1A2E;
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     min-height: 100vh;
   }
@@ -109,10 +109,10 @@
     text-align: center;
   }
   #header h1 {
-    font-size: 22px; font-weight: 700; color: #3D1C11;
+    font-size: 22px; font-weight: 700; color: #1A1A2E;
   }
   #header p {
-    font-size: 13px; color: #6B4226; margin-top: 4px; max-width: 600px;
+    font-size: 13px; color: #555570; margin-top: 4px; max-width: 600px;
     margin-left: auto; margin-right: auto;
   }
 
@@ -130,7 +130,7 @@
     flex-shrink: 0;
   }
   #sidebar h3 {
-    font-size: 11px; text-transform: uppercase; color: #8D6E63;
+    font-size: 11px; text-transform: uppercase; color: #888898;
     letter-spacing: 0.5px; margin-bottom: 10px;
   }
   .dir-item {
@@ -140,17 +140,17 @@
     margin-bottom: 2px;
   }
   .dir-item:hover {
-    background: rgba(61,28,17,0.05);
+    background: rgba(26,26,46,0.05);
   }
   .dir-item.selected {
-    background: rgba(61,28,17,0.08);
+    background: rgba(26,26,46,0.08);
   }
   .dir-item.disabled {
     opacity: 0.4; cursor: not-allowed;
   }
   .dir-checkbox {
     width: 16px; height: 16px; border-radius: 3px;
-    border: 2px solid #8D6E63; flex-shrink: 0;
+    border: 2px solid #888898; flex-shrink: 0;
     display: flex; align-items: center; justify-content: center;
     transition: all 0.15s;
   }
@@ -163,14 +163,14 @@
     background: white;
   }
   .dir-name {
-    font-size: 13px; font-weight: 600; color: #3D1C11;
+    font-size: 13px; font-weight: 600; color: #1A1A2E;
     line-height: 1.2;
   }
   .dir-meta {
-    font-size: 11px; color: #8D6E63; line-height: 1.2;
+    font-size: 11px; color: #888898; line-height: 1.2;
   }
   #limit-msg {
-    font-size: 11px; color: #C62828; margin-top: 8px;
+    font-size: 11px; color: #C02068; margin-top: 8px;
     opacity: 0; transition: opacity 0.2s;
   }
   #limit-msg.visible { opacity: 1; }
@@ -190,13 +190,13 @@
   }
   .legend-item {
     display: flex; align-items: center; gap: 6px;
-    font-size: 13px; font-weight: 600; color: #3D1C11;
+    font-size: 13px; font-weight: 600; color: #1A1A2E;
   }
   .legend-swatch {
     width: 14px; height: 14px; border-radius: 3px;
   }
   .legend-detail {
-    font-weight: 400; color: #8D6E63; font-size: 11px;
+    font-weight: 400; color: #888898; font-size: 11px;
   }
 
   #axis-descriptions {
@@ -205,10 +205,10 @@
     max-width: 640px;
   }
   .axis-desc {
-    font-size: 11px; color: #6B4226; line-height: 1.4;
+    font-size: 11px; color: #555570; line-height: 1.4;
   }
   .axis-desc strong {
-    color: #3D1C11; font-weight: 600;
+    color: #1A1A2E; font-weight: 600;
   }
 
   #chart-container {
@@ -219,8 +219,8 @@
   #tooltip {
     position: absolute;
     pointer-events: none;
-    background: rgba(61,28,17,0.92);
-    color: #F5E6D3;
+    background: rgba(26,26,46,0.92);
+    color: #FFFFFF;
     padding: 8px 12px;
     border-radius: 6px;
     font-size: 12px;
@@ -237,23 +237,23 @@
     display: none;
     text-align: center;
     padding: 80px 24px;
-    color: #8D6E63;
+    color: #888898;
     font-size: 15px;
   }
 
   /* --- Mobile profiles (bar chart cards) --- */
   #mobile-profiles { display: none; padding: 0 12px 80px 12px; }
   .profile-card {
-    background: rgba(237,224,212,0.6); border: 1px solid rgba(61,28,17,0.1);
+    background: rgba(250,250,254,0.6); border: 1px solid rgba(26,26,46,0.1);
     border-radius: 10px; padding: 14px 16px; margin-bottom: 10px;
   }
   .profile-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
-  .profile-name { font-weight: 700; font-size: 15px; color: #3D1C11; }
-  .profile-meta { font-size: 11px; color: #8D6E63; }
+  .profile-name { font-weight: 700; font-size: 15px; color: #1A1A2E; }
+  .profile-meta { font-size: 11px; color: #888898; }
   .feature-row { display: flex; align-items: center; margin-bottom: 6px; }
-  .feature-label { width: 90px; flex-shrink: 0; font-size: 11px; color: #6B4226; font-weight: 600; }
+  .feature-label { width: 90px; flex-shrink: 0; font-size: 11px; color: #555570; font-weight: 600; }
   .feature-bar-bg {
-    flex: 1; height: 18px; background: rgba(61,28,17,0.06); border-radius: 4px;
+    flex: 1; height: 18px; background: rgba(26,26,46,0.06); border-radius: 4px;
     position: relative; overflow: hidden;
   }
   .feature-bar-fill {
@@ -261,10 +261,10 @@
     transition: width 0.3s;
   }
   .feature-val {
-    width: 40px; text-align: right; font-size: 11px; color: #3D1C11; font-weight: 600; flex-shrink: 0;
+    width: 40px; text-align: right; font-size: 11px; color: #1A1A2E; font-weight: 600; flex-shrink: 0;
   }
   .no-selection-msg {
-    text-align: center; color: #8D6E63; font-size: 14px; padding: 40px 16px;
+    text-align: center; color: #888898; font-size: 14px; padding: 40px 16px;
   }
 
   /* --- Mobile: Director Sound --- */
@@ -412,8 +412,8 @@
 const DATA = {"directors": [{"name": "Mani Ratnam", "albums": 17, "tracks": 165, "features": {"energy": 0.496, "danceability": 0.518, "valence": 0.492, "acousticness": 0.483, "rhythm_complexity": 0.453, "tempo": 0.502}}, {"name": "Shankar", "albums": 9, "tracks": 64, "features": {"energy": 0.669, "danceability": 0.604, "valence": 0.619, "acousticness": 0.291, "rhythm_complexity": 0.572, "tempo": 0.492}}, {"name": "Gautham Vasudev Menon", "albums": 6, "tracks": 47, "features": {"energy": 0.538, "danceability": 0.465, "valence": 0.542, "acousticness": 0.584, "rhythm_complexity": 0.502, "tempo": 0.577}}, {"name": "Deepa Mehta", "albums": 3, "tracks": 36, "features": {"energy": 0.202, "danceability": 0.281, "valence": 0.282, "acousticness": 0.598, "rhythm_complexity": 0.388, "tempo": 0.549}}, {"name": "Subhash Ghai", "albums": 3, "tracks": 36, "features": {"energy": 0.398, "danceability": 0.516, "valence": 0.476, "acousticness": 0.466, "rhythm_complexity": 0.527, "tempo": 0.411}}, {"name": "Aanand L. Rai", "albums": 3, "tracks": 33, "features": {"energy": 0.603, "danceability": 0.576, "valence": 0.657, "acousticness": 0.555, "rhythm_complexity": 0.472, "tempo": 0.523}}, {"name": "Bharathiraja", "albums": 5, "tracks": 31, "features": {"energy": 0.511, "danceability": 0.566, "valence": 0.419, "acousticness": 0.468, "rhythm_complexity": 0.617, "tempo": 0.468}}, {"name": "K. S. Ravikumar", "albums": 5, "tracks": 29, "features": {"energy": 0.538, "danceability": 0.555, "valence": 0.579, "acousticness": 0.432, "rhythm_complexity": 0.616, "tempo": 0.507}}, {"name": "Kathir", "albums": 4, "tracks": 29, "features": {"energy": 0.463, "danceability": 0.594, "valence": 0.525, "acousticness": 0.393, "rhythm_complexity": 0.444, "tempo": 0.444}}, {"name": "S. J. Suryah", "albums": 3, "tracks": 26, "features": {"energy": 0.719, "danceability": 0.599, "valence": 0.734, "acousticness": 0.352, "rhythm_complexity": 0.609, "tempo": 0.464}}, {"name": "Ashutosh Gowariker", "albums": 3, "tracks": 24, "features": {"energy": 0.445, "danceability": 0.437, "valence": 0.416, "acousticness": 0.67, "rhythm_complexity": 0.441, "tempo": 0.483}}, {"name": "Rajiv Menon", "albums": 3, "tracks": 22, "features": {"energy": 0.514, "danceability": 0.556, "valence": 0.55, "acousticness": 0.425, "rhythm_complexity": 0.615, "tempo": 0.511}}, {"name": "Rajkumar Santoshi", "albums": 3, "tracks": 18, "features": {"energy": 0.48, "danceability": 0.511, "valence": 0.534, "acousticness": 0.542, "rhythm_complexity": 0.537, "tempo": 0.548}}], "features": ["energy", "danceability", "valence", "acousticness", "rhythm_complexity", "tempo"], "featureLabels": ["Energy", "Danceability", "Valence", "Acousticness", "Rhythmic Complexity", "Tempo"]};
 
 const DIRECTOR_COLORS = [
-    '#C62828', '#E64A19', '#558B2F', '#1565C0',
-    '#8D6E63', '#D84315', '#F9A825', '#33691E'
+    '#C02068', '#E85D20', '#558B2F', '#1565C0',
+    '#888898', '#D84315', '#B8A820', '#33691E'
 ];
 
 const svg = document.getElementById('chart');
@@ -461,14 +461,14 @@ for (const level of ringLevels) {
   gridGroup.appendChild(svgEl('polygon', {
     points: points.join(' '),
     fill: 'none',
-    stroke: 'rgba(61,28,17,0.08)',
+    stroke: 'rgba(26,26,46,0.08)',
     'stroke-width': level === 0.5 ? 1.2 : 0.8,
   }));
   // Level label on first axis
   const lp = axisPoint(0, level);
   const label = svgEl('text', {
     x: lp.x + 4, y: lp.y - 4,
-    fill: '#8D6E63', 'font-size': '9px',
+    fill: '#888898', 'font-size': '9px',
     'font-family': 'Segoe UI, system-ui, sans-serif',
   });
   label.textContent = level.toFixed(2);
@@ -480,13 +480,13 @@ for (let i = 0; i < N; i++) {
   const p = axisPoint(i, 1.0);
   gridGroup.appendChild(svgEl('line', {
     x1: cx, y1: cy, x2: p.x, y2: p.y,
-    stroke: 'rgba(61,28,17,0.12)', 'stroke-width': 1,
+    stroke: 'rgba(26,26,46,0.12)', 'stroke-width': 1,
   }));
   const lp = axisPoint(i, 1.18);
   const label = svgEl('text', {
     x: lp.x, y: lp.y,
     'text-anchor': 'middle', 'dominant-baseline': 'middle',
-    fill: '#6B4226', 'font-size': '12px', 'font-weight': '600',
+    fill: '#555570', 'font-size': '12px', 'font-weight': '600',
     'font-family': 'Segoe UI, system-ui, sans-serif',
   });
   label.textContent = featureLabels[i];
@@ -643,7 +643,7 @@ function renderChart() {
       const p = axisPoint(i, d.features[features[i]]);
       const dot = svgEl('circle', {
         cx: p.x, cy: p.y, r: 4,
-        fill: color, stroke: '#F5E6D3', 'stroke-width': 1.5,
+        fill: color, stroke: '#FFFFFF', 'stroke-width': 1.5,
       });
       // Tooltip on hover (desktop) + tap (mobile)
       dot.addEventListener('mouseenter', (e) => {
@@ -834,7 +834,7 @@ document.addEventListener('keydown', function(e) {
 <style>
 #feedback-btn {
   position: fixed; bottom: 52px; right: 16px; z-index: 9999;
-  background: #C62828; color: #F5E6D3; border: none; border-radius: 50%;
+  background: #7B2D8E; color: #fff; border: none; border-radius: 50%;
   width: 44px; height: 44px; font-size: 20px; cursor: pointer;
   box-shadow: 0 2px 8px rgba(0,0,0,0.2); transition: transform 0.2s;
   font-family: system-ui, sans-serif; line-height: 1;
@@ -842,36 +842,36 @@ document.addEventListener('keydown', function(e) {
 #feedback-btn:hover { transform: scale(1.1); }
 #feedback-panel {
   display: none; position: fixed; bottom: 104px; right: 16px; z-index: 9999;
-  background: #F5E6D3; border: 1px solid rgba(61,28,17,0.15);
+  background: #FAFAFE; border: 1px solid rgba(26,26,46,0.15);
   border-radius: 12px; padding: 20px; width: 300px;
   box-shadow: 0 4px 24px rgba(0,0,0,0.15);
   font-family: 'Segoe UI', system-ui, sans-serif;
 }
 #feedback-panel.open { display: block; }
 #feedback-panel h3 {
-  margin: 0 0 12px; font-size: 15px; color: #3D1C11; font-weight: 700;
+  margin: 0 0 12px; font-size: 15px; color: #1A1A2E; font-weight: 700;
 }
 #feedback-panel textarea {
-  width: 100%; height: 80px; border: 1px solid rgba(61,28,17,0.15);
+  width: 100%; height: 80px; border: 1px solid rgba(26,26,46,0.15);
   border-radius: 8px; padding: 10px; font-size: 13px; resize: vertical;
-  font-family: inherit; background: #fff; color: #3D1C11;
+  font-family: inherit; background: #fff; color: #1A1A2E;
 }
-#feedback-panel textarea:focus { outline: 2px solid #C62828; border-color: transparent; }
+#feedback-panel textarea:focus { outline: 2px solid #7B2D8E; border-color: transparent; }
 #feedback-panel input[type=email] {
-  width: 100%; border: 1px solid rgba(61,28,17,0.15);
+  width: 100%; border: 1px solid rgba(26,26,46,0.15);
   border-radius: 8px; padding: 8px 10px; font-size: 13px; margin-top: 8px;
-  font-family: inherit; background: #fff; color: #3D1C11;
+  font-family: inherit; background: #fff; color: #1A1A2E;
 }
-#feedback-panel input[type=email]:focus { outline: 2px solid #C62828; border-color: transparent; }
-#feedback-panel .fb-hint { font-size: 11px; color: #8D6E63; margin-top: 4px; }
+#feedback-panel input[type=email]:focus { outline: 2px solid #7B2D8E; border-color: transparent; }
+#feedback-panel .fb-hint { font-size: 11px; color: #888898; margin-top: 4px; }
 #feedback-panel button[type=submit] {
-  margin-top: 12px; background: #C62828; color: #F5E6D3; border: none;
+  margin-top: 12px; background: #7B2D8E; color: #fff; border: none;
   border-radius: 8px; padding: 10px 20px; font-size: 13px; font-weight: 600;
   cursor: pointer; width: 100%; transition: background 0.2s;
 }
-#feedback-panel button[type=submit]:hover { background: #A51B1B; }
+#feedback-panel button[type=submit]:hover { background: #C02068; }
 #feedback-panel .fb-thanks {
-  text-align: center; padding: 20px 0; font-size: 14px; color: #3D1C11;
+  text-align: center; padding: 20px 0; font-size: 14px; color: #1A1A2E;
 }
 @media (max-width: 480px) {
   #feedback-panel { width: calc(100vw - 32px); right: 16px; bottom: 96px; }

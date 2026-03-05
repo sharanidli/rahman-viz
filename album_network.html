@@ -14,8 +14,8 @@
   /* --- Tour navigation --- */
   #tour-nav {
     position: fixed; bottom: 0; left: 0; right: 0; z-index: 20;
-    background: rgba(245,230,211,0.95);
-    border-top: 1px solid rgba(61,28,17,0.1);
+    background: rgba(255,255,255,0.95);
+    border-top: 1px solid rgba(26,26,46,0.1);
     display: flex; align-items: center; justify-content: space-between;
     padding: 8px 16px; font-size: 13px;
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -23,11 +23,11 @@
   }
   #tour-nav.hidden { transform: translateY(100%); }
   #tour-nav a {
-    color: #C62828; text-decoration: none; font-weight: 600;
+    color: #C02068; text-decoration: none; font-weight: 600;
     min-height: 36px; display: inline-flex; align-items: center;
   }
   #tour-nav a:hover { text-decoration: underline; }
-  .tour-pos { color: #8D6E63; font-size: 12px; }
+  .tour-pos { color: #888898; font-size: 12px; }
   .tour-arrows { display: flex; gap: 16px; }
   @media (max-width: 480px) {
     #tour-nav { padding: 8px 10px; font-size: 12px; min-height: 48px; }
@@ -49,27 +49,27 @@
   /* --- Site navigation --- */
   .site-nav {
     position: fixed; top: 0; left: 0; right: 0; height: 44px;
-    background: rgba(245,230,211,0.95);
+    background: rgba(255,255,255,0.95);
     backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
     z-index: 10000; display: flex; align-items: center;
     padding: 0 20px;
-    border-bottom: 1px solid rgba(61,28,17,0.1);
+    border-bottom: 1px solid rgba(26,26,46,0.1);
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   }
   .site-nav .nav-brand {
-    text-decoration: none; color: #3D1C11; font-weight: 700; font-size: 14px;
+    text-decoration: none; color: #1A1A2E; font-weight: 700; font-size: 14px;
     white-space: nowrap;
   }
-  .site-nav .nav-brand:hover { color: #2D5DA1; }
+  .site-nav .nav-brand:hover { color: #7B2D8E; }
   .site-nav .nav-links { margin-left: auto; display: flex; gap: 20px; }
   .site-nav .nav-links a {
-    text-decoration: none; color: #6B4226; font-size: 13px; font-weight: 500;
+    text-decoration: none; color: #555570; font-size: 13px; font-weight: 500;
   }
-  .site-nav .nav-links a:hover { color: #C62828; }
+  .site-nav .nav-links a:hover { color: #C02068; }
   .site-nav .nav-toggle-input { display: none; }
   .site-nav .nav-toggle-label {
     display: none; cursor: pointer; font-size: 22px;
-    color: #3D1C11; margin-left: auto; line-height: 1;
+    color: #1A1A2E; margin-left: auto; line-height: 1;
     -webkit-tap-highlight-color: transparent;
   }
   @media (max-width: 600px) {
@@ -77,10 +77,10 @@
     .site-nav .nav-toggle-label { display: block; }
     .site-nav .nav-links {
       display: none; position: absolute; top: 44px; left: 0; right: 0;
-      background: rgba(245,230,211,0.98);
+      background: rgba(255,255,255,0.98);
       backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
       flex-direction: column; padding: 12px 20px; gap: 12px;
-      border-bottom: 1px solid rgba(61,28,17,0.1);
+      border-bottom: 1px solid rgba(26,26,46,0.1);
     }
     .site-nav .nav-toggle-input:checked ~ .nav-links { display: flex; }
   }
@@ -89,8 +89,8 @@
   .mobile-notice { display: none; }
   @media (max-width: 768px) {
     .mobile-notice {
-      display: block; background: rgba(249,168,37,0.12);
-      color: #6B4226; text-align: center;
+      display: block; background: rgba(232,93,32,0.08);
+      color: #555570; text-align: center;
       padding: 6px 16px; font-size: 11px; line-height: 1.4;
     }
   }
@@ -98,8 +98,8 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
     padding-top: 48px;
-    background: #F5E6D3;
-    color: #3D1C11;
+    background: #FFFFFF;
+    color: #1A1A2E;
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     overflow: hidden;
     display: flex;
@@ -108,11 +108,11 @@
   }
   #header {
     padding: 14px 24px 6px;
-    background: rgba(245,230,211,0.95);
+    background: rgba(255,255,255,0.95);
     flex-shrink: 0;
   }
-  #header h1 { font-size: 22px; font-weight: 700; color: #3D1C11; }
-  #header p { font-size: 13px; color: #6B4226; margin-top: 2px; }
+  #header h1 { font-size: 22px; font-weight: 700; color: #1A1A2E; }
+  #header p { font-size: 13px; color: #555570; margin-top: 2px; }
 
   #controls {
     display: flex;
@@ -121,8 +121,8 @@
     justify-content: center;
     padding: 8px 24px;
     flex-wrap: wrap;
-    background: rgba(245,230,211,0.9);
-    border-bottom: 1px solid rgba(61,28,17,0.08);
+    background: rgba(255,255,255,0.9);
+    border-bottom: 1px solid rgba(26,26,46,0.08);
     flex-shrink: 0;
   }
 
@@ -133,35 +133,35 @@
     position: fixed;
     pointer-events: none;
     background: rgba(237, 224, 212, 0.97);
-    border: 1px solid rgba(61,28,17,0.15);
+    border: 1px solid rgba(26,26,46,0.15);
     border-radius: 10px;
     padding: 14px 18px;
     font-size: 13px;
     line-height: 1.5;
     max-width: 320px;
-    box-shadow: 0 8px 32px rgba(61,28,17,0.15);
+    box-shadow: 0 8px 32px rgba(26,26,46,0.15);
     display: none;
     z-index: 100;
     backdrop-filter: blur(8px);
   }
   #tooltip .tt-album { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
-  #tooltip .tt-meta { color: #6B4226; font-size: 12px; margin-bottom: 8px; }
-  #tooltip .tt-section { color: #6B4226; font-size: 11px; text-transform: uppercase;
+  #tooltip .tt-meta { color: #555570; font-size: 12px; margin-bottom: 8px; }
+  #tooltip .tt-section { color: #555570; font-size: 11px; text-transform: uppercase;
     letter-spacing: 0.5px; margin-top: 8px; margin-bottom: 2px; }
-  #tooltip .tt-singers { color: #3D1C11; }
+  #tooltip .tt-singers { color: #1A1A2E; }
 
   /* Edge tooltip */
   #edge-tooltip {
     position: fixed;
     pointer-events: none;
     background: rgba(237, 224, 212, 0.97);
-    border: 1px solid rgba(61,28,17,0.15);
+    border: 1px solid rgba(26,26,46,0.15);
     border-radius: 8px;
     padding: 10px 14px;
     font-size: 12px;
     line-height: 1.5;
     max-width: 280px;
-    box-shadow: 0 8px 32px rgba(61,28,17,0.15);
+    box-shadow: 0 8px 32px rgba(26,26,46,0.15);
     display: none;
     z-index: 100;
     backdrop-filter: blur(8px);
@@ -171,32 +171,32 @@
   #legend {
     position: fixed; bottom: 64px; left: 20px; z-index: 10;
     background: rgba(237, 224, 212, 0.9);
-    border: 1px solid rgba(61,28,17,0.1);
+    border: 1px solid rgba(26,26,46,0.1);
     border-radius: 8px;
     padding: 12px 16px;
     font-size: 12px;
     backdrop-filter: blur(8px);
   }
-  #legend h3 { font-size: 11px; text-transform: uppercase; color: #6B4226;
+  #legend h3 { font-size: 11px; text-transform: uppercase; color: #555570;
     letter-spacing: 0.5px; margin-bottom: 8px; }
-  .legend-item { display: flex; align-items: center; margin-bottom: 4px; color: #3D1C11; }
+  .legend-item { display: flex; align-items: center; margin-bottom: 4px; color: #1A1A2E; }
   .legend-dot { width: 10px; height: 10px; border-radius: 50%; margin-right: 8px;
-    border: 1px solid rgba(61,28,17,0.3); }
+    border: 1px solid rgba(26,26,46,0.3); }
 
   /* Instructions */
   #instructions {
     position: fixed; bottom: 64px; right: 20px; z-index: 10;
-    color: #6B4226; font-size: 11px; text-align: right;
+    color: #555570; font-size: 11px; text-align: right;
     line-height: 1.6;
   }
 
   /* Legend toggle (mobile only) */
   #legend-toggle {
     display: none;
-    background: rgba(237,224,212,0.95);
-    border: 1px solid rgba(61,28,17,0.15);
+    background: rgba(250,250,254,0.95);
+    border: 1px solid rgba(26,26,46,0.15);
     border-radius: 6px; padding: 5px 12px;
-    font-size: 12px; color: #3D1C11; font-weight: 600;
+    font-size: 12px; color: #1A1A2E; font-weight: 600;
     cursor: pointer; font-family: inherit;
   }
 
@@ -323,12 +323,12 @@
 </div>
 
 <div id="controls">
-  <label style="font-size:13px; color:#6B4226;">Min shared singers: <strong id="threshold-val">4</strong></label>
-  <input type="range" id="threshold" min="1" max="10" value="4" style="width:150px; accent-color:#C62828;">
-  <span id="vis-count" style="font-size:12px; color:#8D6E63;"></span>
-  <input type="text" id="album-search" list="album-datalist" placeholder="Search album..." style="padding:5px 10px; border:1px solid rgba(61,28,17,0.2); border-radius:6px; font-size:12px; background:rgba(255,255,255,0.5); color:#3D1C11; width:160px;">
+  <label style="font-size:13px; color:#555570;">Min shared singers: <strong id="threshold-val">4</strong></label>
+  <input type="range" id="threshold" min="1" max="10" value="4" style="width:150px; accent-color:#C02068;">
+  <span id="vis-count" style="font-size:12px; color:#888898;"></span>
+  <input type="text" id="album-search" list="album-datalist" placeholder="Search album..." style="padding:5px 10px; border:1px solid rgba(26,26,46,0.2); border-radius:6px; font-size:12px; background:rgba(255,255,255,0.5); color:#1A1A2E; width:160px;">
   <datalist id="album-datalist"></datalist>
-  <button id="reset-zoom" onclick="resetZoom()" style="background:rgba(61,28,17,0.08); border:1px solid rgba(61,28,17,0.15); color:#6B4226; padding:5px 12px; border-radius:6px; cursor:pointer; font-size:12px;">Reset Zoom</button>
+  <button id="reset-zoom" onclick="resetZoom()" style="background:rgba(26,26,46,0.08); border:1px solid rgba(26,26,46,0.15); color:#555570; padding:5px 12px; border-radius:6px; cursor:pointer; font-size:12px;">Reset Zoom</button>
   <button id="legend-toggle" onclick="document.getElementById('legend').classList.toggle('legend-open'); this.textContent = document.getElementById('legend').classList.contains('legend-open') ? 'Hide Legend' : 'Legend'">Legend</button>
 </div>
 
@@ -61827,7 +61827,7 @@ const DATA = {
   ]
 };
 
-const COMMUNITY_COLORS = ["#C62828", "#1565C0", "#F9A825", "#2E7D32", "#6A1B9A", "#EF6C00", "#00838F", "#6D4C41", "#AD1457", "#33691E", "#FF6F00", "#4E342E", "#0277BD", "#827717", "#BF360C"];
+const COMMUNITY_COLORS = ["#C02068", "#1565C0", "#B8A820", "#2E7D32", "#6A1B9A", "#EF6C00", "#00838F", "#6D4C41", "#AD1457", "#33691E", "#FF6F00", "#4E342E", "#0277BD", "#827717", "#BF360C"];
 
 const isMobile = window.innerWidth < 768;
 const WIDTH = window.innerWidth;
@@ -61893,7 +61893,7 @@ svg.appendChild(nodeGroup);
 // --- Create edge elements ---
 const edgeEls = edgesData.map(e => {
   const line = svgEl('line', {
-    stroke: 'rgba(61,28,17,0.15)',
+    stroke: 'rgba(26,26,46,0.15)',
     'stroke-width': 0.5 + (e.weight / maxWeight) * 5,
     'data-source': e.source,
     'data-target': e.target,
@@ -61943,7 +61943,7 @@ const nodeEls = nodes.map(n => {
   const circle = svgEl('circle', {
     r: n.radius,
     fill: n.color,
-    stroke: 'rgba(61,28,17,0.3)',
+    stroke: 'rgba(26,26,46,0.3)',
     'stroke-width': 1,
     opacity: 0.9,
   });
@@ -61953,7 +61953,7 @@ const nodeEls = nodes.map(n => {
   const text = svgEl('text', {
     'text-anchor': 'middle',
     dy: n.radius + 16,
-    fill: '#3D1C11',
+    fill: '#1A1A2E',
     'font-size': '11px',
     'font-weight': '600',
     'font-family': 'Segoe UI, system-ui, sans-serif',
@@ -61967,7 +61967,7 @@ const nodeEls = nodes.map(n => {
     const yearText = svgEl('text', {
       'text-anchor': 'middle',
       dy: n.radius + 29,
-      fill: '#6B4226',
+      fill: '#555570',
       'font-size': '10px',
       'font-family': 'Segoe UI, system-ui, sans-serif',
       'pointer-events': 'none',
@@ -62180,7 +62180,7 @@ function showTooltip(ev, n) {
   edgeEls.forEach(e => {
     if (!e.visible) return;
     const connected = e.data.source === n.id || e.data.target === n.id;
-    e.line.setAttribute('stroke', connected ? 'rgba(61,28,17,0.4)' : 'rgba(61,28,17,0.03)');
+    e.line.setAttribute('stroke', connected ? 'rgba(26,26,46,0.4)' : 'rgba(26,26,46,0.03)');
   });
 
   // Hovered node full opacity, neighbors visible, everything else dimmed
@@ -62211,7 +62211,7 @@ function showTooltip(ev, n) {
     html += `<div class="tt-section">Top connections</div>`;
     connections.slice(0, 3).forEach(e => {
       const other = e.source === n.id ? e.target : e.source;
-      html += `<div style="color:#6B4226; font-size:12px">${other}: ${e.weight} shared</div>`;
+      html += `<div style="color:#555570; font-size:12px">${other}: ${e.weight} shared</div>`;
     });
   }
 
@@ -62242,7 +62242,7 @@ function hideTooltip() {
   tooltip.style.display = 'none';
   edgeEls.forEach(e => {
     if (!e.visible) return;
-    e.line.setAttribute('stroke', 'rgba(61,28,17,0.15)');
+    e.line.setAttribute('stroke', 'rgba(26,26,46,0.15)');
   });
   nodeEls.forEach(ne => {
     if (!ne.visible) return;
@@ -62255,10 +62255,10 @@ function hideTooltip() {
 }
 
 function showEdgeTooltip(ev, e) {
-  let html = `<div style="font-weight:700; margin-bottom:4px; color:#3D1C11">`;
+  let html = `<div style="font-weight:700; margin-bottom:4px; color:#1A1A2E">`;
   html += `${e.source} &harr; ${e.target}</div>`;
-  html += `<div style="color:#6B4226">${e.weight} shared singer${e.weight > 1 ? 's' : ''}:</div>`;
-  html += `<div style="color:#3D1C11; margin-top:2px">${e.singers.join(', ')}</div>`;
+  html += `<div style="color:#555570">${e.weight} shared singer${e.weight > 1 ? 's' : ''}:</div>`;
+  html += `<div style="color:#1A1A2E; margin-top:2px">${e.singers.join(', ')}</div>`;
   edgeTooltip.innerHTML = html;
   edgeTooltip.style.display = 'block';
 
@@ -62266,7 +62266,7 @@ function showEdgeTooltip(ev, e) {
   edgeEls.forEach(ee => {
     if (!ee.visible) return;
     const isThis = ee.data === e;
-    ee.line.setAttribute('stroke', isThis ? 'rgba(61,28,17,0.5)' : 'rgba(61,28,17,0.04)');
+    ee.line.setAttribute('stroke', isThis ? 'rgba(26,26,46,0.5)' : 'rgba(26,26,46,0.04)');
   });
   moveEdgeTooltip(ev);
 }
@@ -62292,7 +62292,7 @@ function hideEdgeTooltip() {
   edgeTooltip.style.display = 'none';
   edgeEls.forEach(e => {
     if (!e.visible) return;
-    e.line.setAttribute('stroke', 'rgba(61,28,17,0.15)');
+    e.line.setAttribute('stroke', 'rgba(26,26,46,0.15)');
   });
 }
 
@@ -62394,7 +62394,7 @@ document.addEventListener('keydown', function(e) {
 <style>
 #feedback-btn {
   position: fixed; bottom: 52px; right: 16px; z-index: 9999;
-  background: #C62828; color: #F5E6D3; border: none; border-radius: 50%;
+  background: #7B2D8E; color: #fff; border: none; border-radius: 50%;
   width: 44px; height: 44px; font-size: 20px; cursor: pointer;
   box-shadow: 0 2px 8px rgba(0,0,0,0.2); transition: transform 0.2s;
   font-family: system-ui, sans-serif; line-height: 1;
@@ -62402,36 +62402,36 @@ document.addEventListener('keydown', function(e) {
 #feedback-btn:hover { transform: scale(1.1); }
 #feedback-panel {
   display: none; position: fixed; bottom: 104px; right: 16px; z-index: 9999;
-  background: #F5E6D3; border: 1px solid rgba(61,28,17,0.15);
+  background: #FAFAFE; border: 1px solid rgba(26,26,46,0.15);
   border-radius: 12px; padding: 20px; width: 300px;
   box-shadow: 0 4px 24px rgba(0,0,0,0.15);
   font-family: 'Segoe UI', system-ui, sans-serif;
 }
 #feedback-panel.open { display: block; }
 #feedback-panel h3 {
-  margin: 0 0 12px; font-size: 15px; color: #3D1C11; font-weight: 700;
+  margin: 0 0 12px; font-size: 15px; color: #1A1A2E; font-weight: 700;
 }
 #feedback-panel textarea {
-  width: 100%; height: 80px; border: 1px solid rgba(61,28,17,0.15);
+  width: 100%; height: 80px; border: 1px solid rgba(26,26,46,0.15);
   border-radius: 8px; padding: 10px; font-size: 13px; resize: vertical;
-  font-family: inherit; background: #fff; color: #3D1C11;
+  font-family: inherit; background: #fff; color: #1A1A2E;
 }
-#feedback-panel textarea:focus { outline: 2px solid #C62828; border-color: transparent; }
+#feedback-panel textarea:focus { outline: 2px solid #7B2D8E; border-color: transparent; }
 #feedback-panel input[type=email] {
-  width: 100%; border: 1px solid rgba(61,28,17,0.15);
+  width: 100%; border: 1px solid rgba(26,26,46,0.15);
   border-radius: 8px; padding: 8px 10px; font-size: 13px; margin-top: 8px;
-  font-family: inherit; background: #fff; color: #3D1C11;
+  font-family: inherit; background: #fff; color: #1A1A2E;
 }
-#feedback-panel input[type=email]:focus { outline: 2px solid #C62828; border-color: transparent; }
-#feedback-panel .fb-hint { font-size: 11px; color: #8D6E63; margin-top: 4px; }
+#feedback-panel input[type=email]:focus { outline: 2px solid #7B2D8E; border-color: transparent; }
+#feedback-panel .fb-hint { font-size: 11px; color: #888898; margin-top: 4px; }
 #feedback-panel button[type=submit] {
-  margin-top: 12px; background: #C62828; color: #F5E6D3; border: none;
+  margin-top: 12px; background: #7B2D8E; color: #fff; border: none;
   border-radius: 8px; padding: 10px 20px; font-size: 13px; font-weight: 600;
   cursor: pointer; width: 100%; transition: background 0.2s;
 }
-#feedback-panel button[type=submit]:hover { background: #A51B1B; }
+#feedback-panel button[type=submit]:hover { background: #C02068; }
 #feedback-panel .fb-thanks {
-  text-align: center; padding: 20px 0; font-size: 14px; color: #3D1C11;
+  text-align: center; padding: 20px 0; font-size: 14px; color: #1A1A2E;
 }
 @media (max-width: 480px) {
   #feedback-panel { width: calc(100vw - 32px); right: 16px; bottom: 96px; }

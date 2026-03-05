@@ -14,8 +14,8 @@
   /* --- Tour navigation --- */
   #tour-nav {
     position: fixed; bottom: 0; left: 0; right: 0; z-index: 20;
-    background: rgba(245,230,211,0.95);
-    border-top: 1px solid rgba(61,28,17,0.1);
+    background: rgba(255,255,255,0.95);
+    border-top: 1px solid rgba(26,26,46,0.1);
     display: flex; align-items: center; justify-content: space-between;
     padding: 8px 16px; font-size: 13px;
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -23,11 +23,11 @@
   }
   #tour-nav.hidden { transform: translateY(100%); }
   #tour-nav a {
-    color: #C62828; text-decoration: none; font-weight: 600;
+    color: #C02068; text-decoration: none; font-weight: 600;
     min-height: 36px; display: inline-flex; align-items: center;
   }
   #tour-nav a:hover { text-decoration: underline; }
-  .tour-pos { color: #8D6E63; font-size: 12px; }
+  .tour-pos { color: #888898; font-size: 12px; }
   .tour-arrows { display: flex; gap: 16px; }
   @media (max-width: 480px) {
     #tour-nav { padding: 8px 10px; font-size: 12px; min-height: 48px; }
@@ -49,27 +49,27 @@
   /* --- Site navigation --- */
   .site-nav {
     position: fixed; top: 0; left: 0; right: 0; height: 44px;
-    background: rgba(245,230,211,0.95);
+    background: rgba(255,255,255,0.95);
     backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
     z-index: 10000; display: flex; align-items: center;
     padding: 0 20px;
-    border-bottom: 1px solid rgba(61,28,17,0.1);
+    border-bottom: 1px solid rgba(26,26,46,0.1);
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   }
   .site-nav .nav-brand {
-    text-decoration: none; color: #3D1C11; font-weight: 700; font-size: 14px;
+    text-decoration: none; color: #1A1A2E; font-weight: 700; font-size: 14px;
     white-space: nowrap;
   }
-  .site-nav .nav-brand:hover { color: #2D5DA1; }
+  .site-nav .nav-brand:hover { color: #7B2D8E; }
   .site-nav .nav-links { margin-left: auto; display: flex; gap: 20px; }
   .site-nav .nav-links a {
-    text-decoration: none; color: #6B4226; font-size: 13px; font-weight: 500;
+    text-decoration: none; color: #555570; font-size: 13px; font-weight: 500;
   }
-  .site-nav .nav-links a:hover { color: #C62828; }
+  .site-nav .nav-links a:hover { color: #C02068; }
   .site-nav .nav-toggle-input { display: none; }
   .site-nav .nav-toggle-label {
     display: none; cursor: pointer; font-size: 22px;
-    color: #3D1C11; margin-left: auto; line-height: 1;
+    color: #1A1A2E; margin-left: auto; line-height: 1;
     -webkit-tap-highlight-color: transparent;
   }
   @media (max-width: 600px) {
@@ -77,10 +77,10 @@
     .site-nav .nav-toggle-label { display: block; }
     .site-nav .nav-links {
       display: none; position: absolute; top: 44px; left: 0; right: 0;
-      background: rgba(245,230,211,0.98);
+      background: rgba(255,255,255,0.98);
       backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
       flex-direction: column; padding: 12px 20px; gap: 12px;
-      border-bottom: 1px solid rgba(61,28,17,0.1);
+      border-bottom: 1px solid rgba(26,26,46,0.1);
     }
     .site-nav .nav-toggle-input:checked ~ .nav-links { display: flex; }
   }
@@ -89,8 +89,8 @@
   .mobile-notice { display: none; }
   @media (max-width: 768px) {
     .mobile-notice {
-      display: block; background: rgba(249,168,37,0.12);
-      color: #6B4226; text-align: center;
+      display: block; background: rgba(232,93,32,0.08);
+      color: #555570; text-align: center;
       padding: 6px 16px; font-size: 11px; line-height: 1.4;
     }
   }
@@ -98,8 +98,8 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
     padding-top: 48px;
-    background: #F5E6D3;
-    color: #3D1C11;
+    background: #FFFFFF;
+    color: #1A1A2E;
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     overflow-x: auto;
     overflow-y: auto;
@@ -107,19 +107,19 @@
   #header {
     position: fixed; top: 48px; left: 0; right: 0; z-index: 10;
     padding: 16px 24px;
-    background: linear-gradient(180deg, rgba(245,230,211,0.95) 0%, rgba(245,230,211,0) 100%);
+    background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 100%);
   }
-  #header h1 { font-size: 22px; font-weight: 700; color: #3D1C11; }
-  #header p { font-size: 13px; color: #6B4226; margin-top: 4px; }
+  #header h1 { font-size: 22px; font-weight: 700; color: #1A1A2E; }
+  #header p { font-size: 13px; color: #555570; margin-top: 4px; }
 
   #tooltip {
     position: fixed; pointer-events: none;
-    background: rgba(237, 224, 212, 0.97);
-    border: 1px solid rgba(61,28,17,0.15);
+    background: rgba(250, 250, 254, 0.97);
+    border: 1px solid rgba(26,26,46,0.15);
     border-radius: 10px; padding: 12px 16px;
     font-size: 13px; line-height: 1.5;
     max-width: 300px;
-    box-shadow: 0 8px 32px rgba(61,28,17,0.15);
+    box-shadow: 0 8px 32px rgba(26,26,46,0.15);
     display: none; z-index: 100;
     backdrop-filter: blur(8px);
   }
@@ -130,20 +130,20 @@
     display: flex; gap: 0; justify-content: center; margin-top: 10px;
   }
   #view-toggle button {
-    background: rgba(61,28,17,0.08);
-    border: 1px solid rgba(61,28,17,0.15);
-    color: #6B4226; padding: 7px 16px;
+    background: rgba(26,26,46,0.08);
+    border: 1px solid rgba(26,26,46,0.15);
+    color: #555570; padding: 7px 16px;
     cursor: pointer; font-size: 13px;
     transition: all 0.15s;
     border-right: none;
   }
   #view-toggle button:first-child { border-radius: 6px 0 0 6px; }
-  #view-toggle button:last-child { border-radius: 0 6px 6px 0; border-right: 1px solid rgba(61,28,17,0.15); }
-  #view-toggle button:hover { background: rgba(61,28,17,0.15); color: #3D1C11; }
+  #view-toggle button:last-child { border-radius: 0 6px 6px 0; border-right: 1px solid rgba(26,26,46,0.15); }
+  #view-toggle button:hover { background: rgba(26,26,46,0.15); color: #1A1A2E; }
   #view-toggle button.active {
-    background: rgba(198,40,40,0.12);
-    border-color: rgba(198,40,40,0.3);
-    color: #C62828; font-weight: 600;
+    background: rgba(192,32,104,0.12);
+    border-color: rgba(192,32,104,0.3);
+    color: #C02068; font-weight: 600;
   }
   #worm-container {
     display: none; padding: 20px; margin-top: 70px;
@@ -152,25 +152,25 @@
   /* Mobile card view */
   #mobile-cards { display: none; margin-top: 100px; padding: 0 12px 80px 12px; }
   .singer-card {
-    background: rgba(237,224,212,0.6); border: 1px solid rgba(61,28,17,0.1);
+    background: rgba(250,250,254,0.6); border: 1px solid rgba(26,26,46,0.1);
     border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; cursor: pointer;
     transition: background 0.2s;
   }
-  .singer-card.expanded { background: rgba(237,224,212,0.9); }
+  .singer-card.expanded { background: rgba(250,250,254,0.9); }
   .singer-header { display: flex; justify-content: space-between; align-items: baseline; }
-  .singer-name { font-weight: 700; font-size: 15px; color: #3D1C11; }
-  .singer-count { font-size: 12px; color: #8D6E63; font-weight: 600; }
+  .singer-name { font-weight: 700; font-size: 15px; color: #1A1A2E; }
+  .singer-count { font-size: 12px; color: #888898; font-weight: 600; }
   .sparkline { position: relative; width: 100%; height: 14px; margin: 8px 0 4px 0; }
   .spark-dot {
     position: absolute; top: 50%; border-radius: 50%;
     transform: translate(-50%, -50%); opacity: 0.85;
   }
-  .singer-meta { display: flex; justify-content: space-between; font-size: 10px; color: #8D6E63; }
-  .singer-details { display: none; margin-top: 10px; border-top: 1px solid rgba(61,28,17,0.1); padding-top: 8px; }
+  .singer-meta { display: flex; justify-content: space-between; font-size: 10px; color: #888898; }
+  .singer-details { display: none; margin-top: 10px; border-top: 1px solid rgba(26,26,46,0.1); padding-top: 8px; }
   .singer-card.expanded .singer-details { display: block; }
-  .album-entry { font-size: 12px; color: #3D1C11; padding: 3px 0; }
-  .album-year { color: #C62828; font-weight: 600; display: inline-block; width: 36px; }
-  .album-tracks { color: #8D6E63; font-size: 11px; }
+  .album-entry { font-size: 12px; color: #1A1A2E; padding: 3px 0; }
+  .album-year { color: #C02068; font-weight: 600; display: inline-block; width: 36px; }
+  .album-tracks { color: #888898; font-size: 11px; }
 
   @media (max-width: 768px) {
     #mobile-cards { display: block; }
@@ -336,13 +336,13 @@ DATA.years.forEach((y, i) => {
   svg.appendChild(svgEl('line', {
     x1: x, y1: margin.top - 4,
     x2: x, y2: chartH - margin.bottom,
-    stroke: 'rgba(61,28,17,0.08)', 'stroke-width': 1,
+    stroke: 'rgba(26,26,46,0.08)', 'stroke-width': 1,
   }));
 
   // Year label at top
   const yt = svgEl('text', {
     x: x, y: margin.top - 8,
-    'text-anchor': 'end', fill: '#6B4226', 'font-size': '11px',
+    'text-anchor': 'end', fill: '#555570', 'font-size': '11px',
     'font-weight': '600',
     'font-family': 'Segoe UI, system-ui, sans-serif',
     transform: `rotate(-55, ${x}, ${margin.top - 8})`,
@@ -360,13 +360,13 @@ DATA.singers.forEach((s, i) => {
     svg.appendChild(svgEl('rect', {
       x: 0, y: y - rowH / 2,
       width: chartW, height: rowH,
-      fill: 'rgba(61,28,17,0.03)',
+      fill: 'rgba(26,26,46,0.03)',
     }));
   }
 
   const text = svgEl('text', {
     x: margin.left - 8, y: y + 4,
-    'text-anchor': 'end', fill: '#3D1C11', 'font-size': isMobile ? '10px' : '12px',
+    'text-anchor': 'end', fill: '#1A1A2E', 'font-size': isMobile ? '10px' : '12px',
     'font-family': 'Segoe UI, system-ui, sans-serif',
   });
   text.textContent = s;
@@ -380,10 +380,10 @@ const tooltip = document.getElementById('tooltip');
 const dotGroup = svgEl('g');
 svg.appendChild(dotGroup);
 
-// Color interpolation: #8D6E63 (few) -> #C62828 (many)
+// Color interpolation: #888898 (few) -> #C02068 (many)
 function dotColor(tracks) {
   const t = tracks / maxTracks;
-  // #8D6E63 = rgb(141,110,99)  ->  #C62828 = rgb(198,40,40)
+  // #888898 = rgb(141,110,99)  ->  #C02068 = rgb(198,40,40)
   const r = Math.round(141 + t * (198 - 141));
   const g = Math.round(110 + t * (40 - 110));
   const b = Math.round(99 + t * (40 - 99));
@@ -403,15 +403,15 @@ DATA.cells.forEach(c => {
   const circle = svgEl('circle', {
     cx: cx, cy: cy, r: r,
     fill: color, opacity: 0.85,
-    stroke: 'rgba(61,28,17,0.15)', 'stroke-width': 0.5,
+    stroke: 'rgba(26,26,46,0.15)', 'stroke-width': 0.5,
   });
   dotGroup.appendChild(circle);
 
   function showDotTooltip(ev) {
     let html = `<div style="font-weight:700; color:${color}; font-size:14px">${c.singer}</div>`;
-    html += `<div style="color:#6B4226; font-size:12px; margin-bottom:6px">${c.year} &mdash; ${c.tracks} track${c.tracks > 1 ? 's' : ''} total</div>`;
+    html += `<div style="color:#555570; font-size:12px; margin-bottom:6px">${c.year} &mdash; ${c.tracks} track${c.tracks > 1 ? 's' : ''} total</div>`;
     c.albumDetails.forEach(ad => {
-      html += `<div style="color:#3D1C11; font-size:12px">&bull; ${ad.album} (${ad.tracks})</div>`;
+      html += `<div style="color:#1A1A2E; font-size:12px">&bull; ${ad.album} (${ad.tracks})</div>`;
     });
     tooltip.innerHTML = html;
     tooltip.style.display = 'block';
@@ -445,8 +445,8 @@ function moveTooltip(ev) {
 
 // --- Worm Chart ---
 const WORM_COLORS = [
-    '#B71C1C', '#C62828', '#D84315', '#E64A19', '#EF6C00',
-    '#F57C00', '#F9A825', '#FFB300', '#8D6E63', '#A1887F',
+    '#B71C1C', '#C02068', '#D84315', '#E85D20', '#EF6C00',
+    '#F57C00', '#B8A820', '#FFB300', '#888898', '#A1887F',
     '#6D4C41', '#558B2F', '#795548', '#BF360C', '#E65100'
 ];
 
@@ -485,12 +485,12 @@ function drawWorm() {
         // Gridline
         wormSvg.appendChild(svgEl('line', {
             x1: M.left, y1: y, x2: M.left + plotW, y2: y,
-            stroke: 'rgba(61,28,17,0.08)', 'stroke-width': 1
+            stroke: 'rgba(26,26,46,0.08)', 'stroke-width': 1
         }));
         // Label
         const label = svgEl('text', {
             x: M.left - 10, y: y + 4,
-            'text-anchor': 'end', fill: '#6B4226', 'font-size': '11px',
+            'text-anchor': 'end', fill: '#555570', 'font-size': '11px',
             'font-family': 'Segoe UI, system-ui, sans-serif'
         });
         label.textContent = val;
@@ -505,11 +505,11 @@ function drawWorm() {
         // Tick mark
         wormSvg.appendChild(svgEl('line', {
             x1: x, y1: M.top + plotH, x2: x, y2: M.top + plotH + 6,
-            stroke: '#6B4226', 'stroke-width': 1
+            stroke: '#555570', 'stroke-width': 1
         }));
         const label = svgEl('text', {
             x: x, y: M.top + plotH + 22,
-            'text-anchor': 'middle', fill: '#6B4226', 'font-size': '11px',
+            'text-anchor': 'middle', fill: '#555570', 'font-size': '11px',
             'font-family': 'Segoe UI, system-ui, sans-serif'
         });
         label.textContent = yr;
@@ -519,17 +519,17 @@ function drawWorm() {
     // Axes
     wormSvg.appendChild(svgEl('line', {
         x1: M.left, y1: M.top, x2: M.left, y2: M.top + plotH,
-        stroke: '#6B4226', 'stroke-width': 1
+        stroke: '#555570', 'stroke-width': 1
     }));
     wormSvg.appendChild(svgEl('line', {
         x1: M.left, y1: M.top + plotH, x2: M.left + plotW, y2: M.top + plotH,
-        stroke: '#6B4226', 'stroke-width': 1
+        stroke: '#555570', 'stroke-width': 1
     }));
 
     // Y-axis title
     const yTitle = svgEl('text', {
         x: 16, y: M.top + plotH / 2,
-        'text-anchor': 'middle', fill: '#6B4226', 'font-size': '12px',
+        'text-anchor': 'middle', fill: '#555570', 'font-size': '12px',
         'font-weight': '600',
         'font-family': 'Segoe UI, system-ui, sans-serif',
         transform: `rotate(-90, 16, ${M.top + plotH / 2})`
@@ -732,7 +732,7 @@ document.addEventListener('keydown', function(e) {
 <style>
 #feedback-btn {
   position: fixed; bottom: 52px; right: 16px; z-index: 9999;
-  background: #C62828; color: #F5E6D3; border: none; border-radius: 50%;
+  background: #7B2D8E; color: #fff; border: none; border-radius: 50%;
   width: 44px; height: 44px; font-size: 20px; cursor: pointer;
   box-shadow: 0 2px 8px rgba(0,0,0,0.2); transition: transform 0.2s;
   font-family: system-ui, sans-serif; line-height: 1;
@@ -740,36 +740,36 @@ document.addEventListener('keydown', function(e) {
 #feedback-btn:hover { transform: scale(1.1); }
 #feedback-panel {
   display: none; position: fixed; bottom: 104px; right: 16px; z-index: 9999;
-  background: #F5E6D3; border: 1px solid rgba(61,28,17,0.15);
+  background: #FAFAFE; border: 1px solid rgba(26,26,46,0.15);
   border-radius: 12px; padding: 20px; width: 300px;
   box-shadow: 0 4px 24px rgba(0,0,0,0.15);
   font-family: 'Segoe UI', system-ui, sans-serif;
 }
 #feedback-panel.open { display: block; }
 #feedback-panel h3 {
-  margin: 0 0 12px; font-size: 15px; color: #3D1C11; font-weight: 700;
+  margin: 0 0 12px; font-size: 15px; color: #1A1A2E; font-weight: 700;
 }
 #feedback-panel textarea {
-  width: 100%; height: 80px; border: 1px solid rgba(61,28,17,0.15);
+  width: 100%; height: 80px; border: 1px solid rgba(26,26,46,0.15);
   border-radius: 8px; padding: 10px; font-size: 13px; resize: vertical;
-  font-family: inherit; background: #fff; color: #3D1C11;
+  font-family: inherit; background: #fff; color: #1A1A2E;
 }
-#feedback-panel textarea:focus { outline: 2px solid #C62828; border-color: transparent; }
+#feedback-panel textarea:focus { outline: 2px solid #7B2D8E; border-color: transparent; }
 #feedback-panel input[type=email] {
-  width: 100%; border: 1px solid rgba(61,28,17,0.15);
+  width: 100%; border: 1px solid rgba(26,26,46,0.15);
   border-radius: 8px; padding: 8px 10px; font-size: 13px; margin-top: 8px;
-  font-family: inherit; background: #fff; color: #3D1C11;
+  font-family: inherit; background: #fff; color: #1A1A2E;
 }
-#feedback-panel input[type=email]:focus { outline: 2px solid #C62828; border-color: transparent; }
-#feedback-panel .fb-hint { font-size: 11px; color: #8D6E63; margin-top: 4px; }
+#feedback-panel input[type=email]:focus { outline: 2px solid #7B2D8E; border-color: transparent; }
+#feedback-panel .fb-hint { font-size: 11px; color: #888898; margin-top: 4px; }
 #feedback-panel button[type=submit] {
-  margin-top: 12px; background: #C62828; color: #F5E6D3; border: none;
+  margin-top: 12px; background: #7B2D8E; color: #fff; border: none;
   border-radius: 8px; padding: 10px 20px; font-size: 13px; font-weight: 600;
   cursor: pointer; width: 100%; transition: background 0.2s;
 }
-#feedback-panel button[type=submit]:hover { background: #A51B1B; }
+#feedback-panel button[type=submit]:hover { background: #C02068; }
 #feedback-panel .fb-thanks {
-  text-align: center; padding: 20px 0; font-size: 14px; color: #3D1C11;
+  text-align: center; padding: 20px 0; font-size: 14px; color: #1A1A2E;
 }
 @media (max-width: 480px) {
   #feedback-panel { width: calc(100vw - 32px); right: 16px; bottom: 96px; }
