@@ -294,9 +294,11 @@
 </div>
 
 <div id="controls">
-  <label style="font-size:13px; color:#6B4226;">Min shared singers: <strong id="threshold-val">3</strong></label>
-  <input type="range" id="threshold" min="1" max="5" value="3" style="width:150px; accent-color:#C62828;">
+  <label style="font-size:13px; color:#6B4226;">Min shared singers: <strong id="threshold-val">4</strong></label>
+  <input type="range" id="threshold" min="1" max="10" value="4" style="width:150px; accent-color:#C62828;">
   <span id="vis-count" style="font-size:12px; color:#8D6E63;"></span>
+  <input type="text" id="album-search" list="album-datalist" placeholder="Search album..." style="padding:5px 10px; border:1px solid rgba(61,28,17,0.2); border-radius:6px; font-size:12px; background:rgba(255,255,255,0.5); color:#3D1C11; width:160px;">
+  <datalist id="album-datalist"></datalist>
   <button onclick="resetZoom()" style="background:rgba(61,28,17,0.08); border:1px solid rgba(61,28,17,0.15); color:#6B4226; padding:5px 12px; border-radius:6px; cursor:pointer; font-size:12px;">Reset Zoom</button>
 </div>
 
@@ -61251,7 +61253,7 @@ const DATA = {
   ]
 };
 
-const COMMUNITY_COLORS = ["#C62828", "#E64A19", "#F9A825", "#558B2F", "#8D6E63", "#D84315", "#FFB300", "#6D4C41", "#B71C1C", "#33691E", "#FF6F00", "#4E342E", "#EF6C00", "#827717", "#BF360C"];
+const COMMUNITY_COLORS = ["#C62828", "#1565C0", "#F9A825", "#2E7D32", "#6A1B9A", "#EF6C00", "#00838F", "#6D4C41", "#AD1457", "#33691E", "#FF6F00", "#4E342E", "#0277BD", "#827717", "#BF360C"];
 
 const WIDTH = window.innerWidth;
 const HEIGHT = window.innerHeight - 48;
@@ -61314,7 +61316,7 @@ svg.appendChild(nodeGroup);
 // --- Create edge elements ---
 const edgeEls = edgesData.map(e => {
   const line = svgEl('line', {
-    stroke: 'rgba(61,28,17,0.08)',
+    stroke: 'rgba(61,28,17,0.15)',
     'stroke-width': 0.5 + (e.weight / maxWeight) * 5,
     'data-source': e.source,
     'data-target': e.target,
@@ -61477,7 +61479,7 @@ thresholdSlider.addEventListener('input', () => {
 });
 
 // Apply default threshold
-applyThreshold(2);
+applyThreshold(4);
 
 // --- Zoom & Pan ---
 let viewBox = { x: 0, y: 0, w: WIDTH, h: HEIGHT };
@@ -61587,34 +61589,31 @@ const tooltip = document.getElementById('tooltip');
 const edgeTooltip = document.getElementById('edge-tooltip');
 
 function showTooltip(ev, n) {
-  // Only interact with visible edges
-  edgeEls.forEach(e => {
-    if (!e.visible) return;
-    const connected = e.data.source === n.id || e.data.target === n.id;
-    e.line.setAttribute('stroke', connected ? 'rgba(61,28,17,0.35)' : 'rgba(61,28,17,0.02)');
-  });
-
-  // Find the strongest connection among visible edges
+  // Find all connected neighbors among visible edges
   const connEdges = edgesData.filter(e =>
     (e.source === n.id || e.target === n.id) &&
     edgeEls.find(ee => ee.data === e && ee.visible)
   );
-  let bestId = null, bestWeight = 0;
+  const neighborIds = new Set();
   connEdges.forEach(e => {
-    if (e.weight > bestWeight) {
-      bestWeight = e.weight;
-      bestId = e.source === n.id ? e.target : e.source;
-    }
+    neighborIds.add(e.source === n.id ? e.target : e.source);
   });
 
-  // Hovered + strongest connection stay visible; everything else vanishes
+  // Highlight connected edges, dim others
+  edgeEls.forEach(e => {
+    if (!e.visible) return;
+    const connected = e.data.source === n.id || e.data.target === n.id;
+    e.line.setAttribute('stroke', connected ? 'rgba(61,28,17,0.4)' : 'rgba(61,28,17,0.03)');
+  });
+
+  // Hovered node full opacity, neighbors visible, everything else dimmed
   nodeEls.forEach(ne => {
     if (!ne.visible) return;
     const isHovered = ne.data.id === n.id;
-    const isBest = ne.data.id === bestId;
-    ne.circle.setAttribute('opacity', (isHovered || isBest) ? 1 : 0);
+    const isNeighbor = neighborIds.has(ne.data.id);
+    ne.circle.setAttribute('opacity', isHovered ? 1 : isNeighbor ? 0.85 : 0.08);
     ne.glow.setAttribute('opacity', isHovered ? 0.3 : 0);
-    ne.texts.forEach(t => t.setAttribute('opacity', (isHovered || isBest) ? 1 : 0));
+    ne.texts.forEach(t => t.setAttribute('opacity', (isHovered || isNeighbor) ? 1 : 0));
     if (isHovered) {
       ne.circle.setAttribute('r', ne.data.radius * 1.3);
       ne.glow.setAttribute('r', (ne.data.radius + 8) * 1.3);
@@ -61657,7 +61656,7 @@ function hideTooltip() {
   tooltip.style.display = 'none';
   edgeEls.forEach(e => {
     if (!e.visible) return;
-    e.line.setAttribute('stroke', 'rgba(61,28,17,0.12)');
+    e.line.setAttribute('stroke', 'rgba(61,28,17,0.15)');
   });
   nodeEls.forEach(ne => {
     if (!ne.visible) return;
@@ -61698,7 +61697,7 @@ function hideEdgeTooltip() {
   edgeTooltip.style.display = 'none';
   edgeEls.forEach(e => {
     if (!e.visible) return;
-    e.line.setAttribute('stroke', 'rgba(61,28,17,0.12)');
+    e.line.setAttribute('stroke', 'rgba(61,28,17,0.15)');
   });
 }
 
@@ -61710,13 +61709,46 @@ function hideEdgeTooltip() {
   communityIds.forEach(cid => {
     const color = COMMUNITY_COLORS[cid % COMMUNITY_COLORS.length];
     const members = DATA.nodes.filter(n => n.community === cid);
-    // Show up to 3 album names as sample
-    const sample = members.slice(0, 3).map(n => n.id).join(', ');
-    const extra = members.length > 3 ? ` +${members.length - 3} more` : '';
+    // Compute dominant language
+    const langCounts = {};
+    members.forEach(m => { const l = m.language || 'Unknown'; langCounts[l] = (langCounts[l]||0)+1; });
+    const topLang = Object.entries(langCounts).sort((a,b) => b[1]-a[1])[0][0];
+    // Year range
+    const years = members.map(m => m.year).filter(y => y).sort();
+    const yearRange = years.length ? `${years[0]}\u2013${years[years.length-1]}` : '';
+    // Label
+    const label = members.length === 1
+      ? members[0].id
+      : `${topLang} (${yearRange}) \u2014 ${members.length} albums`;
     html += `<div class="legend-item"><div class="legend-dot" style="background:${color}"></div>`;
-    html += `<span>${sample}${extra}</span></div>`;
+    html += `<span>${label}</span></div>`;
   });
   legendEl.innerHTML = html;
+})();
+
+// --- Album search ---
+(function setupSearch() {
+  const searchInput = document.getElementById('album-search');
+  const datalist = document.getElementById('album-datalist');
+  DATA.nodes.forEach(n => {
+    const opt = document.createElement('option');
+    opt.value = n.id;
+    datalist.appendChild(opt);
+  });
+  searchInput.addEventListener('change', function() {
+    const query = this.value.trim();
+    const node = nodes.find(n => n.id.toLowerCase() === query.toLowerCase());
+    if (!node) return;
+    // Zoom to this node
+    const zoomW = WIDTH * 0.4;
+    const zoomH = HEIGHT * 0.4;
+    viewBox = { x: node.sx - zoomW/2, y: node.sy - zoomH/2, w: zoomW, h: zoomH };
+    updateViewBox();
+    // Trigger highlight
+    const ne = nodeEls.find(ne => ne.data.id === node.id);
+    if (ne) showTooltip({ clientX: WIDTH/2, clientY: HEIGHT/2 }, node);
+    this.value = '';
+  });
 })();
 </script>
 <div id="tour-nav">
