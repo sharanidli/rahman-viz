@@ -201,14 +201,22 @@
   }
 
   @media (max-width: 768px) {
+    #header h1 { font-size: 18px; }
+    #header p { font-size: 11px; margin-top: 2px; }
+    #controls { gap: 6px; padding: 4px 12px; flex-wrap: nowrap; }
+    #controls input[type=range] { width: 80px; }
+    #album-search { display: none; }
+    #reset-zoom { display: none; }
+    #vis-count { display: none; }
+    #instructions { display: none; }
     #legend {
       display: none; position: fixed; bottom: 56px; left: 8px; right: 8px;
       width: auto; max-height: 40vh; z-index: 25;
     }
     #legend.legend-open { display: block; }
     #legend-toggle { display: inline-block; }
-    #album-search { display: none; }
-    #controls { gap: 8px; padding: 6px 12px; }
+    #tooltip { max-width: calc(100vw - 16px); }
+    #edge-tooltip { max-width: calc(100vw - 16px); }
   }
 </style>
 <style>
@@ -320,7 +328,7 @@
   <span id="vis-count" style="font-size:12px; color:#8D6E63;"></span>
   <input type="text" id="album-search" list="album-datalist" placeholder="Search album..." style="padding:5px 10px; border:1px solid rgba(61,28,17,0.2); border-radius:6px; font-size:12px; background:rgba(255,255,255,0.5); color:#3D1C11; width:160px;">
   <datalist id="album-datalist"></datalist>
-  <button onclick="resetZoom()" style="background:rgba(61,28,17,0.08); border:1px solid rgba(61,28,17,0.15); color:#6B4226; padding:5px 12px; border-radius:6px; cursor:pointer; font-size:12px;">Reset Zoom</button>
+  <button id="reset-zoom" onclick="resetZoom()" style="background:rgba(61,28,17,0.08); border:1px solid rgba(61,28,17,0.15); color:#6B4226; padding:5px 12px; border-radius:6px; cursor:pointer; font-size:12px;">Reset Zoom</button>
   <button id="legend-toggle" onclick="document.getElementById('legend').classList.toggle('legend-open'); this.textContent = document.getElementById('legend').classList.contains('legend-open') ? 'Hide Legend' : 'Legend'">Legend</button>
 </div>
 
@@ -61277,6 +61285,7 @@ const DATA = {
 
 const COMMUNITY_COLORS = ["#C62828", "#1565C0", "#F9A825", "#2E7D32", "#6A1B9A", "#EF6C00", "#00838F", "#6D4C41", "#AD1457", "#33691E", "#FF6F00", "#4E342E", "#0277BD", "#827717", "#BF360C"];
 
+const isMobile = window.innerWidth < 768;
 const WIDTH = window.innerWidth;
 const HEIGHT = window.innerHeight - 48;
 
@@ -61299,9 +61308,11 @@ const bgRect = svgEl('rect', {
 svg.appendChild(bgRect);
 
 // --- Map pre-computed positions to screen ---
-const pad = 80;
-const usableW = WIDTH - pad * 2;
-const usableH = HEIGHT - pad * 2;
+const padTop = isMobile ? 110 : 80;
+const padBottom = isMobile ? 60 : 80;
+const padLR = isMobile ? 16 : 80;
+const usableW = WIDTH - padLR * 2;
+const usableH = HEIGHT - padTop - padBottom;
 
 const xs = DATA.nodes.map(n => n.x);
 const ys = DATA.nodes.map(n => n.y);
@@ -61312,8 +61323,8 @@ const rangeY = maxY - minY || 1;
 
 const nodes = DATA.nodes.map(n => ({
   ...n,
-  sx: pad + ((n.x - minX) / rangeX) * usableW,
-  sy: pad + ((n.y - minY) / rangeY) * usableH,
+  sx: padLR + ((n.x - minX) / rangeX) * usableW,
+  sy: padTop + ((n.y - minY) / rangeY) * usableH,
   radius: 3 + Math.sqrt(n.singer_count) * 4,
   color: COMMUNITY_COLORS[n.community % COMMUNITY_COLORS.length],
 }));
@@ -61666,6 +61677,15 @@ function showTooltip(ev, n) {
 }
 
 function moveTooltip(ev) {
+  if (isMobile) {
+    tooltip.style.left = '8px';
+    tooltip.style.right = '8px';
+    tooltip.style.width = 'auto';
+    tooltip.style.maxWidth = 'none';
+    tooltip.style.bottom = '56px';
+    tooltip.style.top = 'auto';
+    return;
+  }
   let x = ev.clientX + 16;
   let y = ev.clientY + 16;
   if (x + 320 > WIDTH) x = ev.clientX - 330;
@@ -61708,6 +61728,15 @@ function showEdgeTooltip(ev, e) {
 }
 
 function moveEdgeTooltip(ev) {
+  if (isMobile) {
+    edgeTooltip.style.left = '8px';
+    edgeTooltip.style.right = '8px';
+    edgeTooltip.style.width = 'auto';
+    edgeTooltip.style.maxWidth = 'none';
+    edgeTooltip.style.bottom = '56px';
+    edgeTooltip.style.top = 'auto';
+    return;
+  }
   let x = ev.clientX + 12;
   let y = ev.clientY + 12;
   if (x + 280 > WIDTH) x = ev.clientX - 290;
