@@ -467,9 +467,10 @@ function drawWorm() {
         wormSvg.appendChild(label);
     }
 
-    // X-axis year labels (every 2 years to avoid crowding)
+    // X-axis year labels (every 2 years desktop, every 5 years mobile)
+    const yearEvery = isMobile ? 5 : 2;
     DATA.years.forEach((yr, i) => {
-        if (yr % 2 !== 0 && yr !== minY && yr !== maxY) return;
+        if (yr % yearEvery !== 0 && yr !== minY && yr !== maxY) return;
         const x = xScale(yr);
         // Tick mark
         wormSvg.appendChild(svgEl('line', {

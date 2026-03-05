@@ -315,10 +315,10 @@ const DATA = {"wheel": [{"key": 0, "keyName": "C", "major": 106, "minor": 65, "t
 
 const isMobile = window.innerWidth < 768;
 const W = isMobile ? Math.min(375, window.innerWidth - 16) : 700;
-const H = isMobile ? Math.round(W * 0.85) : 600;
-const cx = W / 2, cy = H / 2;
 const outerR = isMobile ? Math.min(140, W * 0.38) : 240;
 const innerR = isMobile ? Math.round(outerR * 0.36) : 80;
+const H = isMobile ? 2 * (outerR + 44) : 600;
+const cx = W / 2, cy = H / 2;
 
 const svg = document.getElementById('chart');
 svg.setAttribute('width', W);
