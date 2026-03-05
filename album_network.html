@@ -61290,7 +61290,7 @@ const nodes = DATA.nodes.map(n => ({
   ...n,
   sx: pad + ((n.x - minX) / rangeX) * usableW,
   sy: pad + ((n.y - minY) / rangeY) * usableH,
-  radius: 6 + Math.sqrt(n.singer_count) * 12,
+  radius: 3 + Math.sqrt(n.singer_count) * 4,
   color: COMMUNITY_COLORS[n.community % COMMUNITY_COLORS.length],
 }));
 
