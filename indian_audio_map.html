@@ -299,10 +299,10 @@ function pianoSVG(chroma, dominant) {
   }
 
   function blackIntensity(val) {
-    // 0 = dark gray #333, 1 = deep orange
-    const r = Math.round(51 + val * (232 - 51));
-    const g = Math.round(51 + val * (93 - 51));
-    const b = Math.round(51 + val * (32 - 51));
+    // 0 = white, 1 = deep orange (same gradient as white keys)
+    const r = Math.round(255 - val * (255 - 232));
+    const g = Math.round(255 - val * (255 - 93));
+    const b = Math.round(255 - val * (255 - 32));
     return `rgb(${r},${g},${b})`;
   }
 
