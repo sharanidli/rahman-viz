@@ -244,7 +244,7 @@ h1 { font-size: 24px; font-weight: 600; margin-bottom: 4px; }
 
 <div class="container">
   <h1>AR Rahman &mdash; Indian Audio Map</h1>
-  <p class="subtitle">Indian-ness, talam, scale & chroma for every song &mdash; all from audio analysis</p>
+  <p class="subtitle">Indian-ness measures how much a song bends pitch away from Western semitones (microtonal deviation in cents). Higher = more Indian ornamentation. Click an album to expand, then click a song to see its talam, scale, and piano heatmap.</p>
 
   <div class="controls">
     <input type="text" class="search-box" id="searchBox" placeholder="Search songs, albums, or singers...">
@@ -379,7 +379,7 @@ function renderAlbum(album, idx) {
         <div class="detail-item"><span class="label">Scale: </span><span class="value">${tr.sr} ${tr.st.replace(/_/g,' ')} (${tr.sn})</span></div>
       </div>
       <div class="piano-container">
-        <div class="piano-label">Chroma intensity</div>
+        <div class="piano-label">Piano heatmap &mdash; the darker the orange, the more that note is used in the song</div>
         ${pianoSVG(tr.ch, tr.dp)}
       </div>
     `;
