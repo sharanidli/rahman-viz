@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Song DNA — Indian-ness, talam, scale & piano keyboard heatmaps for every AR Rahman song.">
+<meta name="description" content="Song DNA — microtonal variation, talam, scale & piano keyboard heatmaps for every AR Rahman song.">
 <meta property="og:title" content="AR Rahman — Song DNA">
-<meta property="og:description" content="Song DNA — Indian-ness, talam, scale & piano keyboard heatmaps for every AR Rahman song.">
+<meta property="og:description" content="Song DNA — microtonal variation, talam, scale & piano keyboard heatmaps for every AR Rahman song.">
 <meta property="og:image" content="https://brothersinmusicpod.com/og-preview.png">
 <meta property="og:url" content="https://brothersinmusicpod.com/">
 <meta name="twitter:card" content="summary_large_image">
@@ -244,7 +244,7 @@ h1 { font-size: 24px; font-weight: 600; margin-bottom: 4px; }
 
 <div class="container">
   <h1>AR Rahman &mdash; Song DNA</h1>
-  <p class="subtitle">Indian-ness measures how much a song bends pitch away from Western semitones (microtonal deviation in cents). Higher = more Indian ornamentation. Click an album to expand, then click a song to see its talam, scale, and piano heatmap.</p>
+  <p class="subtitle">Microtonal variation measures how much a song bends pitch away from Western semitones (microtonal deviation in cents). Higher = more Carnatic/Indian ornamentation. Click an album to expand, then click a song to see its talam, scale, and piano heatmap.</p>
 
   <div class="controls">
     <input type="text" class="search-box" id="searchBox" placeholder="Search songs, albums, or singers...">
@@ -260,8 +260,8 @@ h1 { font-size: 24px; font-weight: 600; margin-bottom: 4px; }
     <div class="sort-row">
       <label>Sort:</label>
       <select id="sortSelect">
-        <option value="indianness-desc">Indian-ness (high &rarr; low)</option>
-        <option value="indianness-asc">Indian-ness (low &rarr; high)</option>
+        <option value="indianness-desc">Microtonal Variation (high &rarr; low)</option>
+        <option value="indianness-asc">Microtonal Variation (low &rarr; high)</option>
         <option value="year-desc">Year (newest first)</option>
         <option value="year-asc">Year (oldest first)</option>
         <option value="name-asc">Album A &rarr; Z</option>
@@ -369,7 +369,7 @@ function renderAlbum(album, idx) {
 
     let detailHTML = `
       <div class="detail-row">
-        <div class="detail-item"><span class="label">Indian-ness: </span><span class="value">${ordinalSuffix(tr['in'])} %ile (${tr.mc.toFixed(1)} cents)</span></div>
+        <div class="detail-item"><span class="label">Microtonal Variation: </span><span class="value">${ordinalSuffix(tr['in'])} %ile (${tr.mc.toFixed(1)} cents)</span></div>
       </div>
       <div class="detail-row">
         <div class="detail-item"><span class="label">Talam: </span><span class="value">${tr.tn} (${tr.ts})</span></div>
