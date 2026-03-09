@@ -219,7 +219,7 @@
 
   <p>
     An interactive exploration of AR Rahman's complete discography &mdash;
-    <strong>168 albums</strong> and <strong>2,100 tracks</strong> spanning 1992 to 2026,
+    <strong>276 albums</strong> (across multiple languages) and <strong>2,114 tracks</strong> spanning 1992 to 2026,
     visualized through data. Browse sonic fingerprints, trace collaborator networks,
     and discover patterns across three decades of one of cinema's most inventive composers.
   </p>
@@ -290,9 +290,9 @@
   </ul>
 
   <p>For tracks with Spotify data, we use Spotify's features directly. For tracks without,
-    we estimate equivalent scores from librosa's audio analysis, using the ~577 tracks that
+    we estimate equivalent scores from librosa's audio analysis, using the ~730 tracks that
     have both sources as a calibration set. This gives us unified audio features for about
-    <strong>72%</strong> of all tracks. Coverage varies by album &mdash; the
+    <strong>two-thirds</strong> of all tracks. Coverage varies by album &mdash; the
     <a href="data_quality.html">Data Quality</a> page shows completeness for each one.</p>
 
   <h2>Audio Features Glossary</h2>
@@ -304,9 +304,11 @@
     <li><span class="glossary-term">Energy</span> &mdash;
       <span class="glossary-desc">Perceptual intensity and activity. Energetic tracks feel fast, loud, and driven.
       A soft ghazal scores low; a high-octane dance number scores high.</span></li>
-    <li><span class="glossary-term">Danceability</span> &mdash;
-      <span class="glossary-desc">How suitable a track is for dancing. Combines tempo, rhythm stability,
-      beat strength, and regularity. Higher = more danceable.</span></li>
+    <li><span class="glossary-term">Microtonal Variation</span> &mdash;
+      <span class="glossary-desc">How much a track uses pitches between the 12 standard Western notes.
+      Higher values indicate more use of gamakas, shrutis, and bent notes &mdash; common in
+      Carnatic- and Hindustani-inflected compositions. Derived from librosa's chroma and
+      pitch analysis.</span></li>
     <li><span class="glossary-term">Valence</span> &mdash;
       <span class="glossary-desc">Musical positivity. High valence = happy, cheerful, euphoric.
       Low valence = sad, melancholic, intense. Note: for tracks without Spotify data,
@@ -342,19 +344,40 @@
       deeply uplifting in its spiritual context.</li>
   </ul>
 
-  <h2>Limitations</h2>
+  <h2>Limitations &amp; Caveats</h2>
+
+  <p>This project is a labor of love, not a peer-reviewed dataset. We've tried to be thorough,
+    but there are real limitations you should know about:</p>
 
   <ul>
     <li><strong>Not every track has audio features.</strong> About 28% of tracks have no
       audio data from either source. Spotify matching depends on regional availability;
-      librosa requires an audio file.</li>
+      librosa requires finding the audio online. Coverage is weakest for early 90s Tamil films
+      and obscure dubbed releases.</li>
     <li><strong>Predicted features are approximate.</strong> For tracks with only librosa data,
-      features like valence are estimated via regression and carry lower confidence than
-      direct Spotify measurements.</li>
-    <li><strong>Wikipedia credits may be incomplete.</strong> Singer and lyricist credits
-      are community-maintained and may have gaps, especially for older or lesser-known albums.</li>
-    <li><strong>Language data has noise.</strong> The language column sometimes contains
-      Wikipedia section headers instead of actual languages. We filter these where possible.</li>
+      features like valence are estimated via regression (R&sup2; ranging from 0.37 to 0.65)
+      and carry lower confidence than direct Spotify measurements. Valence predictions
+      are the least reliable.</li>
+    <li><strong>Wikipedia credits may be incomplete or wrong.</strong> Singer and lyricist credits
+      are community-maintained and may have gaps, duplicates, or errors &mdash; especially for
+      older or lesser-known albums. Some tracks list the composer as "singer" when the credit
+      really refers to the score performer.</li>
+    <li><strong>Language labels have noise.</strong> Our scraper sometimes picked up Wikipedia
+      section headers instead of actual languages. We've manually corrected hundreds of these,
+      but some may remain.</li>
+    <li><strong>Duplicate tracks across languages.</strong> Many Rahman films were released in
+      multiple languages (Tamil, Hindi, Telugu). The same song may appear twice or more with
+      different titles and singers. We separate albums by language but the underlying
+      composition is sometimes the same.</li>
+    <li><strong>Album boundaries are fuzzy.</strong> Wikipedia's definition of an "album" varies:
+      some pages list background score alongside songs, some split soundtracks from scores,
+      and some Hindi dubbed releases share the original Tamil compositions. Our 276-album
+      count reflects Wikipedia's structure, not a canonical discography.</li>
+    <li><strong>Audio features were designed for Western pop.</strong> Spotify's algorithms and
+      librosa's defaults are trained on Western music. Features like valence and danceability
+      may not translate perfectly to Carnatic-inflected, devotional, or folk compositions.
+      Our "Microtonal Variation" feature is an attempt to address this gap, but it's an
+      approximation.</li>
   </ul>
 
   <a class="back-link" href="index.html">&larr; Back to Explore</a>
