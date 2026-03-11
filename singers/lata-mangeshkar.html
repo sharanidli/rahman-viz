@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Lata Mangeshkar — 8 tracks across 6 films with AR Rahman. Full discography, audio profile, and collaboration history.">
+<meta property="og:title" content="AR Rahman — Lata Mangeshkar">
+<meta property="og:description" content="Lata Mangeshkar — 8 tracks across 6 films with AR Rahman. Full discography, audio profile, and collaboration history.">
+<meta property="og:image" content="https://brothersinmusicpod.com/og-preview.png">
+<meta property="og:url" content="https://brothersinmusicpod.com/">
+<meta name="twitter:card" content="summary_large_image">
+<title>AR Rahman — Lata Mangeshkar</title>
+<style>
+  /* --- Site navigation --- */
+  .site-nav {
+    position: fixed; top: 0; left: 0; right: 0; height: 44px;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    z-index: 10000; display: flex; align-items: center;
+    padding: 0 20px;
+    border-bottom: 1px solid rgba(26,26,46,0.1);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+  .site-nav .nav-brand {
+    text-decoration: none; color: #1A1A2E; font-weight: 700; font-size: 14px;
+    white-space: nowrap;
+  }
+  .site-nav .nav-brand:hover { color: #7B2D8E; }
+  .site-nav .nav-links { margin-left: auto; display: flex; gap: 20px; }
+  .site-nav .nav-links a {
+    text-decoration: none; color: #555570; font-size: 13px; font-weight: 500;
+  }
+  .site-nav .nav-links a:hover { color: #C02068; }
+  .site-nav .nav-toggle-input { display: none; }
+  .site-nav .nav-toggle-label {
+    display: none; cursor: pointer; font-size: 22px;
+    color: #1A1A2E; margin-left: auto; line-height: 1;
+    -webkit-tap-highlight-color: transparent;
+  }
+  @media (max-width: 600px) {
+    .site-nav .nav-brand { font-size: 13px; }
+    .site-nav .nav-toggle-label { display: block; }
+    .site-nav .nav-links {
+      display: none; position: absolute; top: 44px; left: 0; right: 0;
+      background: rgba(255,255,255,0.98);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      flex-direction: column; padding: 12px 20px; gap: 12px;
+      border-bottom: 1px solid rgba(26,26,46,0.1);
+    }
+    .site-nav .nav-toggle-input:checked ~ .nav-links { display: flex; }
+  }
+
+  /* --- Mobile notice banner --- */
+  .mobile-notice { display: none; }
+  @media (max-width: 768px) {
+    .mobile-notice {
+      display: block; background: rgba(232,93,32,0.08);
+      color: #555570; text-align: center;
+      padding: 6px 16px; font-size: 11px; line-height: 1.4;
+    }
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    padding-top: 48px;
+    background: #FFFFFF;
+    color: #1A1A2E;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+  }
+
+  .profile-container {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 32px 24px 60px;
+  }
+
+  /* ── Header ── */
+  .profile-header {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+  .profile-header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1A1A2E;
+    margin-bottom: 8px;
+  }
+  .profile-subtitle {
+    font-size: 14px;
+    color: #888898;
+    margin-bottom: 20px;
+  }
+  .stat-cards {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .stat-card {
+    background: #FAFAFE;
+    border: 1px solid rgba(26,26,46,0.08);
+    border-radius: 10px;
+    padding: 16px 20px;
+    text-align: center;
+    min-width: 0;
+    flex: 1 1 0;
+    border-top: 3px solid #C02068;
+  }
+  .stat-card .stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #C02068;
+    line-height: 1.1;
+  }
+  .stat-card .stat-label {
+    font-size: 12px;
+    color: #888898;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+  }
+
+  /* ── Section headings ── */
+  .section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1A1A2E;
+    margin: 40px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid rgba(192,32,104,0.15);
+  }
+
+  /* ── Timeline ── */
+  .timeline-wrap {
+    overflow-x: auto;
+    margin-bottom: 8px;
+  }
+  .timeline-wrap svg {
+    display: block;
+    margin: 0 auto;
+  }
+
+  /* ── Radar chart ── */
+  .radar-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 8px;
+  }
+  .radar-legend {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    font-size: 13px;
+    color: #555570;
+    margin-bottom: 8px;
+  }
+  .radar-legend span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .radar-legend .swatch {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+  }
+
+  /* ── Collaborators ── */
+  .collab-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+  }
+  .collab-section h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #555570;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+  }
+  .collab-bar {
+    display: flex;
+    align-items: center;
+    margin-bottom: 6px;
+    font-size: 13px;
+  }
+  .collab-bar .bar-name {
+    width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #1A1A2E;
+    flex-shrink: 0;
+  }
+  .collab-bar .bar-fill {
+    height: 18px;
+    background: linear-gradient(90deg, #C02068, #E85D20);
+    border-radius: 3px;
+    margin: 0 8px;
+    min-width: 4px;
+    transition: width 0.3s;
+  }
+  .collab-bar .bar-count {
+    font-size: 12px;
+    color: #888898;
+    flex-shrink: 0;
+    min-width: 24px;
+  }
+
+  /* ── Discography ── */
+  .disco-album {
+    margin-bottom: 2px;
+    border: 1px solid rgba(26,26,46,0.06);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .disco-album-header {
+    padding: 10px 16px;
+    background: #FAFAFE;
+    cursor: pointer;
+    font-size: 14px;
+    color: #1A1A2E;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+  }
+  .disco-album-header:hover {
+    background: rgba(192,32,104,0.04);
+  }
+  .disco-album-header::after {
+    content: '\25BC';
+    font-size: 10px;
+    color: #888898;
+    transition: transform 0.2s;
+    margin-left: 8px;
+    flex-shrink: 0;
+  }
+  .disco-album.open .disco-album-header::after {
+    transform: rotate(180deg);
+  }
+  .track-count {
+    font-size: 12px;
+    color: #888898;
+    font-weight: 400;
+    margin-left: auto;
+    padding-right: 8px;
+  }
+  .disco-tracks {
+    display: none;
+    padding: 4px 16px 12px;
+  }
+  .disco-album.open .disco-tracks {
+    display: block;
+  }
+  .disco-track {
+    padding: 4px 0;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(26,26,46,0.04);
+  }
+  .disco-track:last-child { border-bottom: none; }
+  .track-title {
+    color: #1A1A2E;
+    font-weight: 500;
+  }
+  .co-singers {
+    color: #888898;
+    font-size: 12px;
+  }
+  .co-singers.solo {
+    font-style: italic;
+    color: #B8A820;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .profile-header h1 { font-size: 24px; }
+    .stat-cards { gap: 8px; }
+    .stat-card {
+      min-width: 0;
+      flex: 1 1 calc(50% - 8px);
+      padding: 12px 8px;
+    }
+    .stat-card .stat-value { font-size: 22px; }
+    .collab-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    .collab-bar .bar-name { width: 120px; }
+    .profile-container { padding: 16px 12px 40px; }
+  }
+</style>
+<style>
+  /* --- Responsive: Tablet (1024px) --- */
+  @media (max-width: 1024px) {
+    #year-display { font-size: 48px; }
+    #legend { width: 140px; font-size: 10px; }
+    #instructions { display: none; }
+  }
+
+  /* --- Responsive: Large phone / small tablet (768px) --- */
+  @media (max-width: 768px) {
+    #controls {
+      flex-direction: column; gap: 6px; padding: 6px 12px;
+      align-items: stretch;
+    }
+    #controls > * { text-align: center; }
+    #legend {
+      position: static; width: 100%; max-height: 120px;
+      overflow-y: auto; margin: 4px 0;
+    }
+    #axis-controls {
+      position: relative; top: auto; left: auto;
+      transform: none; flex-wrap: wrap;
+      justify-content: center; gap: 6px;
+      padding: 4px 8px; font-size: 12px;
+    }
+    #header { padding: 12px 16px 4px; }
+    #header h1 { font-size: 20px; }
+    #header p { font-size: 12px; line-height: 1.4; }
+    #main {
+      flex-direction: column; padding: 8px 12px; gap: 12px;
+    }
+    #sidebar {
+      width: 100%; display: flex; flex-wrap: wrap; gap: 4px;
+    }
+  }
+
+  /* --- Responsive: Phone (480px) --- */
+  @media (max-width: 480px) {
+    #year-display {
+      font-size: 32px; bottom: 52px; right: 8px; opacity: 0.6;
+    }
+    #header h1 { font-size: 18px; }
+    #header p { font-size: 11px; }
+    #speed-control { display: none; }
+  }
+
+  /* --- Touch device helpers --- */
+  .touch-device circle,
+  .touch-device .bar-row,
+  .touch-device .dir-item,
+  .touch-device .cell {
+    cursor: pointer;
+  }
+</style>
+
+</head>
+<body>
+<nav class="site-nav">
+  <a href="../index.html" class="nav-brand">Inside the Sound of Rahman</a>
+  <input type="checkbox" id="nav-toggle" class="nav-toggle-input">
+  <label for="nav-toggle" class="nav-toggle-label">&#9776;</label>
+  <div class="nav-links">
+    <a href="../index.html">Explore</a>
+    <a href="../song_database.html">Songs</a>
+    <a href="../about.html">About</a>
+  </div>
+</nav>
+<div class="mobile-notice">Tap elements for details. Rotate for wider view.</div>
+<script>
+(function() {
+  // Detect touch device
+  if (!('ontouchstart' in window)) return;
+  document.body.classList.add('touch-device');
+
+  // Dismiss tooltips on tap-away
+  document.addEventListener('click', function(e) {
+    // Don't dismiss if tapping the tooltip itself
+    if (e.target.closest('#tooltip') || e.target.closest('#edge-tooltip')) return;
+    // Don't dismiss if tapping an interactive element (page handler will show new tooltip)
+    if (e.target.closest('circle') || e.target.closest('.bar-row') ||
+        e.target.closest('.dir-item') || e.target.closest('.cell') ||
+        e.target.closest('line[style]') || e.target.closest('.dot') ||
+        e.target.closest('.segment') || e.target.closest('rect[data-info]')) return;
+    // Dismiss all tooltips
+    var tt = document.getElementById('tooltip');
+    var ett = document.getElementById('edge-tooltip');
+    if (tt) tt.style.display = 'none';
+    if (ett) ett.style.display = 'none';
+  });
+
+  // Recalculate SVG dimensions on orientation change
+  window.addEventListener('orientationchange', function() {
+    setTimeout(function() { window.dispatchEvent(new Event('resize')); }, 200);
+  });
+})();
+</script>
+
+
+<div class="profile-container">
+
+  <!-- Header -->
+  <div class="profile-header">
+    <h1>Lata Mangeshkar</h1>
+    <p class="profile-subtitle">AR Rahman collaborator &middot; Playback singer</p>
+    <div class="stat-cards" id="stat-cards"></div>
+  </div>
+
+  <!-- Timeline -->
+  <div class="section-title">Timeline</div>
+  <div class="timeline-wrap" id="timeline-chart"></div>
+
+  <!-- Audio Fingerprint -->
+  <div class="section-title">Audio Fingerprint</div>
+  <div class="radar-legend">
+    <span><span class="swatch" style="background:rgba(192,32,104,0.25); border: 2px solid #C02068;"></span> Lata Mangeshkar</span>
+    <span><span class="swatch" style="background:rgba(136,136,152,0.15); border: 2px solid #888898;"></span> Rahman catalog average</span>
+  </div>
+  <div class="radar-wrap" id="radar-chart"></div>
+
+  <!-- Top Collaborators -->
+  <div class="section-title">Top Collaborators</div>
+  <div class="collab-grid" id="collab-grid"></div>
+
+  <!-- Discography -->
+  <div class="section-title">Full Discography</div>
+  <div class="disco-album">
+  <div class="disco-album-header" onclick="this.parentElement.classList.toggle('open')"><strong>Rang De Basanti (Hindi)</strong> &middot; 2005 &middot; Dir: Rakeysh Omprakash Mehra <span class="track-count">1 track</span></div>
+  <div class="disco-tracks"><div class="disco-track"><span class="track-title">Luka Chuppi</span> <span class="co-singers">with A. R. Rahman</span></div></div>
+</div>
+<div class="disco-album">
+  <div class="disco-album-header" onclick="this.parentElement.classList.toggle('open')"><strong>Lagaan (Hindi)</strong> &middot; 2001 &middot; Dir: Ashutosh Gowariker <span class="track-count">1 track</span></div>
+  <div class="disco-tracks"><div class="disco-track"><span class="track-title">O Paalanhaare</span> <span class="co-singers">with Udit Narayan, Sadhana Sargam, Chorus</span></div></div>
+</div>
+<div class="disco-album">
+  <div class="disco-album-header" onclick="this.parentElement.classList.toggle('open')"><strong>Zubeidaa – The Story of a Princess (Hindi)</strong> &middot; 2000 &middot; Dir: Shyam Benegal <span class="track-count">3 tracks</span></div>
+  <div class="disco-tracks"><div class="disco-track"><span class="track-title">So Gaye Hain</span> <span class="co-singers solo">Solo</span></div><div class="disco-track"><span class="track-title">Pyaara Sa Gaon</span> <span class="co-singers solo">Solo</span></div><div class="disco-track"><span class="track-title">So Gaye Hain</span> <span class="co-singers">with Chorus</span></div></div>
+</div>
+<div class="disco-album">
+  <div class="disco-album-header" onclick="this.parentElement.classList.toggle('open')"><strong>Pukar (Hindi)</strong> &middot; 1999 &middot; Dir: Rajkumar Santoshi <span class="track-count">1 track</span></div>
+  <div class="disco-tracks"><div class="disco-track"><span class="track-title">Ek Tu Hi Bharosa</span> <span class="co-singers">with Children</span></div></div>
+</div>
+<div class="disco-album">
+  <div class="disco-album-header" onclick="this.parentElement.classList.toggle('open')"><strong>Dil Se... (Original)</strong> &middot; 1998 &middot; Dir: Mani Ratnam <span class="track-count">2 tracks</span></div>
+  <div class="disco-tracks"><div class="disco-track"><span class="track-title">Jiya Jale</span> <span class="co-singers">with M. G. Sreekumar, Chorus</span></div><div class="disco-track"><span class="track-title">Jiya Jale</span> <span class="co-singers">with M. G. Sreekumar, Chorus</span></div></div>
+</div>
+
+</div>
+
+<script>
+const DATA = {"name": "Lata Mangeshkar", "stats": {"tracks": 8, "films": 6, "albums": 5, "yearRange": "1998\u20132005", "languages": ["Hindi", "Original"]}, "yearly": {"1998": 2, "1999": 1, "2000": 3, "2001": 1, "2005": 1}, "singerAvg": {"energy": 0.2728, "indianness": 0.6096, "valence": 0.1867, "acousticness": 0.7112, "rhythm_complexity": 0.5305, "tempo": 0.3317}, "catalogAvg": {"energy": 0.5147, "indianness": 0.514, "valence": 0.5121, "acousticness": 0.4863, "rhythm_complexity": 0.507, "tempo": 0.5045}, "cosingers": [{"name": "Chorus", "count": 4}, {"name": "M. G. Sreekumar", "count": 2}, {"name": "Udit Narayan", "count": 1}, {"name": "Sadhana Sargam", "count": 1}, {"name": "Children", "count": 1}, {"name": "A. R. Rahman", "count": 1}], "lyricists": [{"name": "Javed Akhtar", "count": 4}, {"name": "Gulzar and Malayalam lyrics from the song \"Jiya Jale\" was penned by Gireesh Puthenchery", "count": 2}, {"name": "06:29", "count": 1}, {"name": "Prasoon Joshi", "count": 1}], "directors": [{"name": "Shyam Benegal", "count": 3}, {"name": "Mani Ratnam", "count": 2}, {"name": "Ashutosh Gowariker", "count": 1}, {"name": "Rajkumar Santoshi", "count": 1}, {"name": "Rakeysh Omprakash Mehra", "count": 1}]};
+
+// ── Stat cards ──
+(function() {
+  const langList = DATA.stats.languages;
+  const langDisplay = langList.length <= 3 ? langList.join(', ') : langList.length;
+  const langLabel = 'Languages';
+  const cards = [
+    { value: DATA.stats.tracks, label: 'Tracks' },
+    { value: DATA.stats.films, label: 'Films' },
+    { value: DATA.stats.yearRange, label: 'Years Active' },
+    { value: langDisplay, label: langLabel },
+  ];
+  const el = document.getElementById('stat-cards');
+  el.innerHTML = cards.map(c => `
+    <div class="stat-card">
+      <div class="stat-value">${c.value}</div>
+      <div class="stat-label">${c.label}</div>
+    </div>
+  `).join('');
+})();
+
+// ── Timeline bar chart ──
+(function() {
+  const yearly = DATA.yearly;
+  const years = Object.keys(yearly).map(Number).sort((a,b) => a - b);
+  if (!years.length) return;
+
+  const minY = years[0], maxY = years[years.length - 1];
+  const allYears = [];
+  for (let y = minY; y <= maxY; y++) allYears.push(y);
+
+  const maxCount = Math.max(...allYears.map(y => yearly[y] || 0));
+  const barW = Math.min(28, Math.max(14, Math.floor(700 / allYears.length)));
+  const gap = Math.max(2, Math.floor(barW * 0.2));
+  const chartW = allYears.length * (barW + gap) + 60;
+  const chartH = 180;
+  const padTop = 20, padBottom = 40, padLeft = 36;
+  const plotH = chartH - padTop - padBottom;
+
+  let svg = `<svg width="${chartW}" height="${chartH}" viewBox="0 0 ${chartW} ${chartH}">`;
+
+  const yTicks = [0, Math.ceil(maxCount / 2), maxCount];
+  yTicks.forEach(tick => {
+    const yy = padTop + plotH - (tick / maxCount) * plotH;
+    svg += `<line x1="${padLeft}" y1="${yy}" x2="${chartW}" y2="${yy}" stroke="rgba(26,26,46,0.06)" stroke-width="1"/>`;
+    svg += `<text x="${padLeft - 6}" y="${yy + 4}" text-anchor="end" fill="#888898" font-size="10">${tick}</text>`;
+  });
+
+  allYears.forEach((y, i) => {
+    const count = yearly[y] || 0;
+    const x = padLeft + i * (barW + gap);
+    const barH = count > 0 ? Math.max(2, (count / maxCount) * plotH) : 0;
+    const yy = padTop + plotH - barH;
+
+    if (count > 0) {
+      svg += `<rect x="${x}" y="${yy}" width="${barW}" height="${barH}" rx="2" fill="#C02068" opacity="0.85">`;
+      svg += `<title>${y}: ${count} track${count !== 1 ? 's' : ''}</title></rect>`;
+      if (count >= 3) {
+        svg += `<text x="${x + barW/2}" y="${yy - 4}" text-anchor="middle" fill="#C02068" font-size="10" font-weight="600">${count}</text>`;
+      }
+    }
+
+    const showLabel = allYears.length <= 15 || i % 2 === 0;
+    if (showLabel) {
+      svg += `<text x="${x + barW/2}" y="${padTop + plotH + 16}" text-anchor="middle" fill="#888898" font-size="10" transform="rotate(-45,${x + barW/2},${padTop + plotH + 16})">${y}</text>`;
+    }
+  });
+
+  svg += '</svg>';
+  document.getElementById('timeline-chart').innerHTML = svg;
+})();
+
+// ── Radar chart ──
+(function() {
+  const dims = ['energy', 'indianness', 'valence', 'acousticness', 'rhythm_complexity', 'tempo'];
+  const labels = ['Energy', 'Microtonal\nVariation', 'Valence', 'Acousticness', 'Rhythm\nComplexity', 'Tempo'];
+  const singerAvg = DATA.singerAvg;
+  const catAvg = DATA.catalogAvg;
+
+  const cx = 220, cy = 200, R = 140;
+  const svgW = 440, svgH = 420;
+  const n = dims.length;
+
+  function polarXY(dim_idx, value) {
+    const angle = (Math.PI * 2 * dim_idx / n) - Math.PI / 2;
+    return [
+      cx + R * value * Math.cos(angle),
+      cy + R * value * Math.sin(angle)
+    ];
+  }
+
+  let svg = `<svg width="${svgW}" height="${svgH}" viewBox="0 0 ${svgW} ${svgH}">`;
+
+  [0.25, 0.5, 0.75, 1.0].forEach(r => {
+    svg += `<circle cx="${cx}" cy="${cy}" r="${R * r}" fill="none" stroke="rgba(26,26,46,0.08)" stroke-width="1"/>`;
+  });
+
+  for (let i = 0; i < n; i++) {
+    const [x, y] = polarXY(i, 1.0);
+    svg += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="rgba(26,26,46,0.1)" stroke-width="1"/>`;
+  }
+
+  let catPoints = dims.map((d, i) => polarXY(i, catAvg[d]).join(',')).join(' ');
+  svg += `<polygon points="${catPoints}" fill="rgba(136,136,152,0.08)" stroke="#888898" stroke-width="1.5" stroke-dasharray="4,3"/>`;
+
+  let singerPoints = dims.map((d, i) => polarXY(i, singerAvg[d]).join(',')).join(' ');
+  svg += `<polygon points="${singerPoints}" fill="rgba(192,32,104,0.15)" stroke="#C02068" stroke-width="2.5"/>`;
+
+  dims.forEach((d, i) => {
+    const [x, y] = polarXY(i, singerAvg[d]);
+    svg += `<circle cx="${x}" cy="${y}" r="4" fill="#C02068" stroke="#fff" stroke-width="1.5"/>`;
+  });
+
+  labels.forEach((label, i) => {
+    const [x, y] = polarXY(i, 1.22);
+    const lines = label.split('\n');
+    const anchor = x < cx - 10 ? 'end' : x > cx + 10 ? 'start' : 'middle';
+    lines.forEach((line, li) => {
+      svg += `<text x="${x}" y="${y + li * 14}" text-anchor="${anchor}" fill="#555570" font-size="12" font-weight="500">${line}</text>`;
+    });
+  });
+
+  svg += '</svg>';
+  document.getElementById('radar-chart').innerHTML = svg;
+})();
+
+// ── Collaborators ──
+(function() {
+  function buildBars(items, maxVal) {
+    return items.map(item => {
+      const pct = (item.count / maxVal) * 100;
+      return `<div class="collab-bar">
+        <span class="bar-name" title="${item.name}">${item.name}</span>
+        <span class="bar-fill" style="width:${Math.max(4, pct)}%"></span>
+        <span class="bar-count">${item.count}</span>
+      </div>`;
+    }).join('');
+  }
+
+  const cosMax = DATA.cosingers.length ? DATA.cosingers[0].count : 1;
+  const lyrMax = DATA.lyricists.length ? DATA.lyricists[0].count : 1;
+  const dirMax = DATA.directors.length ? DATA.directors[0].count : 1;
+
+  document.getElementById('collab-grid').innerHTML = `
+    <div class="collab-section">
+      <h3>Co-Singers</h3>
+      ${buildBars(DATA.cosingers, cosMax)}
+    </div>
+    <div class="collab-section">
+      <h3>Lyricists</h3>
+      ${buildBars(DATA.lyricists, lyrMax)}
+    </div>
+    <div class="collab-section">
+      <h3>Directors</h3>
+      ${buildBars(DATA.directors, dirMax)}
+    </div>
+  `;
+})();
+
+// ── Discography: expand first album by default ──
+(function() {
+  const first = document.querySelector('.disco-album');
+  if (first) first.classList.add('open');
+})();
+</script>
+
+<style>
+#feedback-btn {
+  position: fixed; bottom: 52px; right: 16px; z-index: 9999;
+  background: #7B2D8E; color: #fff; border: none; border-radius: 50%;
+  width: 44px; height: 44px; font-size: 20px; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2); transition: transform 0.2s;
+  font-family: system-ui, sans-serif; line-height: 1;
+}
+#feedback-btn:hover { transform: scale(1.1); }
+#feedback-panel {
+  display: none; position: fixed; bottom: 104px; right: 16px; z-index: 9999;
+  background: #FAFAFE; border: 1px solid rgba(26,26,46,0.15);
+  border-radius: 12px; padding: 20px; width: 300px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+#feedback-panel.open { display: block; }
+#feedback-panel h3 {
+  margin: 0 0 12px; font-size: 15px; color: #1A1A2E; font-weight: 700;
+}
+#feedback-panel textarea {
+  width: 100%; height: 80px; border: 1px solid rgba(26,26,46,0.15);
+  border-radius: 8px; padding: 10px; font-size: 13px; resize: vertical;
+  font-family: inherit; background: #fff; color: #1A1A2E;
+}
+#feedback-panel textarea:focus { outline: 2px solid #7B2D8E; border-color: transparent; }
+#feedback-panel input[type=email] {
+  width: 100%; border: 1px solid rgba(26,26,46,0.15);
+  border-radius: 8px; padding: 8px 10px; font-size: 13px; margin-top: 8px;
+  font-family: inherit; background: #fff; color: #1A1A2E;
+}
+#feedback-panel input[type=email]:focus { outline: 2px solid #7B2D8E; border-color: transparent; }
+#feedback-panel .fb-hint { font-size: 11px; color: #888898; margin-top: 4px; }
+#feedback-panel button[type=submit] {
+  margin-top: 12px; background: #7B2D8E; color: #fff; border: none;
+  border-radius: 8px; padding: 10px 20px; font-size: 13px; font-weight: 600;
+  cursor: pointer; width: 100%; transition: background 0.2s;
+}
+#feedback-panel button[type=submit]:hover { background: #C02068; }
+#feedback-panel .fb-thanks {
+  text-align: center; padding: 20px 0; font-size: 14px; color: #1A1A2E;
+}
+@media (max-width: 480px) {
+  #feedback-panel { width: calc(100vw - 32px); right: 16px; bottom: 96px; }
+  #feedback-btn { bottom: 52px; right: 12px; }
+}
+</style>
+
+<button id="feedback-btn" onclick="toggleFeedback()" aria-label="Send feedback" title="Send feedback">&#9993;</button>
+<div id="feedback-panel">
+  <form id="feedback-form" action="https://formspree.io/f/xojkalry" method="POST">
+    <h3>Send us feedback</h3>
+    <textarea name="message" placeholder="What did you like? What could be better?" required></textarea>
+    <input type="email" name="_replyto" placeholder="Email (optional)">
+    <div class="fb-hint">We read every message.</div>
+    <input type="hidden" name="_subject" value="Rahman Viz Feedback">
+    <input type="hidden" name="page" id="fb-page">
+    <button type="submit">Send Feedback</button>
+  </form>
+</div>
+<script>
+function toggleFeedback() {
+  var p = document.getElementById('feedback-panel');
+  p.classList.toggle('open');
+  document.getElementById('fb-page').value = location.pathname;
+}
+document.getElementById('feedback-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  var form = this;
+  fetch(form.action, {
+    method: 'POST',
+    body: new FormData(form),
+    headers: { 'Accept': 'application/json' }
+  }).then(function(r) {
+    if (r.ok) {
+      form.innerHTML = '<div class="fb-thanks">Thanks for your feedback!</div>';
+      setTimeout(function() {
+        document.getElementById('feedback-panel').classList.remove('open');
+      }, 2000);
+    }
+  });
+});
+document.addEventListener('click', function(e) {
+  var panel = document.getElementById('feedback-panel');
+  var btn = document.getElementById('feedback-btn');
+  if (panel.classList.contains('open') && !panel.contains(e.target) && e.target !== btn) {
+    panel.classList.remove('open');
+  }
+});
+</script>
+
+<script data-goatcounter="https://brothersinmusic.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
