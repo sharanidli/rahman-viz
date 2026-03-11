@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Browse all AR Rahman singer-collaborators — searchable directory with profile links, track counts, and language filters.">
+<meta property="og:title" content="AR Rahman — Singer Directory">
+<meta property="og:description" content="Browse all AR Rahman singer-collaborators — searchable directory with profile links, track counts, and language filters.">
+<meta property="og:image" content="https://brothersinmusicpod.com/og-preview.png">
+<meta property="og:url" content="https://brothersinmusicpod.com/">
+<meta name="twitter:card" content="summary_large_image">
+<title>AR Rahman — Singer Directory</title>
+<style>
+  /* --- Site navigation --- */
+  .site-nav {
+    position: fixed; top: 0; left: 0; right: 0; height: 44px;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    z-index: 10000; display: flex; align-items: center;
+    padding: 0 20px;
+    border-bottom: 1px solid rgba(26,26,46,0.1);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+  .site-nav .nav-brand {
+    text-decoration: none; color: #1A1A2E; font-weight: 700; font-size: 14px;
+    white-space: nowrap;
+  }
+  .site-nav .nav-brand:hover { color: #7B2D8E; }
+  .site-nav .nav-links { margin-left: auto; display: flex; gap: 20px; }
+  .site-nav .nav-links a {
+    text-decoration: none; color: #555570; font-size: 13px; font-weight: 500;
+  }
+  .site-nav .nav-links a:hover { color: #C02068; }
+  .site-nav .nav-toggle-input { display: none; }
+  .site-nav .nav-toggle-label {
+    display: none; cursor: pointer; font-size: 22px;
+    color: #1A1A2E; margin-left: auto; line-height: 1;
+    -webkit-tap-highlight-color: transparent;
+  }
+  @media (max-width: 600px) {
+    .site-nav .nav-brand { font-size: 13px; }
+    .site-nav .nav-toggle-label { display: block; }
+    .site-nav .nav-links {
+      display: none; position: absolute; top: 44px; left: 0; right: 0;
+      background: rgba(255,255,255,0.98);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      flex-direction: column; padding: 12px 20px; gap: 12px;
+      border-bottom: 1px solid rgba(26,26,46,0.1);
+    }
+    .site-nav .nav-toggle-input:checked ~ .nav-links { display: flex; }
+  }
+
+  /* --- Mobile notice banner --- */
+  .mobile-notice { display: none; }
+  @media (max-width: 768px) {
+    .mobile-notice {
+      display: block; background: rgba(232,93,32,0.08);
+      color: #555570; text-align: center;
+      padding: 6px 16px; font-size: 11px; line-height: 1.4;
+    }
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    padding-top: 48px;
+    background: #FFFFFF;
+    color: #1A1A2E;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+  }
+
+  .index-container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 32px 24px 60px;
+  }
+
+  /* ── Header ── */
+  .index-header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  .index-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1A1A2E;
+    margin-bottom: 6px;
+  }
+  .index-header p {
+    font-size: 14px;
+    color: #555570;
+  }
+
+  /* ── Controls ── */
+  .controls {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .search-box {
+    flex: 1;
+    min-width: 200px;
+    padding: 10px 14px;
+    border: 1px solid rgba(26,26,46,0.15);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    background: #FAFAFE;
+    color: #1A1A2E;
+    transition: border-color 0.2s;
+  }
+  .search-box:focus { border-color: #C02068; }
+  .search-box::placeholder { color: #888898; }
+
+  .sort-select, .lang-select {
+    padding: 10px 12px;
+    border: 1px solid rgba(26,26,46,0.15);
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: inherit;
+    background: #FAFAFE;
+    color: #1A1A2E;
+    cursor: pointer;
+    outline: none;
+  }
+  .sort-select:focus, .lang-select:focus { border-color: #C02068; }
+
+  .result-count {
+    font-size: 13px;
+    color: #888898;
+    margin-bottom: 12px;
+  }
+
+  /* ── Singer grid ── */
+  .singer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+  }
+
+  .singer-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    background: #FAFAFE;
+    border: 1px solid rgba(26,26,46,0.08);
+    border-radius: 10px;
+    padding: 16px 18px;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+  }
+  .singer-card:hover {
+    background: rgba(26,26,46,0.03);
+    border-left-color: #C02068;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(26,26,46,0.06);
+  }
+  .singer-card .sc-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1A1A2E;
+    margin-bottom: 4px;
+  }
+  .singer-card .sc-stats {
+    font-size: 12px;
+    color: #555570;
+    margin-bottom: 4px;
+  }
+  .singer-card .sc-years {
+    font-size: 12px;
+    color: #888898;
+  }
+  .singer-card .sc-langs {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+  }
+  .lang-badge {
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(192,32,104,0.08);
+    color: #C02068;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  .no-results {
+    text-align: center;
+    padding: 40px 20px;
+    color: #888898;
+    font-size: 15px;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 600px) {
+    .index-container { padding: 16px 12px 40px; }
+    .index-header h1 { font-size: 22px; }
+    .singer-grid { grid-template-columns: 1fr; }
+    .controls { flex-direction: column; }
+    .search-box { min-width: 100%; }
+  }
+</style>
+<style>
+  /* --- Responsive: Tablet (1024px) --- */
+  @media (max-width: 1024px) {
+    #year-display { font-size: 48px; }
+    #legend { width: 140px; font-size: 10px; }
+    #instructions { display: none; }
+  }
+
+  /* --- Responsive: Large phone / small tablet (768px) --- */
+  @media (max-width: 768px) {
+    #controls {
+      flex-direction: column; gap: 6px; padding: 6px 12px;
+      align-items: stretch;
+    }
+    #controls > * { text-align: center; }
+    #legend {
+      position: static; width: 100%; max-height: 120px;
+      overflow-y: auto; margin: 4px 0;
+    }
+    #axis-controls {
+      position: relative; top: auto; left: auto;
+      transform: none; flex-wrap: wrap;
+      justify-content: center; gap: 6px;
+      padding: 4px 8px; font-size: 12px;
+    }
+    #header { padding: 12px 16px 4px; }
+    #header h1 { font-size: 20px; }
+    #header p { font-size: 12px; line-height: 1.4; }
+    #main {
+      flex-direction: column; padding: 8px 12px; gap: 12px;
+    }
+    #sidebar {
+      width: 100%; display: flex; flex-wrap: wrap; gap: 4px;
+    }
+  }
+
+  /* --- Responsive: Phone (480px) --- */
+  @media (max-width: 480px) {
+    #year-display {
+      font-size: 32px; bottom: 52px; right: 8px; opacity: 0.6;
+    }
+    #header h1 { font-size: 18px; }
+    #header p { font-size: 11px; }
+    #speed-control { display: none; }
+  }
+
+  /* --- Touch device helpers --- */
+  .touch-device circle,
+  .touch-device .bar-row,
+  .touch-device .dir-item,
+  .touch-device .cell {
+    cursor: pointer;
+  }
+</style>
+
+</head>
+<body>
+<nav class="site-nav">
+  <a href="../index.html" class="nav-brand">Inside the Sound of Rahman</a>
+  <input type="checkbox" id="nav-toggle" class="nav-toggle-input">
+  <label for="nav-toggle" class="nav-toggle-label">&#9776;</label>
+  <div class="nav-links">
+    <a href="../index.html">Explore</a>
+    <a href="../song_database.html">Songs</a>
+    <a href="../singers/index.html">Singers</a>
+    <a href="../about.html">About</a>
+  </div>
+</nav>
+<div class="mobile-notice">Tap elements for details. Rotate for wider view.</div>
+<script>
+(function() {
+  // Detect touch device
+  if (!('ontouchstart' in window)) return;
+  document.body.classList.add('touch-device');
+
+  // Dismiss tooltips on tap-away
+  document.addEventListener('click', function(e) {
+    // Don't dismiss if tapping the tooltip itself
+    if (e.target.closest('#tooltip') || e.target.closest('#edge-tooltip')) return;
+    // Don't dismiss if tapping an interactive element (page handler will show new tooltip)
+    if (e.target.closest('circle') || e.target.closest('.bar-row') ||
+        e.target.closest('.dir-item') || e.target.closest('.cell') ||
+        e.target.closest('line[style]') || e.target.closest('.dot') ||
+        e.target.closest('.segment') || e.target.closest('rect[data-info]')) return;
+    // Dismiss all tooltips
+    var tt = document.getElementById('tooltip');
+    var ett = document.getElementById('edge-tooltip');
+    if (tt) tt.style.display = 'none';
+    if (ett) ett.style.display = 'none';
+  });
+
+  // Recalculate SVG dimensions on orientation change
+  window.addEventListener('orientationchange', function() {
+    setTimeout(function() { window.dispatchEvent(new Event('resize')); }, 200);
+  });
+})();
+</script>
+
+<style>.singer-link { color: #C02068; text-decoration: none; } .singer-link:hover { text-decoration: underline; }</style>
+<script>
+window.__SINGER_MANIFEST = {"S. P. Balasubrahmanyam":"s-p-balasubrahmanyam","A. R. Rahman":"a-r-rahman","K. S. Chithra":"k-s-chithra","Hariharan":"hariharan","Srinivas":"srinivas","Sujatha Mohan":"sujatha-mohan","Karthik":"karthik","Shreya Ghoshal":"shreya-ghoshal","Sukhwinder Singh":"sukhwinder-singh","Udit Narayan":"udit-narayan","Mano":"mano","Swarnalatha":"swarnalatha","Sadhana Sargam":"sadhana-sargam","Blaaze":"blaaze","Haricharan":"haricharan","Shankar Mahadevan":"shankar-mahadevan","Shashaa Tirupati":"shashaa-tirupati","Chinmayi Sripada":"chinmayi-sripada","Alka Yagnik":"alka-yagnik","Sonu Nigam":"sonu-nigam","Naresh Iyer":"naresh-iyer","Kavita Krishnamurthy":"kavita-krishnamurthy","Benny Dayal":"benny-dayal","Madhushree":"madhushree","Vijay Prakash":"vijay-prakash","P. Unnikrishnan":"p-unnikrishnan","Unni Menon":"unni-menon","Harini":"harini","Jonita Gandhi":"jonita-gandhi","Anuradha Sriram":"anuradha-sriram","Tanvi Shah":"tanvi-shah","Javed Ali":"javed-ali","Sid Sriram":"sid-sriram","S. Janaki":"s-janaki","Arijit Singh":"arijit-singh","Nikhita Gandhi":"nikhita-gandhi","Nakul Abhyankar":"nakul-abhyankar","Mohit Chauhan":"mohit-chauhan","Suzanne D'Mello":"suzanne-dmello","Clinton Cerejo":"clinton-cerejo","Asha Bhosle":"asha-bhosle","Suresh Peters":"suresh-peters","Annupamaa":"annupamaa","Minmini":"minmini","Shahul Hameed":"shahul-hameed","Sarthak Kalyani":"sarthak-kalyani","Vasundhara Das":"vasundhara-das","G. V. Prakash Kumar":"g-v-prakash-kumar","Anupama":"anupama","Chorus":"chorus","Arjun Chandy":"arjun-chandy","A. R. Ameen":"a-r-ameen","Kailash Kher":"kailash-kher","Shakthisree Gopalan":"shakthisree-gopalan","Vijay Yesudas":"vijay-yesudas","Sunitha Sarathy":"sunitha-sarathy","K. J. Yesudas":"k-j-yesudas","Rakshita Suresh":"rakshita-suresh","M. G. Sreekumar":"m-g-sreekumar","Malgudi Subha":"malgudi-subha","Khatija Rahman":"khatija-rahman","Sreekanth Hariharan":"sreekanth-hariharan","Mohammed Aslam":"mohammed-aslam","Noel James":"noel-james","Kunal Ganjawala":"kunal-ganjawala","Shweta Mohan":"shweta-mohan","Bruce Springsteen":"bruce-springsteen","A. R. Reihana":"a-r-reihana","{{hlist":"hlist","Bela Shende":"bela-shende","Richa Sharma":"richa-sharma","Chinmayi Sripaada":"chinmayi-sripaada","Neeti Mohan":"neeti-mohan","Hriday Gattani":"hriday-gattani","Rashid Ali":"rashid-ali","Palakkad Sreeram":"palakkad-sreeram","Febi Mani":"febi-mani","Nakash Aziz":"nakash-aziz","Shashwat Singh":"shashwat-singh","P. Jayachandran":"p-jayachandran","Darshana KT":"darshana-kt","Gopika Poornima":"gopika-poornima","Nivas":"nivas","Abhay Jodhpurkar":"abhay-jodhpurkar","Poorvi Koutish":"poorvi-koutish","KK":"kk","Lata Mangeshkar":"lata-mangeshkar","Zubeen Garg":"zubeen-garg","George Peter":"george-peter","Jithin Raj":"jithin-raj","Dr. Narayanan":"dr-narayanan","Adithya RK":"adithya-rk","Sathya Prakash":"sathya-prakash","Mahalakshmi Iyer":"mahalakshmi-iyer","Vaishali Samant":"vaishali-samant","Remo Fernandes":"remo-fernandes","Sapna Awasthi":"sapna-awasthi","Dominique Cerejo":"dominique-cerejo","Kalyani Menon":"kalyani-menon","Faiz Mustafa":"faiz-mustafa","Theni Kunjarammal":"theni-kunjarammal","Bamba Bakya":"bamba-bakya","Sanah Moidutty":"sanah-moidutty","Sharanya Srinivas":"sharanya-srinivas","Sireesha Bhagavatula":"sireesha-bhagavatula","Lucky Ali":"lucky-ali","Adnan Sami":"adnan-sami","Sunidhi Chauhan":"sunidhi-chauhan","Sriram Parthasarathy":"sriram-parthasarathy","Reena Bhardwaj":"reena-bhardwaj","Raqeeb Alam":"raqeeb-alam","Sanaa Moussa":"sanaa-moussa","Surjo Bhattacharya":"surjo-bhattacharya","Chinmayee":"chinmayee","A.R. Rahman":"ar-rahman","Nithyasree Mahadevan":"nithyasree-mahadevan","Aaryan Dinesh Kanagaratnam":"aaryan-dinesh-kanagaratnam","Unni Krishnan":"unni-krishnan","Ila Arun":"ila-arun","Sathyaprakash":"sathyaprakash","Aravind Srinivas":"aravind-srinivas","Aditya Rao":"aditya-rao","Dinesh Kanagaratnam":"dinesh-kanagaratnam","S. P. B. Charan":"s-p-b-charan","Unnikrishnan":"unnikrishnan","Hiral Viradia":"hiral-viradia","Dilshaad Shabbir Shaikh":"dilshaad-shabbir-shaikh","MC Heam":"mc-heam","Shiraz Uppal":"shiraz-uppal","Chitra Sivaraman":"chitra-sivaraman","Mathangi":"mathangi","Lady Kash and Krissy":"lady-kash-and-krissy","Aslam Mustafa":"aslam-mustafa","Malaysia Vasudevan":"malaysia-vasudevan","Deepthi Suresh":"deepthi-suresh","Shilpa Rao":"shilpa-rao","Hema Sardesai":"hema-sardesai","Nabyla Maan":"nabyla-maan","Shenbagaraj":"shenbagaraj","T S Ayyappan":"t-s-ayyappan","Raja Hasan":"raja-hasan","Murtuza Mustafa":"murtuza-mustafa","Armaan Malik":"armaan-malik","Shiv":"shiv","Pop Shalini":"pop-shalini","Aparna Narayanan":"aparna-narayanan","Saindhavi":"saindhavi","Sarath Santhosh":"sarath-santhosh","Shi Millhouse":"shi-millhouse","Raven Millhouse":"raven-millhouse","Jaspreet Jasz":"jaspreet-jasz","Thoughts for Now":"thoughts-for-now","Mahathi":"mahathi","Sowmya Raoh":"sowmya-raoh","T. K. Kala":"t-k-kala","Alphons Joseph":"alphons-joseph","Aparna":"aparna","Chinmayi":"chinmayi","Amina Rafiq":"amina-rafiq","Natalie Di Luccio":"natalie-di-luccio","Sirkazhi G. Sivachidambaram":"sirkazhi-g-sivachidambaram","Sayanora Philip":"sayanora-philip","Sangeetha":"sangeetha","Devan Ekambaram":"devan-ekambaram","Abhijeet Bhattacharya":"abhijeet-bhattacharya","K. S. Chitra":"k-s-chitra","Murtuza Khan":"murtuza-khan","Mahesh Vinayakram":"mahesh-vinayakram","Arivu":"arivu","Shuba":"shuba","Sivasri Skandaprasad":"sivasri-skandaprasad","Antara Nandy":"antara-nandy","Keerthi Sagathia":"keerthi-sagathia","Papon":"papon","Ganga Sitharasu":"ganga-sitharasu","Nitesh Aher":"nitesh-aher","Alexandra Joy":"alexandra-joy","Rekha Sawhney":"rekha-sawhney","Anil Ban":"anil-ban","Swagat Rathod":"swagat-rathod","Shahin Badar (Ethnic Vocals)":"shahin-badar-ethnic-vocals","Bharathiraja":"bharathiraja","Daler Mehndi":"daler-mehndi","Dhanush":"dhanush","Srimathumitha":"srimathumitha","Sonu Kakkar":"sonu-kakkar","chorus (Sujatha Mohan":"chorus-sujatha-mohan","Reshmi":"reshmi","Ganga)":"ganga","chorus":"chorus","Shubha":"shubha","Swetha Mohan":"swetha-mohan","Mira Sengupta":"mira-sengupta","Keerthana Vaidyanathan":"keerthana-vaidyanathan","Rekha Bhardwaj":"rekha-bhardwaj","Ash King":"ash-king","Aditya Narayan":"aditya-narayan","P. Susheela":"p-susheela","Megha":"megha","Timmy":"timmy","Rafee":"rafee","Poetic Ammo":"poetic-ammo","Pradeep Kumar":"pradeep-kumar","Pavithra Chari":"pavithra-chari","Udhai Mazumdar":"udhai-mazumdar","Pooja Tiwari":"pooja-tiwari","Mika Singh":"mika-singh","Shweta Pandit":"shweta-pandit","Nirmala Seshadri":"nirmala-seshadri","T. L. Maharajan":"t-l-maharajan","Raqueeb Alam":"raqueeb-alam","Kavita Paudwal":"kavita-paudwal","Bonnie Chakraborty":"bonnie-chakraborty","Naveen Kumar":"naveen-kumar","Rahul Nambiar":"rahul-nambiar","S.P.B. Pallavi":"spb-pallavi","Tippu":"tippu","Vani Jayaram":"vani-jayaram","Qadir Khan":"qadir-khan","S. Shailaja":"s-shailaja","The London Session Orchestra":"the-london-session-orchestra","Shaan":"shaan","Apache Indian":"apache-indian","Kalpana Raghavendar":"kalpana-raghavendar","Vishal Mishra (composer)":"vishal-mishra-composer","Chandran":"chandran","Pravin Mani":"pravin-mani","Arpita Gandhi":"arpita-gandhi","Le Trio Joubran":"le-trio-joubran","Hans Raj Hans":"hans-raj-hans","Aalap Raju":"aalap-raju","George Doering":"george-doering","A. R. Raihanah":"a-r-raihanah","Haripriya":"haripriya","Mustafa Kutoane":"mustafa-kutoane","Jali Fily Cissokho":"jali-fily-cissokho","Suresh Wadkar":"suresh-wadkar","Shweta Shetty":"shweta-shetty","Ravi Khote":"ravi-khote"};
+window.__singerBasePath = '../';
+function escHtml(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+function singerLink(raw) {
+  if (!raw) return '';
+  var M = window.__SINGER_MANIFEST, bp = window.__singerBasePath || '';
+  var parts = raw.replace(/ & /g, ', ').split(',');
+  var out = [];
+  for (var i = 0; i < parts.length; i++) {
+    var name = parts[i].trim();
+    if (!name) continue;
+    var slug = M[name];
+    if (slug) out.push('<a href="' + bp + 'singers/' + slug + '.html" class="singer-link">' + escHtml(name) + '</a>');
+    else out.push(escHtml(name));
+  }
+  return out.join(', ');
+}
+</script>
+
+
+<div class="index-container">
+  <div class="index-header">
+    <h1>Singer Directory</h1>
+    <p>Every singer who has recorded 3 or more tracks with AR Rahman</p>
+  </div>
+
+  <div class="controls">
+    <input type="text" class="search-box" id="search" placeholder="Search singers..." autocomplete="off">
+    <select class="sort-select" id="sort">
+      <option value="tracks">Most Tracks</option>
+      <option value="alpha">Alphabetical</option>
+      <option value="films">Most Films</option>
+      <option value="recent">Most Recent</option>
+    </select>
+    <select class="lang-select" id="lang-filter">
+      <option value="All">All Languages</option>
+    </select>
+  </div>
+
+  <div class="result-count" id="result-count"></div>
+  <div class="singer-grid" id="grid"></div>
+</div>
+
+<script>
+const SINGERS = [{"name": "S. P. Balasubrahmanyam", "slug": "s-p-balasubrahmanyam", "tracks": 131, "films": 48, "years": "1992–2014", "languages": ["Hindi", "Original", "Tamil", "Telugu"]}, {"name": "A. R. Rahman", "slug": "a-r-rahman", "tracks": 130, "films": 62, "years": "1992–2025", "languages": ["English", "Hindi", "Hindi, Malayalam, English", "Kannada", "Malayalam", "Original", "Tamil", "Telugu"]}, {"name": "K. S. Chithra", "slug": "k-s-chithra", "tracks": 94, "films": 40, "years": "1992–2023", "languages": ["English", "Hindi", "Malayalam", "Tamil", "Telugu"]}, {"name": "Hariharan", "slug": "hariharan", "tracks": 84, "films": 41, "years": "1992–2023", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Srinivas", "slug": "srinivas", "tracks": 77, "films": 38, "years": "1993–2023", "languages": ["Hindi", "Malayalam", "Original", "Tamil", "Telugu"]}, {"name": "Sujatha Mohan", "slug": "sujatha-mohan", "tracks": 72, "films": 36, "years": "1992–2004", "languages": ["Hindi", "Malayalam", "Marathi", "Tamil", "Telugu"]}, {"name": "Karthik", "slug": "karthik", "tracks": 61, "films": 33, "years": "2001–2018", "languages": ["Hindi", "Original", "Tamil", "Telugu"]}, {"name": "Shreya Ghoshal", "slug": "shreya-ghoshal", "tracks": 60, "films": 34, "years": "2003–2026", "languages": ["Hindi", "Hindi, Malayalam, English", "Kannada", "Malayalam", "Original", "Tamil", "Tamil, Telugu", "Telugu"]}, {"name": "Sukhwinder Singh", "slug": "sukhwinder-singh", "tracks": 58, "films": 29, "years": "1997–2025", "languages": ["English", "Hindi", "Original", "Tamil", "Telugu"]}, {"name": "Udit Narayan", "slug": "udit-narayan", "tracks": 56, "films": 31, "years": "1993–2009", "languages": ["Hindi", "Original", "Tamil", "Telugu"]}, {"name": "Mano", "slug": "mano", "tracks": 56, "films": 26, "years": "1992–2022", "languages": ["Hindi", "Original", "Tamil", "Telugu"]}, {"name": "Swarnalatha", "slug": "swarnalatha", "tracks": 49, "films": 27, "years": "1993–2006", "languages": ["Hindi", "Tamil", "Tamil, Telugu", "Telugu"]}, {"name": "Sadhana Sargam", "slug": "sadhana-sargam", "tracks": 42, "films": 23, "years": "1996–2014", "languages": ["English", "Hindi", "Original", "Tamil", "Telugu"]}, {"name": "Blaaze", "slug": "blaaze", "tracks": 41, "films": 24, "years": "2002–2018", "languages": ["English", "Hindi", "Tamil", "Telugu"]}, {"name": "Haricharan", "slug": "haricharan", "tracks": 41, "films": 18, "years": "2010–2025", "languages": ["Hindi", "Malayalam", "Original", "Tamil", "Telugu"]}, {"name": "Shankar Mahadevan", "slug": "shankar-mahadevan", "tracks": 38, "films": 26, "years": "1994–2025", "languages": ["Hindi", "Tamil", "Tamil, Telugu", "Telugu"]}, {"name": "Shashaa Tirupati", "slug": "shashaa-tirupati", "tracks": 35, "films": 18, "years": "2014–2024", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Chinmayi Sripada", "slug": "chinmayi-sripada", "tracks": 34, "films": 18, "years": "2002–2025", "languages": ["Hindi", "Original", "Tamil", "Telugu"]}, {"name": "Alka Yagnik", "slug": "alka-yagnik", "tracks": 33, "films": 18, "years": "1992–2024", "languages": ["English", "Hindi"]}, {"name": "Sonu Nigam", "slug": "sonu-nigam", "tracks": 33, "films": 19, "years": "1996–2009", "languages": ["English", "Hindi", "Original", "Tamil", "Telugu"]}, {"name": "Naresh Iyer", "slug": "naresh-iyer", "tracks": 33, "films": 20, "years": "2005–2024", "languages": ["Hindi", "Hindi, Malayalam, English", "Tamil", "Tamil, Telugu", "Telugu"]}, {"name": "Kavita Krishnamurthy", "slug": "kavita-krishnamurthy", "tracks": 30, "films": 18, "years": "1992–2011", "languages": ["Hindi", "Original", "Tamil", "Telugu"]}, {"name": "Benny Dayal", "slug": "benny-dayal", "tracks": 29, "films": 15, "years": "2007–2023", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Madhushree", "slug": "madhushree", "tracks": 28, "films": 19, "years": "2002–2022", "languages": ["Hindi", "Hindi, Malayalam, English", "Original", "Tamil", "Telugu"]}, {"name": "Vijay Prakash", "slug": "vijay-prakash", "tracks": 28, "films": 19, "years": "2004–2025", "languages": ["English", "Hindi", "Kannada", "Tamil", "Telugu"]}, {"name": "P. Unnikrishnan", "slug": "p-unnikrishnan", "tracks": 27, "films": 20, "years": "1994–2014", "languages": ["English", "Tamil", "Telugu"]}, {"name": "Unni Menon", "slug": "unni-menon", "tracks": 26, "films": 15, "years": "1992–2004", "languages": ["Malayalam", "Tamil", "Telugu"]}, {"name": "Harini", "slug": "harini", "tracks": 25, "films": 14, "years": "1995–2023", "languages": ["Hindi", "Original", "Tamil", "Telugu"]}, {"name": "Jonita Gandhi", "slug": "jonita-gandhi", "tracks": 23, "films": 17, "years": "2014–2025", "languages": ["English", "Hindi", "Tamil", "Telugu"]}, {"name": "Anuradha Sriram", "slug": "anuradha-sriram", "tracks": 23, "films": 14, "years": "1994–2020", "languages": ["Hindi", "Original", "Tamil", "Telugu"]}, {"name": "Tanvi Shah", "slug": "tanvi-shah", "tracks": 21, "films": 14, "years": "2004–2017", "languages": ["English", "Hindi", "Original", "Tamil", "Tamil, Telugu", "Telugu"]}, {"name": "Javed Ali", "slug": "javed-ali", "tracks": 21, "films": 16, "years": "2007–2024", "languages": ["Hindi", "Hindi, Malayalam, English", "Original", "Tamil", "Telugu"]}, {"name": "Sid Sriram", "slug": "sid-sriram", "tracks": 20, "films": 12, "years": "2012–2023", "languages": ["Hindi", "Original", "Tamil", "Telugu"]}, {"name": "S. Janaki", "slug": "s-janaki", "tracks": 19, "films": 13, "years": "1993–2004", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Arijit Singh", "slug": "arijit-singh", "tracks": 18, "films": 15, "years": "2014–2026", "languages": ["Hindi", "Tamil"]}, {"name": "Nikhita Gandhi", "slug": "nikhita-gandhi", "tracks": 18, "films": 8, "years": "2014–2025", "languages": ["English", "Hindi", "Persian", "Tamil", "Telugu"]}, {"name": "Nakul Abhyankar", "slug": "nakul-abhyankar", "tracks": 18, "films": 10, "years": "2018–2025", "languages": ["Hindi", "Kannada", "Tamil", "Telugu"]}, {"name": "Mohit Chauhan", "slug": "mohit-chauhan", "tracks": 18, "films": 9, "years": "2005–2024", "languages": ["Hindi", "Tamil"]}, {"name": "Suzanne D'Mello", "slug": "suzanne-dmello", "tracks": 17, "films": 13, "years": "2008–2017", "languages": ["English", "Hindi", "Hindi, Malayalam, English", "Tamil", "Telugu"]}, {"name": "Clinton Cerejo", "slug": "clinton-cerejo", "tracks": 17, "films": 10, "years": "1999–2011", "languages": ["Hindi", "Hindi, Malayalam, English", "Tamil", "Telugu"]}, {"name": "Asha Bhosle", "slug": "asha-bhosle", "tracks": 17, "films": 10, "years": "1995–2004", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Suresh Peters", "slug": "suresh-peters", "tracks": 17, "films": 6, "years": "1993–2006", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Annupamaa", "slug": "annupamaa", "tracks": 17, "films": 10, "years": "1993–2003", "languages": ["Hindi", "Original", "Tamil", "Telugu"]}, {"name": "Minmini", "slug": "minmini", "tracks": 17, "films": 9, "years": "1992–2002", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Shahul Hameed", "slug": "shahul-hameed", "tracks": 17, "films": 10, "years": "1993–1998", "languages": ["Tamil", "Telugu"]}, {"name": "Sarthak Kalyani", "slug": "sarthak-kalyani", "tracks": 16, "films": 7, "years": "2020–2026", "languages": ["Hindi", "Kannada", "Malayalam", "Tamil", "Telugu"]}, {"name": "Vasundhara Das", "slug": "vasundhara-das", "tracks": 16, "films": 10, "years": "1999–2008", "languages": ["Hindi", "Tamil", "Tamil, Telugu", "Telugu"]}, {"name": "G. V. Prakash Kumar", "slug": "g-v-prakash-kumar", "tracks": 16, "films": 8, "years": "1993–2019", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Anupama", "slug": "anupama", "tracks": 16, "films": 11, "years": "1994–2008", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Chorus", "slug": "chorus", "tracks": 16, "films": 8, "years": "1994–2010", "languages": ["Hindi", "Original", "Tamil", "Telugu"]}, {"name": "Arjun Chandy", "slug": "arjun-chandy", "tracks": 15, "films": 10, "years": "2009–2019", "languages": ["Hindi", "Original", "Tamil", "Telugu"]}, {"name": "A. R. Ameen", "slug": "a-r-ameen", "tracks": 15, "films": 10, "years": "2015–2025", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Kailash Kher", "slug": "kailash-kher", "tracks": 15, "films": 9, "years": "2004–2024", "languages": ["Hindi", "Tamil"]}, {"name": "Shakthisree Gopalan", "slug": "shakthisree-gopalan", "tracks": 15, "films": 9, "years": "2012–2025", "languages": ["Malayalam", "Original", "Tamil", "Telugu"]}, {"name": "Vijay Yesudas", "slug": "vijay-yesudas", "tracks": 15, "films": 9, "years": "2007–2025", "languages": ["Kannada", "Malayalam", "Original", "Tamil", "Telugu"]}, {"name": "Sunitha Sarathy", "slug": "sunitha-sarathy", "tracks": 15, "films": 9, "years": "2003–2022", "languages": ["Hindi", "Original", "Tamil", "Telugu"]}, {"name": "K. J. Yesudas", "slug": "k-j-yesudas", "tracks": 15, "films": 8, "years": "1992–2004", "languages": ["Hindi", "Malayalam", "Tamil", "Telugu"]}, {"name": "Rakshita Suresh", "slug": "rakshita-suresh", "tracks": 14, "films": 8, "years": "2021–2025", "languages": ["Hindi", "Kannada", "Malayalam", "Tamil", "Telugu"]}, {"name": "M. G. Sreekumar", "slug": "m-g-sreekumar", "tracks": 14, "films": 7, "years": "1992–1999", "languages": ["Hindi", "Malayalam", "Original", "Tamil", "Telugu"]}, {"name": "Malgudi Subha", "slug": "malgudi-subha", "tracks": 14, "films": 7, "years": "1992–1998", "languages": ["Hindi", "Malayalam", "Tamil", "Telugu"]}, {"name": "Khatija Rahman", "slug": "khatija-rahman", "tracks": 14, "films": 7, "years": "2010–2026", "languages": ["Hindi", "Marathi", "Tamil", "Telugu"]}, {"name": "Sreekanth Hariharan", "slug": "sreekanth-hariharan", "tracks": 13, "films": 6, "years": "2020–2026", "languages": ["Hindi", "Kannada", "Malayalam", "Tamil", "Telugu"]}, {"name": "Mohammed Aslam", "slug": "mohammed-aslam", "tracks": 13, "films": 8, "years": "2004–2026", "languages": ["Hindi", "Tamil", "Tamil, Telugu", "Telugu"]}, {"name": "Noel James", "slug": "noel-james", "tracks": 13, "films": 5, "years": "1993–1996", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Kunal Ganjawala", "slug": "kunal-ganjawala", "tracks": 13, "films": 7, "years": "2002–2010", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Shweta Mohan", "slug": "shweta-mohan", "tracks": 12, "films": 11, "years": "1994–2024", "languages": ["Hindi", "Malayalam", "Tamil", "Telugu"]}, {"name": "Bruce Springsteen", "slug": "bruce-springsteen", "tracks": 12, "films": 1, "years": "2019–2019", "languages": ["English"]}, {"name": "A. R. Reihana", "slug": "a-r-reihana", "tracks": 12, "films": 7, "years": "2002–2017", "languages": ["Hindi", "Original", "Tamil", "Telugu"]}, {"name": "{{hlist", "slug": "hlist", "tracks": 12, "films": 1, "years": "2007–2007", "languages": ["English"]}, {"name": "Bela Shende", "slug": "bela-shende", "tracks": 11, "films": 6, "years": "2008–2026", "languages": ["Hindi", "Malayalam", "Marathi", "Tamil", "Telugu"]}, {"name": "Richa Sharma", "slug": "richa-sharma", "tracks": 11, "films": 9, "years": "1999–2024", "languages": ["English", "Hindi", "Tamil"]}, {"name": "Chinmayi Sripaada", "slug": "chinmayi-sripaada", "tracks": 11, "films": 5, "years": "2004–2024", "languages": ["Hindi", "Kannada", "Malayalam", "Tamil", "Telugu"]}, {"name": "Neeti Mohan", "slug": "neeti-mohan", "tracks": 11, "films": 4, "years": "2014–2022", "languages": ["Hindi", "Original", "Tamil", "Telugu"]}, {"name": "Hriday Gattani", "slug": "hriday-gattani", "tracks": 10, "films": 5, "years": "2014–2024", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Rashid Ali", "slug": "rashid-ali", "tracks": 10, "films": 8, "years": "2001–2021", "languages": ["Hindi", "Hindi, Malayalam, English", "Original", "Tamil", "Telugu"]}, {"name": "Palakkad Sreeram", "slug": "palakkad-sreeram", "tracks": 10, "films": 9, "years": "1998–2025", "languages": ["English", "Tamil", "Telugu"]}, {"name": "Febi Mani", "slug": "febi-mani", "tracks": 10, "films": 7, "years": "1995–2002", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Nakash Aziz", "slug": "nakash-aziz", "tracks": 9, "films": 7, "years": "2013–2024", "languages": ["Hindi", "Tamil"]}, {"name": "Shashwat Singh", "slug": "shashwat-singh", "tracks": 9, "films": 5, "years": "2015–2025", "languages": ["Hindi", "Tamil"]}, {"name": "P. Jayachandran", "slug": "p-jayachandran", "tracks": 9, "films": 8, "years": "1993–2008", "languages": ["Hindi", "Tamil"]}, {"name": "Darshana KT", "slug": "darshana-kt", "tracks": 9, "films": 4, "years": "2007–2017", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Gopika Poornima", "slug": "gopika-poornima", "tracks": 9, "films": 6, "years": "2000–2008", "languages": ["Tamil", "Telugu"]}, {"name": "Nivas", "slug": "nivas", "tracks": 8, "films": 4, "years": "2017–2026", "languages": ["Hindi", "Kannada", "Malayalam", "Tamil", "Telugu"]}, {"name": "Abhay Jodhpurkar", "slug": "abhay-jodhpurkar", "tracks": 8, "films": 6, "years": "2009–2026", "languages": ["Hindi", "Marathi", "Original", "Tamil", "Telugu"]}, {"name": "Poorvi Koutish", "slug": "poorvi-koutish", "tracks": 8, "films": 2, "years": "2020–2020", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "KK", "slug": "kk", "tracks": 8, "films": 4, "years": "1996–2004", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Lata Mangeshkar", "slug": "lata-mangeshkar", "tracks": 8, "films": 6, "years": "1998–2005", "languages": ["Hindi", "Original"]}, {"name": "Zubeen Garg", "slug": "zubeen-garg", "tracks": 8, "films": 2, "years": "1998–1998", "languages": ["Hindi", "Malayalam", "Tamil", "Telugu"]}, {"name": "George Peter", "slug": "george-peter", "tracks": 8, "films": 2, "years": "2003–2003", "languages": ["Tamil", "Telugu"]}, {"name": "Jithin Raj", "slug": "jithin-raj", "tracks": 8, "films": 3, "years": "2022–2026", "languages": ["Hindi", "Kannada", "Malayalam", "Tamil", "Telugu"]}, {"name": "Dr. Narayanan", "slug": "dr-narayanan", "tracks": 8, "films": 2, "years": "2014–2023", "languages": ["Hindi", "Kannada", "Malayalam", "Tamil", "Telugu"]}, {"name": "Adithya RK", "slug": "adithya-rk", "tracks": 8, "films": 3, "years": "2025–2025", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Sathya Prakash", "slug": "sathya-prakash", "tracks": 7, "films": 6, "years": "2015–2022", "languages": ["Tamil", "Telugu"]}, {"name": "Mahalakshmi Iyer", "slug": "mahalakshmi-iyer", "tracks": 7, "films": 5, "years": "1998–2008", "languages": ["English", "Original", "Tamil"]}, {"name": "Vaishali Samant", "slug": "vaishali-samant", "tracks": 7, "films": 6, "years": "2000–2025", "languages": ["Hindi", "Tamil"]}, {"name": "Remo Fernandes", "slug": "remo-fernandes", "tracks": 7, "films": 3, "years": "1994–1999", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Sapna Awasthi", "slug": "sapna-awasthi", "tracks": 7, "films": 3, "years": "1998–2010", "languages": ["Hindi", "Original", "Telugu"]}, {"name": "Dominique Cerejo", "slug": "dominique-cerejo", "tracks": 7, "films": 5, "years": "1996–2000", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Kalyani Menon", "slug": "kalyani-menon", "tracks": 7, "films": 6, "years": "1994–2011", "languages": ["Hindi, Malayalam, English", "Tamil", "Telugu"]}, {"name": "Faiz Mustafa", "slug": "faiz-mustafa", "tracks": 7, "films": 3, "years": "2022–2026", "languages": ["Hindi", "Kannada", "Malayalam", "Tamil", "Telugu"]}, {"name": "Theni Kunjarammal", "slug": "theni-kunjarammal", "tracks": 7, "films": 5, "years": "1994–2006", "languages": ["Tamil", "Tamil, Telugu", "Telugu"]}, {"name": "Bamba Bakya", "slug": "bamba-bakya", "tracks": 6, "films": 5, "years": "2017–2022", "languages": ["Kannada", "Tamil"]}, {"name": "Sanah Moidutty", "slug": "sanah-moidutty", "tracks": 6, "films": 3, "years": "2016–2022", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Sharanya Srinivas", "slug": "sharanya-srinivas", "tracks": 6, "films": 5, "years": "2013–2023", "languages": ["Malayalam", "Tamil", "Telugu"]}, {"name": "Sireesha Bhagavatula", "slug": "sireesha-bhagavatula", "tracks": 6, "films": 4, "years": "2020–2023", "languages": ["Tamil", "Telugu"]}, {"name": "Lucky Ali", "slug": "lucky-ali", "tracks": 6, "films": 4, "years": "2002–2015", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Adnan Sami", "slug": "adnan-sami", "tracks": 6, "films": 4, "years": "2002–2004", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Sunidhi Chauhan", "slug": "sunidhi-chauhan", "tracks": 6, "films": 6, "years": "2001–2020", "languages": ["Hindi"]}, {"name": "Sriram Parthasarathy", "slug": "sriram-parthasarathy", "tracks": 6, "films": 5, "years": "2001–2019", "languages": ["Tamil", "Telugu"]}, {"name": "Reena Bhardwaj", "slug": "reena-bhardwaj", "tracks": 6, "films": 6, "years": "2002–2010", "languages": ["Hindi", "Tamil"]}, {"name": "Raqeeb Alam", "slug": "raqeeb-alam", "tracks": 6, "films": 4, "years": "1996–2009", "languages": ["Hindi", "Telugu"]}, {"name": "Sanaa Moussa", "slug": "sanaa-moussa", "tracks": 6, "films": 2, "years": "2020–2024", "languages": ["Hindi", "Kannada", "Malayalam", "Tamil", "Telugu"]}, {"name": "Surjo Bhattacharya", "slug": "surjo-bhattacharya", "tracks": 6, "films": 4, "years": "1999–2003", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Chinmayee", "slug": "chinmayee", "tracks": 6, "films": 3, "years": "2003–2012", "languages": ["Original", "Tamil"]}, {"name": "A.R. Rahman", "slug": "ar-rahman", "tracks": 6, "films": 5, "years": "1995–2024", "languages": ["English", "Hindi"]}, {"name": "Nithyasree Mahadevan", "slug": "nithyasree-mahadevan", "tracks": 6, "films": 4, "years": "1998–2004", "languages": ["Tamil", "Telugu"]}, {"name": "Aaryan Dinesh Kanagaratnam", "slug": "aaryan-dinesh-kanagaratnam", "tracks": 6, "films": 4, "years": "2012–2016", "languages": ["Hindi", "Original", "Tamil", "Telugu"]}, {"name": "Unni Krishnan", "slug": "unni-krishnan", "tracks": 6, "films": 3, "years": "1996–2000", "languages": ["Tamil", "Telugu"]}, {"name": "Ila Arun", "slug": "ila-arun", "tracks": 6, "films": 4, "years": "1995–2010", "languages": ["English", "Hindi", "Telugu"]}, {"name": "Sathyaprakash", "slug": "sathyaprakash", "tracks": 6, "films": 2, "years": "2023–2023", "languages": ["Hindi", "Kannada", "Malayalam", "Tamil", "Telugu"]}, {"name": "Aravind Srinivas", "slug": "aravind-srinivas", "tracks": 6, "films": 2, "years": "2022–2023", "languages": ["Hindi", "Kannada", "Malayalam", "Tamil", "Telugu"]}, {"name": "Aditya Rao", "slug": "aditya-rao", "tracks": 5, "films": 4, "years": "2014–2016", "languages": ["English", "Tamil", "Telugu"]}, {"name": "Dinesh Kanagaratnam", "slug": "dinesh-kanagaratnam", "tracks": 5, "films": 3, "years": "2016–2024", "languages": ["Tamil", "Telugu"]}, {"name": "S. P. B. Charan", "slug": "s-p-b-charan", "tracks": 5, "films": 4, "years": "2000–2003", "languages": ["Tamil", "Telugu"]}, {"name": "Unnikrishnan", "slug": "unnikrishnan", "tracks": 5, "films": 5, "years": "1995–2003", "languages": ["Tamil", "Telugu"]}, {"name": "Hiral Viradia", "slug": "hiral-viradia", "tracks": 5, "films": 5, "years": "2021–2025", "languages": ["Hindi", "Tamil"]}, {"name": "Dilshaad Shabbir Shaikh", "slug": "dilshaad-shabbir-shaikh", "tracks": 5, "films": 3, "years": "2015–2023", "languages": ["Hindi", "Persian"]}, {"name": "MC Heam", "slug": "mc-heam", "tracks": 5, "films": 4, "years": "2018–2025", "languages": ["Hindi"]}, {"name": "Shiraz Uppal", "slug": "shiraz-uppal", "tracks": 5, "films": 5, "years": "2001–2014", "languages": ["Hindi", "Original"]}, {"name": "Chitra Sivaraman", "slug": "chitra-sivaraman", "tracks": 5, "films": 3, "years": "2003–2004", "languages": ["Tamil", "Telugu"]}, {"name": "Mathangi", "slug": "mathangi", "tracks": 5, "films": 3, "years": "2003–2003", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Lady Kash and Krissy", "slug": "lady-kash-and-krissy", "tracks": 5, "films": 3, "years": "2010–2014", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Aslam Mustafa", "slug": "aslam-mustafa", "tracks": 5, "films": 2, "years": "1995–1996", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Malaysia Vasudevan", "slug": "malaysia-vasudevan", "tracks": 5, "films": 4, "years": "1993–1997", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Deepthi Suresh", "slug": "deepthi-suresh", "tracks": 5, "films": 3, "years": "2023–2023", "languages": ["Kannada", "Tamil", "Telugu"]}, {"name": "Shilpa Rao", "slug": "shilpa-rao", "tracks": 5, "films": 4, "years": "2021–2025", "languages": ["Hindi"]}, {"name": "Hema Sardesai", "slug": "hema-sardesai", "tracks": 5, "films": 3, "years": "1997–1999", "languages": ["Hindi"]}, {"name": "Nabyla Maan", "slug": "nabyla-maan", "tracks": 5, "films": 2, "years": "2022–2023", "languages": ["Tamil"]}, {"name": "Shenbagaraj", "slug": "shenbagaraj", "tracks": 5, "films": 1, "years": "2023–2023", "languages": ["Hindi", "Kannada", "Malayalam", "Tamil", "Telugu"]}, {"name": "T S Ayyappan", "slug": "t-s-ayyappan", "tracks": 5, "films": 1, "years": "2023–2023", "languages": ["Hindi", "Kannada", "Malayalam", "Tamil", "Telugu"]}, {"name": "Raja Hasan", "slug": "raja-hasan", "tracks": 5, "films": 1, "years": "2024–2024", "languages": ["Hindi", "Kannada", "Malayalam", "Tamil", "Telugu"]}, {"name": "Murtuza Mustafa", "slug": "murtuza-mustafa", "tracks": 5, "films": 1, "years": "2024–2024", "languages": ["Hindi", "Kannada", "Malayalam", "Tamil", "Telugu"]}, {"name": "Armaan Malik", "slug": "armaan-malik", "tracks": 4, "films": 4, "years": "2017–2024", "languages": ["Hindi", "Tamil"]}, {"name": "Shiv", "slug": "shiv", "tracks": 4, "films": 2, "years": "2018–2020", "languages": ["Original", "Tamil", "Telugu"]}, {"name": "Pop Shalini", "slug": "pop-shalini", "tracks": 4, "films": 4, "years": "2004–2011", "languages": ["Hindi", "Tamil"]}, {"name": "Aparna Narayanan", "slug": "aparna-narayanan", "tracks": 4, "films": 3, "years": "2016–2018", "languages": ["Original", "Tamil"]}, {"name": "Saindhavi", "slug": "saindhavi", "tracks": 4, "films": 2, "years": "2006–2007", "languages": ["Tamil"]}, {"name": "Sarath Santhosh", "slug": "sarath-santhosh", "tracks": 4, "films": 4, "years": "2019–2025", "languages": ["Tamil", "Telugu"]}, {"name": "Shi Millhouse", "slug": "shi-millhouse", "tracks": 4, "films": 1, "years": "2009–2009", "languages": ["Hindi", "Telugu"]}, {"name": "Raven Millhouse", "slug": "raven-millhouse", "tracks": 4, "films": 1, "years": "2009–2009", "languages": ["Hindi", "Telugu"]}, {"name": "Jaspreet Jasz", "slug": "jaspreet-jasz", "tracks": 4, "films": 3, "years": "2009–2014", "languages": ["Hindi", "Hindi, Malayalam, English"]}, {"name": "Thoughts for Now", "slug": "thoughts-for-now", "tracks": 4, "films": 1, "years": "2022–2022", "languages": ["Kannada", "Malayalam", "Tamil", "Telugu"]}, {"name": "Mahathi", "slug": "mahathi", "tracks": 4, "films": 2, "years": "2006–2009", "languages": ["Hindi", "Tamil"]}, {"name": "Sowmya Raoh", "slug": "sowmya-raoh", "tracks": 4, "films": 4, "years": "1998–2006", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "T. K. Kala", "slug": "t-k-kala", "tracks": 4, "films": 4, "years": "1993–1999", "languages": ["Tamil"]}, {"name": "Alphons Joseph", "slug": "alphons-joseph", "tracks": 4, "films": 4, "years": "2010–2022", "languages": ["Hindi, Malayalam, English", "Tamil", "Telugu"]}, {"name": "Aparna", "slug": "aparna", "tracks": 4, "films": 2, "years": "2003–2003", "languages": ["Tamil", "Telugu"]}, {"name": "Chinmayi", "slug": "chinmayi", "tracks": 4, "films": 2, "years": "2003–2003", "languages": ["Telugu"]}, {"name": "Amina Rafiq", "slug": "amina-rafiq", "tracks": 4, "films": 2, "years": "2025–2026", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Natalie Di Luccio", "slug": "natalie-di-luccio", "tracks": 4, "films": 2, "years": "2014–2015", "languages": ["Hindi", "Persian", "Tamil", "Telugu"]}, {"name": "Sirkazhi G. Sivachidambaram", "slug": "sirkazhi-g-sivachidambaram", "tracks": 4, "films": 3, "years": "1995–2006", "languages": ["Tamil", "Tamil, Telugu", "Telugu"]}, {"name": "Sayanora Philip", "slug": "sayanora-philip", "tracks": 4, "films": 3, "years": "2006–2008", "languages": ["Hindi", "Telugu"]}, {"name": "Sangeetha", "slug": "sangeetha", "tracks": 4, "films": 3, "years": "1996–2010", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Devan Ekambaram", "slug": "devan-ekambaram", "tracks": 4, "films": 3, "years": "1999–2000", "languages": ["Tamil", "Telugu"]}, {"name": "Abhijeet Bhattacharya", "slug": "abhijeet-bhattacharya", "tracks": 4, "films": 4, "years": "1992–2001", "languages": ["Hindi"]}, {"name": "K. S. Chitra", "slug": "k-s-chitra", "tracks": 4, "films": 3, "years": "1995–2000", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Murtuza Khan", "slug": "murtuza-khan", "tracks": 4, "films": 4, "years": "2002–2005", "languages": ["Hindi", "Tamil"]}, {"name": "Mahesh Vinayakram", "slug": "mahesh-vinayakram", "tracks": 4, "films": 2, "years": "2014–2022", "languages": ["Hindi", "Kannada", "Tamil", "Telugu"]}, {"name": "Arivu", "slug": "arivu", "tracks": 4, "films": 2, "years": "2023–2024", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Shuba", "slug": "shuba", "tracks": 4, "films": 2, "years": "2023–2025", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Sivasri Skandaprasad", "slug": "sivasri-skandaprasad", "tracks": 4, "films": 2, "years": "2022–2023", "languages": ["Kannada", "Tamil"]}, {"name": "Antara Nandy", "slug": "antara-nandy", "tracks": 4, "films": 3, "years": "2022–2024", "languages": ["Hindi", "Kannada", "Tamil"]}, {"name": "Keerthi Sagathia", "slug": "keerthi-sagathia", "tracks": 4, "films": 3, "years": "2010–2013", "languages": ["Hindi", "Original", "Tamil", "Telugu"]}, {"name": "Papon", "slug": "papon", "tracks": 4, "films": 1, "years": "2020–2020", "languages": ["Hindi"]}, {"name": "Ganga Sitharasu", "slug": "ganga-sitharasu", "tracks": 4, "films": 3, "years": "1993–2001", "languages": ["Tamil"]}, {"name": "Nitesh Aher", "slug": "nitesh-aher", "tracks": 4, "films": 2, "years": "2025–2025", "languages": ["Hindi", "Telugu"]}, {"name": "Alexandra Joy", "slug": "alexandra-joy", "tracks": 4, "films": 2, "years": "2025–2025", "languages": ["Tamil", "Telugu"]}, {"name": "Rekha Sawhney", "slug": "rekha-sawhney", "tracks": 4, "films": 1, "years": "2017–2017", "languages": ["English"]}, {"name": "Anil Ban", "slug": "anil-ban", "tracks": 3, "films": 1, "years": "2016–2016", "languages": ["Hindi"]}, {"name": "Swagat Rathod", "slug": "swagat-rathod", "tracks": 3, "films": 1, "years": "2020–2020", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Shahin Badar (Ethnic Vocals)", "slug": "shahin-badar-ethnic-vocals", "tracks": 3, "films": 2, "years": "2004–2004", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Bharathiraja", "slug": "bharathiraja", "tracks": 3, "films": 2, "years": "1994–1996", "languages": ["Tamil"]}, {"name": "Daler Mehndi", "slug": "daler-mehndi", "tracks": 3, "films": 3, "years": "2004–2021", "languages": ["Hindi"]}, {"name": "Dhanush", "slug": "dhanush", "tracks": 3, "films": 2, "years": "2021–2024", "languages": ["Hindi", "Tamil"]}, {"name": "Srimathumitha", "slug": "srimathumitha", "tracks": 3, "films": 2, "years": "2007–2008", "languages": ["English", "Tamil"]}, {"name": "Sonu Kakkar", "slug": "sonu-kakkar", "tracks": 3, "films": 1, "years": "2009–2009", "languages": ["Hindi", "Telugu"]}, {"name": "chorus (Sujatha Mohan", "slug": "chorus-sujatha-mohan", "tracks": 3, "films": 1, "years": "1994–1994", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Reshmi", "slug": "reshmi", "tracks": 3, "films": 1, "years": "1994–1994", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Ganga)", "slug": "ganga", "tracks": 3, "films": 1, "years": "1994–1994", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "chorus", "slug": "chorus", "tracks": 3, "films": 2, "years": "1994–1994", "languages": ["Tamil", "Telugu"]}, {"name": "Shubha", "slug": "shubha", "tracks": 3, "films": 2, "years": "1994–2010", "languages": ["Hindi", "Telugu"]}, {"name": "Swetha Mohan", "slug": "swetha-mohan", "tracks": 3, "films": 3, "years": "2008–2018", "languages": ["Hindi", "Original", "Tamil"]}, {"name": "Mira Sengupta", "slug": "mira-sengupta", "tracks": 3, "films": 1, "years": "2022–2022", "languages": ["Kannada", "Malayalam", "Telugu"]}, {"name": "Keerthana Vaidyanathan", "slug": "keerthana-vaidyanathan", "tracks": 3, "films": 3, "years": "2022–2023", "languages": ["Kannada", "Tamil"]}, {"name": "Rekha Bhardwaj", "slug": "rekha-bhardwaj", "tracks": 3, "films": 2, "years": "2009–2010", "languages": ["Hindi"]}, {"name": "Ash King", "slug": "ash-king", "tracks": 3, "films": 2, "years": "2009–2014", "languages": ["Hindi"]}, {"name": "Aditya Narayan", "slug": "aditya-narayan", "tracks": 3, "films": 3, "years": "1995–2020", "languages": ["Hindi"]}, {"name": "P. Susheela", "slug": "p-susheela", "tracks": 3, "films": 3, "years": "1993–1996", "languages": ["Tamil"]}, {"name": "Megha", "slug": "megha", "tracks": 3, "films": 3, "years": "2010–2011", "languages": ["Hindi, Malayalam, English", "Tamil", "Telugu"]}, {"name": "Timmy", "slug": "timmy", "tracks": 3, "films": 3, "years": "1999–2011", "languages": ["Hindi", "Hindi, Malayalam, English", "Tamil"]}, {"name": "Rafee", "slug": "rafee", "tracks": 3, "films": 3, "years": "1996–2004", "languages": ["Hindi", "Tamil"]}, {"name": "Poetic Ammo", "slug": "poetic-ammo", "tracks": 3, "films": 1, "years": "2010–2010", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Pradeep Kumar", "slug": "pradeep-kumar", "tracks": 3, "films": 1, "years": "2010–2010", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Pavithra Chari", "slug": "pavithra-chari", "tracks": 3, "films": 3, "years": "2022–2026", "languages": ["Tamil", "Telugu"]}, {"name": "Udhai Mazumdar", "slug": "udhai-mazumdar", "tracks": 3, "films": 1, "years": "2006–2006", "languages": ["Hindi", "Tamil"]}, {"name": "Pooja Tiwari", "slug": "pooja-tiwari", "tracks": 3, "films": 3, "years": "2022–2023", "languages": ["Hindi"]}, {"name": "Mika Singh", "slug": "mika-singh", "tracks": 3, "films": 3, "years": "2015–2022", "languages": ["Hindi"]}, {"name": "Shweta Pandit", "slug": "shweta-pandit", "tracks": 3, "films": 2, "years": "2014–2014", "languages": ["Hindi"]}, {"name": "Nirmala Seshadri", "slug": "nirmala-seshadri", "tracks": 3, "films": 1, "years": "1996–1996", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "T. L. Maharajan", "slug": "t-l-maharajan", "tracks": 3, "films": 3, "years": "1994–2004", "languages": ["Tamil"]}, {"name": "Raqueeb Alam", "slug": "raqueeb-alam", "tracks": 3, "films": 2, "years": "1998–1999", "languages": ["Hindi", "Tamil"]}, {"name": "Kavita Paudwal", "slug": "kavita-paudwal", "tracks": 3, "films": 2, "years": "1997–1998", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Bonnie Chakraborty", "slug": "bonnie-chakraborty", "tracks": 3, "films": 1, "years": "2008–2008", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Naveen Kumar", "slug": "naveen-kumar", "tracks": 3, "films": 2, "years": "2008–2016", "languages": ["Hindi", "Tamil"]}, {"name": "Rahul Nambiar", "slug": "rahul-nambiar", "tracks": 3, "films": 2, "years": "2008–2010", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "S.P.B. Pallavi", "slug": "spb-pallavi", "tracks": 3, "films": 1, "years": "1994–1994", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Tippu", "slug": "tippu", "tracks": 3, "films": 2, "years": "2002–2017", "languages": ["Tamil", "Telugu"]}, {"name": "Vani Jayaram", "slug": "vani-jayaram", "tracks": 3, "films": 1, "years": "2014–2014", "languages": ["Malayalam", "Tamil", "Telugu"]}, {"name": "Qadir Khan", "slug": "qadir-khan", "tracks": 3, "films": 3, "years": "2002–2004", "languages": ["Hindi", "Tamil"]}, {"name": "S. Shailaja", "slug": "s-shailaja", "tracks": 3, "films": 1, "years": "2005–2005", "languages": ["Hindi"]}, {"name": "The London Session Orchestra", "slug": "the-london-session-orchestra", "tracks": 3, "films": 1, "years": "2014–2014", "languages": ["Hindi", "Original", "Telugu"]}, {"name": "Shaan", "slug": "shaan", "tracks": 3, "films": 3, "years": "2001–2004", "languages": ["Hindi"]}, {"name": "Apache Indian", "slug": "apache-indian", "tracks": 3, "films": 1, "years": "1995–1995", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Kalpana Raghavendar", "slug": "kalpana-raghavendar", "tracks": 3, "films": 3, "years": "1999–2023", "languages": ["Tamil"]}, {"name": "Vishal Mishra (composer)", "slug": "vishal-mishra-composer", "tracks": 3, "films": 2, "years": "2022–2023", "languages": ["Hindi"]}, {"name": "Chandran", "slug": "chandran", "tracks": 3, "films": 2, "years": "1996–1999", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Pravin Mani", "slug": "pravin-mani", "tracks": 3, "films": 2, "years": "1999–2001", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Arpita Gandhi", "slug": "arpita-gandhi", "tracks": 3, "films": 2, "years": "2015–2016", "languages": ["English", "Persian"]}, {"name": "Le Trio Joubran", "slug": "le-trio-joubran", "tracks": 3, "films": 1, "years": "2015–2015", "languages": ["Persian"]}, {"name": "Hans Raj Hans", "slug": "hans-raj-hans", "tracks": 3, "films": 2, "years": "2001–2017", "languages": ["Hindi"]}, {"name": "Aalap Raju", "slug": "aalap-raju", "tracks": 3, "films": 1, "years": "2015–2015", "languages": ["Tamil", "Telugu"]}, {"name": "George Doering", "slug": "george-doering", "tracks": 3, "films": 1, "years": "2016–2016", "languages": ["English"]}, {"name": "A. R. Raihanah", "slug": "a-r-raihanah", "tracks": 3, "films": 1, "years": "2022–2022", "languages": ["Kannada", "Tamil", "Telugu"]}, {"name": "Haripriya", "slug": "haripriya", "tracks": 3, "films": 3, "years": "2015–2024", "languages": ["Hindi", "Telugu"]}, {"name": "Mustafa Kutoane", "slug": "mustafa-kutoane", "tracks": 3, "films": 2, "years": "2010–2010", "languages": ["Hindi", "Tamil", "Telugu"]}, {"name": "Jali Fily Cissokho", "slug": "jali-fily-cissokho", "tracks": 3, "films": 2, "years": "2010–2010", "languages": ["Hindi", "Tamil"]}, {"name": "Suresh Wadkar", "slug": "suresh-wadkar", "tracks": 3, "films": 2, "years": "1992–1995", "languages": ["Hindi", "Marathi"]}, {"name": "Shweta Shetty", "slug": "shweta-shetty", "tracks": 3, "films": 2, "years": "1992–1995", "languages": ["Hindi", "Marathi"]}, {"name": "Ravi Khote", "slug": "ravi-khote", "tracks": 3, "films": 1, "years": "2007–2007", "languages": ["Hindi", "Tamil", "Telugu"]}];
+
+// Build language filter options
+const allLangs = new Set();
+SINGERS.forEach(function(s) { s.languages.forEach(function(l) { allLangs.add(l); }); });
+const langSelect = document.getElementById('lang-filter');
+Array.from(allLangs).sort().forEach(function(l) {
+  var opt = document.createElement('option');
+  opt.value = l;
+  opt.textContent = l;
+  langSelect.appendChild(opt);
+});
+
+function render() {
+  var q = document.getElementById('search').value.toLowerCase().trim();
+  var sortBy = document.getElementById('sort').value;
+  var langFilter = langSelect.value;
+
+  var filtered = SINGERS.filter(function(s) {
+    if (q && s.name.toLowerCase().indexOf(q) < 0) return false;
+    if (langFilter !== 'All' && s.languages.indexOf(langFilter) < 0) return false;
+    return true;
+  });
+
+  // Sort
+  if (sortBy === 'tracks') {
+    filtered.sort(function(a, b) { return b.tracks - a.tracks; });
+  } else if (sortBy === 'alpha') {
+    filtered.sort(function(a, b) { return a.name.localeCompare(b.name); });
+  } else if (sortBy === 'films') {
+    filtered.sort(function(a, b) { return b.films - a.films; });
+  } else if (sortBy === 'recent') {
+    filtered.sort(function(a, b) {
+      var ya = a.years ? parseInt(a.years.split('\u2013').pop() || a.years) : 0;
+      var yb = b.years ? parseInt(b.years.split('\u2013').pop() || b.years) : 0;
+      return yb - ya;
+    });
+  }
+
+  var html = '';
+  filtered.forEach(function(s) {
+    var langBadges = s.languages.map(function(l) {
+      return '<span class="lang-badge">' + l + '</span>';
+    }).join('');
+    html += '<a class="singer-card" href="' + s.slug + '.html">';
+    html += '<div class="sc-name">' + s.name + '</div>';
+    html += '<div class="sc-stats">' + s.tracks + ' tracks &middot; ' + s.films + ' films</div>';
+    html += '<div class="sc-years">' + s.years + '</div>';
+    html += '<div class="sc-langs">' + langBadges + '</div>';
+    html += '</a>';
+  });
+
+  document.getElementById('grid').innerHTML = html || '<div class="no-results">No singers match your search</div>';
+  document.getElementById('result-count').textContent = filtered.length + ' of ' + SINGERS.length + ' singers';
+}
+
+document.getElementById('search').addEventListener('input', render);
+document.getElementById('sort').addEventListener('change', render);
+langSelect.addEventListener('change', render);
+
+render();
+</script>
+
+<style>
+#feedback-btn {
+  position: fixed; bottom: 52px; right: 16px; z-index: 9999;
+  background: #7B2D8E; color: #fff; border: none; border-radius: 50%;
+  width: 44px; height: 44px; font-size: 20px; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2); transition: transform 0.2s;
+  font-family: system-ui, sans-serif; line-height: 1;
+}
+#feedback-btn:hover { transform: scale(1.1); }
+#feedback-panel {
+  display: none; position: fixed; bottom: 104px; right: 16px; z-index: 9999;
+  background: #FAFAFE; border: 1px solid rgba(26,26,46,0.15);
+  border-radius: 12px; padding: 20px; width: 300px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+#feedback-panel.open { display: block; }
+#feedback-panel h3 {
+  margin: 0 0 12px; font-size: 15px; color: #1A1A2E; font-weight: 700;
+}
+#feedback-panel textarea {
+  width: 100%; height: 80px; border: 1px solid rgba(26,26,46,0.15);
+  border-radius: 8px; padding: 10px; font-size: 13px; resize: vertical;
+  font-family: inherit; background: #fff; color: #1A1A2E;
+}
+#feedback-panel textarea:focus { outline: 2px solid #7B2D8E; border-color: transparent; }
+#feedback-panel input[type=email] {
+  width: 100%; border: 1px solid rgba(26,26,46,0.15);
+  border-radius: 8px; padding: 8px 10px; font-size: 13px; margin-top: 8px;
+  font-family: inherit; background: #fff; color: #1A1A2E;
+}
+#feedback-panel input[type=email]:focus { outline: 2px solid #7B2D8E; border-color: transparent; }
+#feedback-panel .fb-hint { font-size: 11px; color: #888898; margin-top: 4px; }
+#feedback-panel button[type=submit] {
+  margin-top: 12px; background: #7B2D8E; color: #fff; border: none;
+  border-radius: 8px; padding: 10px 20px; font-size: 13px; font-weight: 600;
+  cursor: pointer; width: 100%; transition: background 0.2s;
+}
+#feedback-panel button[type=submit]:hover { background: #C02068; }
+#feedback-panel .fb-thanks {
+  text-align: center; padding: 20px 0; font-size: 14px; color: #1A1A2E;
+}
+@media (max-width: 480px) {
+  #feedback-panel { width: calc(100vw - 32px); right: 16px; bottom: 96px; }
+  #feedback-btn { bottom: 52px; right: 12px; }
+}
+</style>
+
+<button id="feedback-btn" onclick="toggleFeedback()" aria-label="Send feedback" title="Send feedback">&#9993;</button>
+<div id="feedback-panel">
+  <form id="feedback-form" action="https://formspree.io/f/xojkalry" method="POST">
+    <h3>Send us feedback</h3>
+    <textarea name="message" placeholder="What did you like? What could be better?" required></textarea>
+    <input type="email" name="_replyto" placeholder="Email (optional)">
+    <div class="fb-hint">We read every message.</div>
+    <input type="hidden" name="_subject" value="Rahman Viz Feedback">
+    <input type="hidden" name="page" id="fb-page">
+    <button type="submit">Send Feedback</button>
+  </form>
+</div>
+<script>
+function toggleFeedback() {
+  var p = document.getElementById('feedback-panel');
+  p.classList.toggle('open');
+  document.getElementById('fb-page').value = location.pathname;
+}
+document.getElementById('feedback-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  var form = this;
+  fetch(form.action, {
+    method: 'POST',
+    body: new FormData(form),
+    headers: { 'Accept': 'application/json' }
+  }).then(function(r) {
+    if (r.ok) {
+      form.innerHTML = '<div class="fb-thanks">Thanks for your feedback!</div>';
+      setTimeout(function() {
+        document.getElementById('feedback-panel').classList.remove('open');
+      }, 2000);
+    }
+  });
+});
+document.addEventListener('click', function(e) {
+  var panel = document.getElementById('feedback-panel');
+  var btn = document.getElementById('feedback-btn');
+  if (panel.classList.contains('open') && !panel.contains(e.target) && e.target !== btn) {
+    panel.classList.remove('open');
+  }
+});
+</script>
+
+<script data-goatcounter="https://brothersinmusic.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
