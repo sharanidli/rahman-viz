@@ -289,11 +289,11 @@
       provides danceability, energy, valence, acousticness, and tempo for tracks with a
       Spotify match (~43% of the catalog).</li>
     <li><strong>Librosa</strong> (direct audio analysis) &mdash; computes rhythmic complexity,
-      spectral features, and harmonic structure from the audio waveform (~87% of the catalog).</li>
+      spectral features, and harmonic structure from the audio waveform (~92% of the catalog).</li>
   </ul>
 
   <p>For tracks with Spotify data, we use Spotify's features directly. For tracks without,
-    we estimate equivalent scores from librosa's audio analysis, using the ~840 tracks that
+    we estimate equivalent scores from librosa's audio analysis, using the ~860 tracks that
     have both sources as a calibration set. This gives us unified audio features for about
     <strong>nine in ten</strong> tracks. Coverage varies by album &mdash; the
     <a href="data_quality.html">Data Quality</a> page shows completeness for each one.</p>
@@ -353,12 +353,12 @@
     but there are real limitations you should know about:</p>
 
   <ul>
-    <li><strong>Not every track has audio features.</strong> About 9% of tracks have no
+    <li><strong>Not every track has audio features.</strong> About 6% of tracks have no
       audio data from either source. Spotify matching depends on regional availability;
       librosa requires finding the audio online. Coverage is weakest for early 90s Tamil films
       and obscure dubbed releases.</li>
     <li><strong>Predicted features are approximate.</strong> For tracks with only librosa data,
-      features like valence are estimated via regression (out-of-sample R&sup2; between 0.31 and 0.47)
+      features like valence are estimated via regression (out-of-sample R&sup2; between 0.30 and 0.47)
       and carry lower confidence than direct Spotify measurements. Valence predictions
       are the least reliable.</li>
     <li><strong>Wikipedia credits may be incomplete or wrong.</strong> Singer and lyricist credits
