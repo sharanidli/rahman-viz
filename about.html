@@ -218,8 +218,8 @@
   <h1>About This Project</h1>
 
   <p>
-    An interactive exploration of AR Rahman's complete discography &mdash;
-    <strong>283 albums</strong> (across multiple languages) and <strong>2,110 tracks</strong> spanning 1992 to 2026,
+    An interactive exploration of AR Rahman's film discography, plus the album <em>Vande Mataram</em> &mdash;
+    <strong>291 albums</strong> (across multiple languages) and <strong>2,116 tracks</strong> spanning 1992 to 2026,
     visualized through data. Browse sonic fingerprints, trace collaborator networks,
     and discover patterns across three decades of one of cinema's most inventive composers.
   </p>
@@ -278,21 +278,24 @@
 
   <p><strong>Track and film metadata</strong> was scraped from Wikipedia's discography pages for
     AR Rahman. This includes album names, track listings, singer credits, lyricist credits,
-    director, cast, release year, and language.</p>
+    director, cast, release year, and language.
+    The catalogue covers Rahman's film soundtracks plus one non-film album, <em>Vande Mataram</em> (1997),
+    added in October 2026; non-film albums carry no director or cast. Only songs Rahman composed are
+    included: licensed tracks and other composers' songs that appear on some soundtracks are left out.</p>
 
   <p><strong>Audio features</strong> come from two sources:</p>
   <ul>
     <li><strong>Spotify</strong> (via <a href="https://reccobeats.com">ReccoBeats</a>) &mdash;
       provides danceability, energy, valence, acousticness, and tempo for tracks with a
-      Spotify match (~35% of the catalog).</li>
+      Spotify match (~43% of the catalog).</li>
     <li><strong>Librosa</strong> (direct audio analysis) &mdash; computes rhythmic complexity,
-      spectral features, and harmonic structure from the audio waveform (~64% of the catalog).</li>
+      spectral features, and harmonic structure from the audio waveform (~87% of the catalog).</li>
   </ul>
 
   <p>For tracks with Spotify data, we use Spotify's features directly. For tracks without,
-    we estimate equivalent scores from librosa's audio analysis, using the ~730 tracks that
+    we estimate equivalent scores from librosa's audio analysis, using the ~840 tracks that
     have both sources as a calibration set. This gives us unified audio features for about
-    <strong>two-thirds</strong> of all tracks. Coverage varies by album &mdash; the
+    <strong>nine in ten</strong> tracks. Coverage varies by album &mdash; the
     <a href="data_quality.html">Data Quality</a> page shows completeness for each one.</p>
 
   <h2>Audio Features Glossary</h2>
@@ -350,12 +353,12 @@
     but there are real limitations you should know about:</p>
 
   <ul>
-    <li><strong>Not every track has audio features.</strong> About 28% of tracks have no
+    <li><strong>Not every track has audio features.</strong> About 9% of tracks have no
       audio data from either source. Spotify matching depends on regional availability;
       librosa requires finding the audio online. Coverage is weakest for early 90s Tamil films
       and obscure dubbed releases.</li>
     <li><strong>Predicted features are approximate.</strong> For tracks with only librosa data,
-      features like valence are estimated via regression (R&sup2; ranging from 0.37 to 0.65)
+      features like valence are estimated via regression (out-of-sample R&sup2; between 0.31 and 0.47)
       and carry lower confidence than direct Spotify measurements. Valence predictions
       are the least reliable.</li>
     <li><strong>Wikipedia credits may be incomplete or wrong.</strong> Singer and lyricist credits
@@ -372,13 +375,18 @@
       Singer-Collaborators page are counted per film, not per language version.</li>
     <li><strong>Album boundaries are fuzzy.</strong> Wikipedia's definition of an "album" varies:
       some pages list background score alongside songs, some split soundtracks from scores,
-      and some Hindi dubbed releases share the original Tamil compositions. Our 282-album
+      and some Hindi dubbed releases share the original Tamil compositions. Our 291-album
       count reflects Wikipedia's structure, not a canonical discography.</li>
     <li><strong>Audio features were designed for Western pop.</strong> Spotify's algorithms and
       librosa's defaults are trained on Western music. Features like valence and danceability
       may not translate perfectly to Carnatic-inflected, devotional, or folk compositions.
       Our "Microtonal Variation" feature is an attempt to address this gap, but it's an
       approximation.</li>
+    <li><strong>Album year, not film year.</strong> Where Wikipedia lists a soundtrack release date,
+      "year" is the year the album came out, which can precede the film by a year (Bombay 1994,
+      Rang De Basanti 2005, Guru 2006). Le Musk is dated by its 2024 soundtrack release.</li>
+    <li><strong>One non-film album.</strong> <em>Vande Mataram</em> (1997) has no director or cast; its
+      Tamil track appears as a separate one-track album entry.</li>
   </ul>
 
   <a class="back-link" href="index.html">&larr; Back to Explore</a>
