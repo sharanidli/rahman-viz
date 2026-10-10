@@ -290,6 +290,67 @@
     .mini-reel { width: 5px; height: 5px; }
     .cassette-divider { margin: 32px 0 20px; }
   }
+
+  /* --- Session 30: hero with Song of the Day, three doors, podcast block --- */
+  .hero { padding-top: 40px; }
+  .hero .kicker {
+    display: block; font-size: 12px; font-weight: 700; letter-spacing: .8px;
+    text-transform: uppercase; color: #7B2D8E; text-decoration: none; margin-bottom: 14px;
+    animation: fadeUp 0.5s ease-out 0s both;
+  }
+  .hero .kicker:hover { color: #C02068; }
+  .hero .logo { display: block; width: 84px; margin: 0 auto 14px; }
+  .hero .hook { margin-bottom: 4px; }
+  .hero .sotd, .hero #rahman-picker { animation: fadeUp 0.5s ease-out 0.3s both; }
+  .pick-toggle { margin: 14px 0 0; animation: fadeUp 0.5s ease-out 0.35s both; }
+  .pick-toggle button {
+    background: none; border: none; color: #C02068; font: inherit; font-size: 14px; font-weight: 600;
+    cursor: pointer; text-decoration: underline; text-underline-offset: 3px; padding: 6px 4px;
+  }
+  .pick-toggle button:hover { color: #7B2D8E; }
+  .hero .stats { margin-top: 28px; gap: 24px; }
+  .hero .stat-num { font-size: 22px; }
+
+  .doors { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 8px 0 40px; }
+  .door {
+    display: block; text-decoration: none; color: inherit; background: #fff;
+    border: 1px solid rgba(26,26,46,0.10); border-radius: 14px; padding: 22px 20px 18px;
+    transition: all .2s ease;
+  }
+  @media (hover: hover) {
+    .door:hover { border-color: rgba(192,32,104,0.35); transform: translateY(-3px); box-shadow: 0 10px 28px rgba(26,26,46,0.08); }
+  }
+  .door svg { width: 30px; height: 30px; color: #C02068; margin-bottom: 12px; display: block; }
+  .door h3 { font-size: 17px; font-weight: 800; color: #1A1A2E; line-height: 1.25; margin-bottom: 6px; }
+  .door p { font-size: 13px; color: #555570; line-height: 1.5; }
+  .door .door-meta { display: inline-block; margin-top: 12px; font-size: 11px; color: #888898; text-transform: uppercase; letter-spacing: .5px; }
+
+  .podcast {
+    display: flex; gap: 22px; align-items: center; background: #FAFAFE;
+    border: 1px solid rgba(26,26,46,0.08); border-radius: 16px; padding: 22px 24px; margin-bottom: 48px;
+  }
+  .podcast-art { width: 120px; height: 120px; border-radius: 12px; flex-shrink: 0; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+  .podcast-kicker { font-size: 12px; font-weight: 700; color: #7B2D8E; text-transform: uppercase; letter-spacing: .7px; margin-bottom: 4px; }
+  .podcast h2 { font-size: 20px; font-weight: 800; color: #1A1A2E; margin-bottom: 6px; }
+  .podcast p { font-size: 14px; color: #555570; line-height: 1.55; }
+  .podcast-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .plink {
+    display: inline-flex; align-items: center; gap: 6px; border-radius: 10px; padding: 10px 14px;
+    font-size: 13px; font-weight: 700; text-decoration: none; border: 1.5px solid rgba(26,26,46,0.18);
+    color: #1A1A2E; background: #fff;
+  }
+  .plink.primary { background: #C02068; border-color: #C02068; color: #fff; }
+  .plink:hover { border-color: #C02068; color: #C02068; }
+  .plink.primary:hover { background: #7B2D8E; border-color: #7B2D8E; color: #fff; }
+  .explore-head { margin-top: 8px; }
+  @media (max-width: 760px) {
+    .doors { grid-template-columns: 1fr; }
+    .podcast { flex-direction: column; align-items: flex-start; }
+  }
+  /* keep the action buttons clear of the floating feedback envelope on phones */
+  @media (max-width: 600px) {
+    .sotd .pk-actions, #rahman-picker .pk-actions { padding-right: 56px; }
+  }
 </style>
 </head>
 <body>
@@ -302,25 +363,23 @@
     <a href="index.html">Explore</a>
     <a href="song_database.html">Songs</a>
     <a href="singers/index.html">Singers</a>
+    <a href="#podcast">Podcast</a>
     <a href="about.html">About</a>
   </div>
 </nav>
 
 <!-- Hero -->
 <div class="hero">
+  <a class="kicker" href="#podcast">From the Brothers in Music podcast</a>
   <img src="logo.jpg" alt="Brothers in Music podcast logo" class="logo">
   <h1>Inside the Sound of Rahman</h1>
   <p class="hook">
-    34 years. 291 albums. 2,116 tracks. One composer &mdash; explored through data.
+    2,116 songs. 567 singers. 196 he sang himself. 34 years of AR Rahman, mapped.
   </p>
-  <p class="intro">
-    An interactive exploration of AR Rahman's film discography, plus the album <em>Vande Mataram</em>.
-    Browse sonic fingerprints, trace collaborator networks, and discover patterns
-    across three decades of one of cinema's most inventive composers.
-    Built by <strong>Swaroop</strong> and <strong>Sharan</strong> of the
-    <a href="https://rss.buzzsprout.com/2289931.rss">Brothers in Music</a> podcast.
-  </p>
-  <a class="start-btn" href="racing_bar.html">Start Exploring &rarr;</a>
+  <!-- Song of the Day + mood picker: markup, styles and data come from picker.js (build_picker.py) -->
+  <div id="song-of-the-day" class="sotd" aria-live="polite"></div>
+  <p class="pick-toggle"><button type="button" id="pick-toggle-btn">Want a different one? Pick by mood &darr;</button></p>
+  <div id="rahman-picker" hidden></div>
   <!-- Stats: manually updated (see PROJECT_LOG.md for current counts) -->
   <div class="stats">
     <div class="stat"><div class="stat-num">291</div><div class="stat-label">Albums</div></div>
@@ -332,6 +391,50 @@
 </div>
 
 <div class="content">
+
+  <!-- Three doors -->
+  <div class="doors">
+    <a class="door" href="racing_bar.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3.5M8.5 21.5h7"/></svg>
+      <h3>Who sings for Rahman?</h3>
+      <p>Watch his singers rise and fall across 34 years, from SPB and Chithra to Arijit and Shreya.</p>
+      <span class="door-meta">Animated chart</span>
+    </a>
+    <a class="door" href="indian_audio_map.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2.5c0 5 12 7 12 12v7M18 2.5c0 5-12 7-12 12v7"/><path d="M7.5 6h9M7 18h10M9.5 10.5h5M9.5 13.5h5"/></svg>
+      <h3>What is in a Rahman song?</h3>
+      <p>Song DNA: the microtones, the talam, the scale and the notes he leans on, for 1,965 songs.</p>
+      <span class="door-meta">Song DNA</span>
+    </a>
+    <a class="door" href="director_sound.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="9" width="18" height="12" rx="2"/><path d="M3 9l2.5-5h13L21 9M8 4l-1.5 5M13 4l-1.5 5M18 4l-1.5 5"/></svg>
+      <h3>Does he sound different for each director?</h3>
+      <p>Mani Ratnam against Shankar against Imtiaz Ali, on six axes of sound.</p>
+      <span class="door-meta">Radar comparison</span>
+    </a>
+  </div>
+
+  <!-- Podcast -->
+  <section class="podcast" id="podcast">
+    <img src="logo.jpg" alt="Brothers in Music: The AR Rahman Edition" class="podcast-art">
+    <div class="podcast-body">
+      <div class="podcast-kicker">The podcast</div>
+      <h2>Brothers in Music: The AR Rahman Edition</h2>
+      <p>Swaroop and Sharan go through Rahman's films year by year, one album at a time.
+         This site is the data behind the arguments.</p>
+      <div class="podcast-links">
+        <a class="plink primary" href="https://open.spotify.com/show/2xK9pHsQVMyMuu9y6FJWFz" target="_blank" rel="noopener">&#9654; Spotify</a>
+        <a class="plink" href="https://podcasts.apple.com/us/podcast/brothers-in-music-the-ar-rahman-edition/id1721595218" target="_blank" rel="noopener">Apple Podcasts</a>
+        <a class="plink" href="https://www.buzzsprout.com/2289931" target="_blank" rel="noopener">All episodes</a>
+      </div>
+      <!-- PODCAST_EPISODES: latest episodes from the feed go here (phase 2) -->
+    </div>
+  </section>
+
+  <div class="section-head explore-head">
+    <h2>Explore more</h2>
+    <p>Every page on the site: the catalogue, the people, the sound, and how it all fits together.</p>
+  </div>
 
   <!-- Browse the catalog -->
   <div class="section">
@@ -612,6 +715,7 @@ document.addEventListener('click', function(e) {
   if (p.classList.contains('open') && !p.contains(e.target) && e.target !== b) p.classList.remove('open');
 });
 </script>
+<script src="picker.js" defer></script>
 <script data-goatcounter="https://brothersinmusic.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>

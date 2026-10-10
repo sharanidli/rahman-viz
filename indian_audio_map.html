@@ -353,7 +353,7 @@ function pianoSVG(chroma, dominant) {
     const isDom = NOTE_NAMES[ni] === dominant;
     const stroke = isDom ? '#C02068' : 'rgba(26,26,46,0.2)';
     const sw = isDom ? 2 : 0.5;
-    svg += `<rect x="${whiteX[i]}" y="0" width="${WK_W}" height="${WK_H}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" rx="0 0 3 3">`;
+    svg += `<rect x="${whiteX[i]}" y="0" width="${WK_W}" height="${WK_H}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" rx="2">`;
     svg += `<title>${NOTE_NAMES[ni]}: ${Math.round(v * 100)}%</title></rect>`;
   });
 
@@ -370,7 +370,7 @@ function pianoSVG(chroma, dominant) {
     const isDom = NOTE_NAMES[ni] === dominant;
     const stroke = isDom ? '#C02068' : 'rgba(0,0,0,0.3)';
     const sw = isDom ? 2 : 0.5;
-    svg += `<rect x="${blackX[i]}" y="0" width="${BK_W}" height="${BK_H}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" rx="0 0 2 2">`;
+    svg += `<rect x="${blackX[i]}" y="0" width="${BK_W}" height="${BK_H}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" rx="1.5">`;
     svg += `<title>${NOTE_NAMES[ni]}: ${Math.round(v * 100)}%</title></rect>`;
   });
 
@@ -423,7 +423,7 @@ function renderAlbum(album, idx) {
     `;
 
     trackHTML += `
-      <div class="track-card" data-tidx="${ti}" onclick="this.classList.toggle('expanded')">
+      <div class="track-card" data-tidx="${ti}" data-key="${makeSlug(tr.t, album.n, album.y)}" onclick="this.classList.toggle('expanded')">
         <div class="track-title">${tr.t}</div>
         ${tr.s ? '<div class="track-singers">' + tr.s + '</div>' : ''}
         <div class="track-indianness">
@@ -515,8 +515,41 @@ document.getElementById('sortSelect').addEventListener('change', function() {
   render();
 });
 
+// Deep links (Session 30): #<slug> in the same title-album-year form as song_database.html,
+// so the landing page's "See its DNA" and the picker can land on one song. A numbered
+// suffix (-2, -3) from that page is ignored here; this page keys songs by title.
+function makeSlug(title, album, year) {
+  return (title + '-' + album + '-' + (year || '')).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+function checkHash() {
+  const raw = decodeURIComponent(location.hash.slice(1));
+  if (!raw) return;
+  const want = raw.replace(/-[0-9]+$/, '');
+  for (const a of DATA) {
+    for (const t of a.tracks) {
+      const key = makeSlug(t.t, a.n, a.y);
+      if (key === raw || key === want) {
+        currentLang = 'all';
+        searchQuery = t.t;
+        document.getElementById('searchBox').value = t.t;
+        document.querySelectorAll('#langFilters .chip').forEach(c => c.classList.toggle('active', c.dataset.lang === 'all'));
+        render();
+        const card = document.querySelector('.track-card[data-key="' + key + '"]');
+        if (card) {
+          card.closest('.album-card').classList.add('expanded');
+          card.classList.add('expanded');
+          setTimeout(() => card.scrollIntoView({behavior: 'smooth', block: 'center'}), 50);
+        }
+        return;
+      }
+    }
+  }
+}
+window.addEventListener('hashchange', checkHash);
+
 // Initial render
 render();
+checkHash();
 </script>
 
 <style>

@@ -1,7 +1,6 @@
 
 (function () {
-  // Song data lives in picker-data.json, fetched in the background after the page is up
-  // (or inlined as window.__PICKER_DATA__ in the preview build).
+  // Song data lives in picker-data.json (or inline as window.__PICKER_DATA__ in the preview).
   var POOL = window.__PICKER_DATA__ || null;
   var N = 1590;
   var loading = null;
@@ -11,13 +10,26 @@
   // bands on the catalogue percentile: low < 0.4, mid 0.4-0.7, high > 0.7
   var MOOD = [['Dark & tender', 0, 0.4], ['In between', 0.4, 0.7], ['Bright & joyful', 0.7, 1.01]];
   var ENERGY = [['Soft', 0, 0.4], ['Medium', 0.4, 0.7], ['Intense', 0.7, 1.01]];
+  // f = [energy, microtonal, valence, acousticness, rhythm, tempo] percentiles
+  var AXES = [['More energetic than', 'Softer than'], ['More microtonal than', 'Less microtonal than'],
+              ['Brighter than', 'Darker than'], ['More acoustic than', 'Less acoustic than'],
+              ['More rhythmically complex than', 'Simpler in rhythm than'], ['Faster than', 'Slower than']];
 
   var CSS = '\
-#rahman-picker{margin:28px auto 0;max-width:640px;text-align:left;border-radius:18px;padding:2px;\
+.sotd{margin:26px auto 0;max-width:640px;text-align:left;border-radius:18px;padding:2px;\
 background:linear-gradient(135deg,#C02068,#E85D20,#B8A820);box-shadow:0 8px 32px rgba(192,32,104,0.12)}\
-#rahman-picker .pk-inner{background:#fff;border-radius:16px;padding:22px 22px 18px}\
-#rahman-picker h2{font-size:22px;font-weight:800;color:#1A1A2E;margin:0 0 4px;letter-spacing:-0.2px}\
-#rahman-picker .pk-sub{font-size:14px;color:#555570;margin-bottom:16px;line-height:1.5}\
+.sotd .sotd-inner{background:#fff;border-radius:16px;padding:22px 24px 20px;min-height:120px}\
+.sotd .sotd-kicker{font-size:12px;font-weight:700;color:#E85D20;text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px}\
+.sotd .sotd-title{font-size:34px;font-weight:800;line-height:1.1;color:#1A1A2E;margin-bottom:8px;word-break:break-word}\
+.sotd .sotd-title a{color:inherit;text-decoration:none}.sotd .sotd-title a:hover{color:#C02068}\
+.sotd .sotd-meta{font-size:15px;color:#555570;line-height:1.5}.sotd .sotd-meta b{color:#1A1A2E;font-weight:600}\
+.sotd .sotd-fact{margin-top:12px;font-size:15px;color:#1A1A2E;line-height:1.5;padding-left:12px;border-left:3px solid #C02068}\
+.sotd .sotd-skel{color:#888898;font-size:15px;padding:18px 0}\
+.sotd .pk-actions{margin-top:16px}\
+#rahman-picker{margin:16px auto 0;max-width:640px;text-align:left;border-radius:16px;background:#FAFAFE;border:1px solid rgba(26,26,46,0.08)}\
+#rahman-picker .pk-inner{padding:20px 22px 18px}\
+#rahman-picker h2{font-size:19px;font-weight:800;color:#1A1A2E;margin:0 0 4px;letter-spacing:-0.2px}\
+#rahman-picker .pk-sub{font-size:14px;color:#555570;margin-bottom:14px;line-height:1.5}\
 #rahman-picker .pk-row{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px}\
 #rahman-picker .pk-label{flex:0 0 76px;font-size:12px;font-weight:700;color:#888898;text-transform:uppercase;letter-spacing:.6px}\
 #rahman-picker .pk-pill{border:1.5px solid rgba(26,26,46,0.14);background:#fff;color:#1A1A2E;border-radius:999px;\
@@ -25,62 +37,144 @@ padding:8px 14px;font-size:14px;font-weight:600;cursor:pointer;line-height:1;fon
 #rahman-picker .pk-pill:hover{border-color:#C02068;color:#C02068}\
 #rahman-picker .pk-pill[aria-pressed="true"]{background:#C02068;border-color:#C02068;color:#fff}\
 #rahman-picker .pk-pill.pk-any[aria-pressed="true"]{background:#EEEEF4;border-color:#EEEEF4;color:#555570}\
-#rahman-picker .pk-go{display:block;width:100%;margin-top:14px;background:#1A1A2E;color:#fff;border:none;border-radius:12px;\
-padding:15px 20px;font-size:17px;font-weight:700;cursor:pointer;font-family:inherit;transition:transform .1s ease,background .2s ease}\
+#rahman-picker .pk-go{display:block;width:100%;margin-top:12px;background:#C02068;color:#fff;border:none;border-radius:12px;\
+padding:14px 20px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;transition:transform .1s ease,background .2s ease}\
 #rahman-picker .pk-go:hover{background:#7B2D8E;transform:translateY(-1px)}\
 #rahman-picker .pk-go:disabled{opacity:.6;cursor:default;transform:none}\
 #rahman-picker .pk-result{margin-top:16px;border-top:1px solid rgba(26,26,46,0.08);padding-top:16px;display:none}\
 #rahman-picker .pk-result.show{display:block;animation:pkIn .45s ease-out}\
 @keyframes pkIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}\
 #rahman-picker .pk-kicker{font-size:12px;font-weight:700;color:#E85D20;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;min-height:14px}\
-#rahman-picker .pk-title{font-size:30px;font-weight:800;line-height:1.15;color:#1A1A2E;margin-bottom:6px;word-break:break-word}\
-#rahman-picker .pk-title a{color:inherit;text-decoration:none}\
-#rahman-picker .pk-title a:hover{color:#C02068}\
-#rahman-picker .pk-meta{font-size:15px;color:#555570;line-height:1.5;margin-bottom:4px}\
-#rahman-picker .pk-meta b{color:#1A1A2E;font-weight:600}\
+#rahman-picker .pk-title{font-size:28px;font-weight:800;line-height:1.15;color:#1A1A2E;margin-bottom:6px;word-break:break-word}\
+#rahman-picker .pk-title a{color:inherit;text-decoration:none}#rahman-picker .pk-title a:hover{color:#C02068}\
+#rahman-picker .pk-meta{font-size:15px;color:#555570;line-height:1.5;margin-bottom:4px}#rahman-picker .pk-meta b{color:#1A1A2E;font-weight:600}\
 #rahman-picker .pk-bars{display:flex;gap:18px;margin:12px 0 4px;flex-wrap:wrap}\
 #rahman-picker .pk-bar{flex:1 1 180px;font-size:12px;color:#888898}\
-#rahman-picker .pk-bar span{display:flex;justify-content:space-between;margin-bottom:4px}\
-#rahman-picker .pk-bar em{font-style:normal}\
+#rahman-picker .pk-bar span{display:flex;justify-content:space-between;margin-bottom:4px}#rahman-picker .pk-bar em{font-style:normal}\
 #rahman-picker .pk-bar i{display:block;height:6px;border-radius:3px;background:rgba(26,26,46,0.08);overflow:hidden}\
 #rahman-picker .pk-bar i b{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,#C02068,#E85D20)}\
 #rahman-picker .pk-note{font-size:12px;color:#888898;margin-top:6px;min-height:14px}\
-#rahman-picker .pk-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}\
-#rahman-picker .pk-btn{display:inline-flex;align-items:center;gap:6px;border-radius:10px;padding:11px 16px;font-size:14px;font-weight:700;\
+.pk-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}\
+.pk-btn{display:inline-flex;align-items:center;gap:6px;border-radius:10px;padding:11px 16px;font-size:14px;font-weight:700;\
 text-decoration:none;cursor:pointer;font-family:inherit;border:1.5px solid transparent;line-height:1;min-height:40px}\
-#rahman-picker .pk-btn.primary{background:#C02068;color:#fff}\
-#rahman-picker .pk-btn.primary:hover{background:#7B2D8E}\
-#rahman-picker .pk-btn.ghost{background:#fff;color:#1A1A2E;border-color:rgba(26,26,46,0.18)}\
-#rahman-picker .pk-btn.ghost:hover{border-color:#C02068;color:#C02068}\
-#rahman-picker .pk-shuffle{font-size:22px;font-weight:700;color:#888898;min-height:36px;display:flex;align-items:center;letter-spacing:.2px}\
-#rahman-picker .pk-toast{font-size:12px;color:#7B2D8E;margin-top:8px;min-height:14px;word-break:break-all}\
-@media (max-width:480px){#rahman-picker .pk-inner{padding:18px 14px 14px}#rahman-picker h2{font-size:20px}\
-#rahman-picker .pk-label{flex-basis:100%;margin-bottom:-2px}#rahman-picker .pk-title{font-size:26px}}\
+.pk-btn.primary{background:#C02068;color:#fff}.pk-btn.primary:hover{background:#7B2D8E}\
+.pk-btn.ghost{background:#fff;color:#1A1A2E;border-color:rgba(26,26,46,0.18)}.pk-btn.ghost:hover{border-color:#C02068;color:#C02068}\
+#rahman-picker .pk-shuffle{font-size:22px;font-weight:700;color:#888898;min-height:36px;display:flex;align-items:center}\
+.pk-toast{font-size:12px;color:#7B2D8E;margin-top:8px;min-height:14px;word-break:break-all}\
+@media (max-width:480px){.sotd .sotd-inner{padding:18px 16px 16px}.sotd .sotd-title{font-size:28px}\
+#rahman-picker .pk-inner{padding:16px 14px 14px}#rahman-picker .pk-label{flex-basis:100%;margin-bottom:-2px}#rahman-picker .pk-title{font-size:25px}}\
 @media (prefers-reduced-motion:reduce){#rahman-picker .pk-result.show{animation:none}}';
 
-  // same as makeSlug() in song_database.html, so links open the right song
+  // same as makeSlug() in song_database.html; the Song DNA page accepts the same form
   function slug(s) {
     return (s.t + '-' + s.a + '-' + s.y).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + (s.k ? '-' + s.k : '');
   }
-  function film(s) { return s.a.replace(/\s*\([^)]*\)\s*$/, ''); }
-
-  var state = { mood: -1, energy: -1, lang: -1, era: -1 };
-  var recent = [];
-  var root, resultEl, goBtn;
+  function film(s) {
+    return s.a.replace(/\s*\([^)]*\)\s*$/, '')
+      .replace(/\s*[:\-]?\s*\(?(original motion picture soundtrack|music from the motion picture|original soundtrack|soundtrack)\)?\s*$/i, '');
+  }
+  function songUrl(s) { return 'song_database.html#' + slug(s); }
+  function dnaUrl(s) { return 'indian_audio_map.html#' + slug(s); }
+  function listenUrl(s) {
+    return s.p ? 'https://open.spotify.com/track/' + s.p
+      : 'https://www.youtube.com/results?search_query=' + encodeURIComponent(s.t + ' ' + film(s) + ' AR Rahman');
+  }
+  function shareUrl(s) {
+    var u = location.origin + location.pathname.replace(/index\.html$/, '');
+    return u + '?pick=' + encodeURIComponent(slug(s));
+  }
+  function fact(s) {
+    var best = -1, bi = -1;
+    for (var i = 0; i < 6; i++) {
+      var v = s.f[i];
+      if (v == null) continue;
+      var d = Math.abs(v - 0.5);
+      if (d > best) { best = d; bi = i; }
+    }
+    if (bi < 0) return '';
+    var hi = s.f[bi] >= 0.5, pct = Math.round((hi ? s.f[bi] : 1 - s.f[bi]) * 100);
+    return (hi ? AXES[bi][0] : AXES[bi][1]) + ' ' + pct + '% of his songs.';
+  }
+  function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function track(what, s) {
+    try { if (window.goatcounter && goatcounter.count) goatcounter.count({ path: 'picker/' + what, title: s ? s.t : what, event: true }); } catch (e) {}
+  }
+  function actions(s, share, again) {
+    var h = '<div class="pk-actions">';
+    if (s.d) {
+      h += '<a class="pk-btn primary" href="' + dnaUrl(s) + '">See its DNA &rarr;</a>';
+      h += '<a class="pk-btn ghost" href="' + songUrl(s) + '">Song page</a>';
+    } else {
+      h += '<a class="pk-btn primary" href="' + songUrl(s) + '">Open song &rarr;</a>';
+    }
+    h += '<a class="pk-btn ghost" href="' + listenUrl(s) + '" target="_blank" rel="noopener">&#9654; Listen</a>';
+    if (again) h += '<button type="button" class="pk-btn ghost" data-act="again">&#8635; Another one</button>';
+    if (share) h += '<button type="button" class="pk-btn ghost" data-act="share">Share</button>';
+    return h + '</div>';
+  }
+  function wireShare(container, s) {
+    var b = container.querySelector('[data-act="share"]');
+    if (!b) return;
+    b.addEventListener('click', function () {
+      var url = shareUrl(s), text = s.t + ' (' + film(s) + ', ' + s.y + ') - my Rahman song';
+      var toast = container.querySelector('.pk-toast');
+      if (navigator.share) { navigator.share({ title: 'Inside the Sound of Rahman', text: text, url: url }).catch(function () {}); return; }
+      if (navigator.clipboard) navigator.clipboard.writeText(url).then(function () { toast.textContent = 'Link copied.'; }, function () { toast.textContent = url; });
+      else toast.textContent = url;
+    });
+  }
 
   function ensureData() {
     if (POOL) return Promise.resolve(POOL);
     if (!loading) {
-      var src = (document.currentScript && document.currentScript.src || 'picker.js').replace(/picker\.js.*$/, 'picker-data.json');
-      loading = fetch(src, { cache: 'force-cache' }).then(function (r) { return r.json(); })
+      var base = '';
+      var sc = document.querySelector('script[src*="picker.js"]');
+      if (sc) base = sc.getAttribute('src').replace(/picker\.js.*$/, '');
+      loading = fetch(base + 'picker-data.json', { cache: 'force-cache' }).then(function (r) { return r.json(); })
         .then(function (d) { POOL = d; return d; })
         .catch(function () { loading = null; throw new Error('load'); });
     }
     return loading;
   }
 
-  function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
-  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  // ---------- Song of the Day ----------
+  function fnv(str) {
+    var h = 2166136261;
+    for (var i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; }
+    return h >>> 0;
+  }
+  function songOfTheDay(d) {
+    var known = d.filter(function (s) { return s.p; });
+    var list = known.length ? known : d;
+    var now = new Date();
+    var key = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate();
+    return list[fnv(key) % list.length];
+  }
+  function renderSotd(box) {
+    box.innerHTML = '<div class="sotd-inner"><div class="sotd-kicker">Song of the day</div><div class="sotd-skel">Picking today’s song…</div></div>';
+    ensureData().then(function (d) {
+      var s = songOfTheDay(d);
+      var day = new Date().toLocaleDateString(undefined, { day: 'numeric', month: 'long' });
+      var h = '<div class="sotd-inner">';
+      h += '<div class="sotd-kicker">Song of the day &middot; ' + esc(day) + '</div>';
+      h += '<div class="sotd-title"><a href="' + (s.d ? dnaUrl(s) : songUrl(s)) + '">' + esc(s.t) + '</a></div>';
+      h += '<div class="sotd-meta"><b>' + esc(film(s)) + '</b> (' + s.y + ') &middot; ' + esc(s.l) + (s.s ? ' &middot; ' + esc(s.s) : '') + '</div>';
+      var f = fact(s);
+      if (f) h += '<div class="sotd-fact">' + esc(f) + '</div>';
+      h += actions(s, true, false) + '<div class="pk-toast"></div></div>';
+      box.innerHTML = h;
+      wireShare(box, s);
+      track('song-of-the-day', s);
+    }, function () {
+      box.innerHTML = '<div class="sotd-inner"><div class="sotd-kicker">Song of the day</div><div class="sotd-skel">Could not load the song list. Check your connection and reload.</div></div>';
+    });
+  }
+
+  // ---------- Picker ----------
+  var state = { mood: -1, energy: -1, lang: -1, era: -1 };
+  var recent = [];
+  var root, resultEl, goBtn;
 
   function pillRow(label, key, names, anyLabel) {
     var row = el('div', 'pk-row');
@@ -100,25 +194,23 @@ text-decoration:none;cursor:pointer;font-family:inherit;border:1.5px solid trans
     });
     return row;
   }
-
   function inBand(v, band) { return v >= band[1] && v < band[2]; }
   function matches(song, s, widen) {
+    var e = song.f[0], v = song.f[2];
     if (s.lang >= 0 && song.l !== LANGS[s.lang]) return false;
     if (s.era >= 0 && (song.y < ERAS[s.era][1] || song.y > ERAS[s.era][2])) return false;
     if (s.mood >= 0) {
-      var ok = inBand(song.v, MOOD[s.mood]);
-      if (!ok && widen) ok = (s.mood > 0 && inBand(song.v, MOOD[s.mood - 1])) || (s.mood < 2 && inBand(song.v, MOOD[s.mood + 1]));
+      var ok = inBand(v, MOOD[s.mood]);
+      if (!ok && widen) ok = (s.mood > 0 && inBand(v, MOOD[s.mood - 1])) || (s.mood < 2 && inBand(v, MOOD[s.mood + 1]));
       if (!ok) return false;
     }
     if (s.energy >= 0) {
-      var ok2 = inBand(song.e, ENERGY[s.energy]);
-      if (!ok2 && widen) ok2 = (s.energy > 0 && inBand(song.e, ENERGY[s.energy - 1])) || (s.energy < 2 && inBand(song.e, ENERGY[s.energy + 1]));
+      var ok2 = inBand(e, ENERGY[s.energy]);
+      if (!ok2 && widen) ok2 = (s.energy > 0 && inBand(e, ENERGY[s.energy - 1])) || (s.energy < 2 && inBand(e, ENERGY[s.energy + 1]));
       if (!ok2) return false;
     }
     return true;
   }
-
-  // returns {songs, note}
   function candidates() {
     var steps = [
       [state, false, ''],
@@ -133,7 +225,6 @@ text-decoration:none;cursor:pointer;font-family:inherit;border:1.5px solid trans
     }
     return { songs: POOL, note: '' };
   }
-
   function pick(list) {
     var fresh = list.filter(function (s) { return recent.indexOf(slug(s)) < 0; });
     if (fresh.length) list = fresh;
@@ -142,69 +233,35 @@ text-decoration:none;cursor:pointer;font-family:inherit;border:1.5px solid trans
     for (var i = 0; i < list.length; i++) { r -= w[i]; if (r <= 0) return list[i]; }
     return list[list.length - 1];
   }
-
-  function listenUrl(s) {
-    return s.p ? 'https://open.spotify.com/track/' + s.p
-      : 'https://www.youtube.com/results?search_query=' + encodeURIComponent(s.t + ' ' + film(s) + ' AR Rahman');
-  }
-  function songUrl(s) { return 'song_database.html#' + slug(s); }
-  function shareUrl(s) {
-    var u = location.origin + location.pathname.replace(/index\.html$/, '');
-    return u + '?pick=' + encodeURIComponent(slug(s));
-  }
   function bar(label, lo, hi, v) {
     return '<div class="pk-bar"><span><em>' + lo + '</em><em>' + label + '</em><em>' + hi + '</em></span><i><b style="width:' + Math.round(v * 100) + '%"></b></i></div>';
   }
-
   function render(s, note) {
     recent.push(slug(s)); if (recent.length > 8) recent.shift();
     var h = '<div class="pk-kicker">' + (note ? 'Closest match' : 'Your song') + '</div>';
     h += '<div class="pk-title"><a href="' + songUrl(s) + '">' + esc(s.t) + '</a></div>';
     h += '<div class="pk-meta"><b>' + esc(film(s)) + '</b> (' + s.y + ') &middot; ' + esc(s.l) + '</div>';
     if (s.s) h += '<div class="pk-meta">' + esc(s.s) + '</div>';
-    h += '<div class="pk-bars">' + bar('mood', 'dark', 'bright', s.v) + bar('energy', 'soft', 'intense', s.e) + '</div>';
+    h += '<div class="pk-bars">' + bar('mood', 'dark', 'bright', s.f[2]) + bar('energy', 'soft', 'intense', s.f[0]) + '</div>';
     h += '<div class="pk-note">' + esc(note) + '</div>';
-    h += '<div class="pk-actions">';
-    h += '<a class="pk-btn primary" href="' + songUrl(s) + '">Open song &rarr;</a>';
-    h += '<a class="pk-btn ghost" href="' + listenUrl(s) + '" target="_blank" rel="noopener">&#9654; Listen</a>';
-    h += '<button type="button" class="pk-btn ghost" data-act="again">&#8635; Another one</button>';
-    h += '<button type="button" class="pk-btn ghost" data-act="share">Share</button>';
-    h += '</div><div class="pk-toast"></div>';
+    h += actions(s, true, true) + '<div class="pk-toast"></div>';
     resultEl.innerHTML = h;
     resultEl.classList.add('show');
     resultEl.querySelector('[data-act="again"]').addEventListener('click', function () { go(); });
-    resultEl.querySelector('[data-act="share"]').addEventListener('click', function () { share(s); });
-    // on a phone the result lands below the button; bring it into view
+    wireShare(resultEl, s);
     var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     try { resultEl.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'nearest' }); } catch (e) {}
     track('pick', s);
   }
-
-  function share(s) {
-    var url = shareUrl(s), text = s.t + ' (' + film(s) + ', ' + s.y + ') - my Rahman song';
-    var toast = resultEl.querySelector('.pk-toast');
-    if (navigator.share) { navigator.share({ title: 'Inside the Sound of Rahman', text: text, url: url }).catch(function () {}); return; }
-    if (navigator.clipboard) navigator.clipboard.writeText(url).then(function () { toast.textContent = 'Link copied.'; });
-    else { toast.textContent = url; }
-  }
-
-  function track(what, s) {
-    try { if (window.goatcounter && goatcounter.count) goatcounter.count({ path: 'picker/' + what, title: s ? s.t : what, event: true }); } catch (e) {}
-  }
-
   function go() {
     goBtn.disabled = true;
-    if (!POOL) {
-      resultEl.innerHTML = '<div class="pk-kicker">Loading the songs&hellip;</div>';
-      resultEl.classList.add('show');
-    }
-    ensureData().then(function () { goNow(); }, function () {
+    if (!POOL) { resultEl.innerHTML = '<div class="pk-kicker">Loading the songs&hellip;</div>'; resultEl.classList.add('show'); }
+    ensureData().then(goNow, function () {
       resultEl.innerHTML = '<div class="pk-kicker">Could not load the song list. Check your connection and try again.</div>';
       resultEl.classList.add('show');
       goBtn.disabled = false;
     });
   }
-
   function goNow() {
     var c = candidates();
     var chosen = pick(c.songs);
@@ -219,11 +276,15 @@ text-decoration:none;cursor:pointer;font-family:inherit;border:1.5px solid trans
       if (++n >= 11) { clearInterval(iv); resultEl.classList.remove('show'); void resultEl.offsetWidth; render(chosen, c.note); goBtn.disabled = false; }
     }, 75);
   }
-
-  function build() {
+  function showPicker() {
+    if (!root) return;
+    root.hidden = false;
+    var tb = document.getElementById('pick-toggle-btn');
+    if (tb) tb.parentNode.style.display = 'none';
+  }
+  function buildPicker() {
     root = document.getElementById('rahman-picker');
     if (!root) return;
-    var st = document.createElement('style'); st.textContent = CSS; document.head.appendChild(st);
     var inner = el('div', 'pk-inner');
     inner.appendChild(el('h2', null, 'What Rahman song are you feeling like?'));
     inner.appendChild(el('p', 'pk-sub', 'Tap a mood and we pick one of ' + N.toLocaleString() + ' songs for you. Every choice is optional.'));
@@ -237,20 +298,25 @@ text-decoration:none;cursor:pointer;font-family:inherit;border:1.5px solid trans
     resultEl = el('div', 'pk-result');
     inner.appendChild(resultEl);
     root.appendChild(inner);
+    var tb = document.getElementById('pick-toggle-btn');
+    if (tb) tb.addEventListener('click', function () { showPicker(); root.scrollIntoView({ behavior: 'smooth', block: 'start' }); track('open-picker'); });
+  }
 
-    // shared link: ?pick=<slug>
+  function build() {
+    var st = document.createElement('style'); st.textContent = CSS; document.head.appendChild(st);
+    buildPicker();
+    var sotd = document.getElementById('song-of-the-day');
     var q = /[?&]pick=([^&#]+)/.exec(location.search);
-    if (q) {
+    if (q && root) {
       var h = decodeURIComponent(q[1]);
+      showPicker();
       ensureData().then(function (d) {
         for (var i = 0; i < d.length; i++) if (slug(d[i]) === h) { render(d[i], ''); track('open-shared', d[i]); break; }
         root.scrollIntoView({ block: 'start' });
       }, function () {});
-    } else {
-      // warm the data in the background once the page is idle
-      var warm = function () { ensureData().then(null, function () {}); };
-      if (window.requestIdleCallback) requestIdleCallback(warm, { timeout: 3000 }); else setTimeout(warm, 1500);
     }
+    if (sotd) renderSotd(sotd);
+    else { var warm = function () { ensureData().then(null, function () {}); }; if (window.requestIdleCallback) requestIdleCallback(warm, { timeout: 3000 }); else setTimeout(warm, 1500); }
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', build); else build();
