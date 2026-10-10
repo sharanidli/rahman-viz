@@ -308,6 +308,9 @@
     cursor: pointer; text-decoration: underline; text-underline-offset: 3px; padding: 6px 4px;
   }
   .pick-toggle button:hover { color: #7B2D8E; }
+  .pick-toggle .pick-sep { color: #888898; margin: 0 4px; }
+  .pick-toggle .quiz-link { color: #C02068; font-size: 14px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+  .pick-toggle .quiz-link:hover { color: #7B2D8E; }
   .hero .stats { margin-top: 28px; gap: 24px; }
   .hero .stat-num { font-size: 22px; }
 
@@ -388,7 +391,8 @@
   </p>
   <!-- Song of the Day + mood picker: markup, styles and data come from picker.js (build_picker.py) -->
   <div id="song-of-the-day" class="sotd" aria-live="polite"></div>
-  <p class="pick-toggle"><button type="button" id="pick-toggle-btn">Want a different one? Pick by mood &darr;</button></p>
+  <p class="pick-toggle"><button type="button" id="pick-toggle-btn">Want a different one? Pick by mood &darr;</button>
+     <span class="pick-sep">&middot;</span> <a class="quiz-link" href="quiz.html">Which Rahman are you? Take the quiz &rarr;</a></p>
   <div id="rahman-picker" hidden></div>
   <!-- Stats: manually updated (see PROJECT_LOG.md for current counts) -->
   <div class="stats">

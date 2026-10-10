@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Eight taps to find which of the six kinds of Rahman sound is yours. Built from the audio of 1,568 songs.">
+<meta property="og:title" content="Which Rahman are you?">
+<meta property="og:description" content="Eight taps to find which of the six kinds of Rahman sound is yours. Built from the audio of 1,568 songs.">
+<meta property="og:image" content="https://brothersinmusicpod.com/og-preview.png">
+<meta property="og:url" content="https://brothersinmusicpod.com/">
+<meta name="twitter:card" content="summary_large_image">
+<title>Which Rahman are you?</title>
+<style>
+  /* --- Site navigation --- */
+  .site-nav {
+    position: fixed; top: 0; left: 0; right: 0; height: 44px;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    z-index: 10000; display: flex; align-items: center;
+    padding: 0 20px;
+    border-bottom: 1px solid rgba(26,26,46,0.1);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+  .site-nav .nav-brand {
+    text-decoration: none; color: #1A1A2E; font-weight: 700; font-size: 14px;
+    white-space: nowrap;
+  }
+  .site-nav .nav-brand:hover { color: #7B2D8E; }
+  .site-nav .nav-links { margin-left: auto; display: flex; gap: 20px; }
+  .site-nav .nav-links a {
+    text-decoration: none; color: #555570; font-size: 13px; font-weight: 500;
+  }
+  .site-nav .nav-links a:hover { color: #C02068; }
+  .site-nav .nav-toggle-input { display: none; }
+  .site-nav .nav-toggle-label {
+    display: none; cursor: pointer; font-size: 22px;
+    color: #1A1A2E; margin-left: auto; line-height: 1;
+    -webkit-tap-highlight-color: transparent;
+  }
+  @media (max-width: 600px) {
+    .site-nav .nav-brand { font-size: 13px; }
+    .site-nav .nav-toggle-label { display: block; }
+    .site-nav .nav-links {
+      display: none; position: absolute; top: 44px; left: 0; right: 0;
+      background: rgba(255,255,255,0.98);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      flex-direction: column; padding: 12px 20px; gap: 12px;
+      border-bottom: 1px solid rgba(26,26,46,0.1);
+    }
+    .site-nav .nav-toggle-input:checked ~ .nav-links { display: flex; }
+  }
+
+  /* --- Mobile notice banner --- */
+  .mobile-notice { display: none; }
+  @media (max-width: 768px) {
+    .mobile-notice {
+      display: block; background: rgba(232,93,32,0.08);
+      color: #555570; text-align: center;
+      padding: 6px 16px; font-size: 11px; line-height: 1.4;
+    }
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    padding-top: 48px; background: #fff; color: #1A1A2E; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+  .qz { max-width: 640px; margin: 0 auto; padding: 28px 16px 80px; }
+  .qz-kicker { font-size: 12px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: #7B2D8E; text-decoration: none; display: inline-block; margin-bottom: 10px; }
+  .qz h1 { font-size: 34px; font-weight: 800; line-height: 1.1; letter-spacing: -0.3px;
+    background: linear-gradient(135deg, #C02068, #E85D20, #B8A820); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 10px; }
+  .qz p.lead { font-size: 16px; color: #555570; line-height: 1.6; margin-bottom: 20px; }
+  .qz-btn { display: inline-flex; align-items: center; gap: 8px; border-radius: 12px; padding: 14px 22px; font-size: 16px; font-weight: 700; text-decoration: none; cursor: pointer; font-family: inherit; border: 1.5px solid transparent; line-height: 1; }
+  .qz-btn.primary { background: #C02068; color: #fff; } .qz-btn.primary:hover { background: #7B2D8E; }
+  .qz-btn.ghost { background: #fff; color: #1A1A2E; border-color: rgba(26,26,46,0.18); } .qz-btn.ghost:hover { border-color: #C02068; color: #C02068; }
+  .qz-btn.small { padding: 10px 14px; font-size: 14px; border-radius: 10px; }
+  .qz-progress { display: flex; align-items: center; gap: 10px; margin: 6px 0 18px; font-size: 13px; color: #888898; }
+  .qz-bar { flex: 1; height: 6px; background: rgba(26,26,46,0.08); border-radius: 3px; overflow: hidden; }
+  .qz-bar b { display: block; height: 100%; background: linear-gradient(90deg, #C02068, #E85D20); border-radius: 3px; transition: width .3s ease; }
+  .qz-q { font-size: 22px; font-weight: 800; margin-bottom: 16px; line-height: 1.25; }
+  .qz-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .qz-opt { text-align: left; background: #fff; border: 1.5px solid rgba(26,26,46,0.14); border-radius: 16px; padding: 18px 16px 14px; cursor: pointer; font-family: inherit; color: inherit; min-height: 150px; display: flex; flex-direction: column; justify-content: space-between; transition: border-color .15s ease, transform .1s ease, box-shadow .15s ease; }
+  .qz-opt:hover { border-color: #C02068; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,26,46,0.08); }
+  .qz-opt .t { font-size: 20px; font-weight: 800; line-height: 1.15; margin-bottom: 6px; word-break: break-word; }
+  .qz-opt .m { font-size: 13px; color: #555570; line-height: 1.4; }
+  .qz-opt .m b { color: #1A1A2E; font-weight: 600; }
+  .qz-opt.situation { min-height: 110px; justify-content: center; align-items: center; text-align: center; }
+  .qz-opt.situation .t { font-size: 24px; margin: 0; }
+  .qz-sub { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 12px; font-size: 12px; }
+  .qz-sub a, .qz-sub button { background: none; border: none; color: #7B2D8E; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; text-decoration: none; padding: 6px 0; }
+  .qz-sub a:hover, .qz-sub button:hover { text-decoration: underline; }
+  .qz-skip { margin-top: 14px; text-align: center; font-size: 13px; }
+  .qz-skip button { background: none; border: none; color: #888898; font: inherit; font-size: 13px; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+  .qz-result { border-radius: 18px; padding: 2px; background: linear-gradient(135deg, #C02068, #E85D20, #B8A820); box-shadow: 0 8px 32px rgba(192,32,104,0.12); }
+  .qz-result .in { background: #fff; border-radius: 16px; padding: 24px 22px 20px; }
+  .qz-result .k { font-size: 12px; font-weight: 700; color: #E85D20; text-transform: uppercase; letter-spacing: .7px; margin-bottom: 8px; }
+  .qz-result h2 { font-size: 36px; font-weight: 800; line-height: 1.05; margin-bottom: 10px; letter-spacing: -0.3px; }
+  .qz-result .blurb { font-size: 17px; color: #1A1A2E; line-height: 1.5; padding-left: 12px; border-left: 3px solid #C02068; margin-bottom: 18px; }
+  .qz-songs { list-style: none; display: grid; gap: 8px; margin-bottom: 18px; }
+  .qz-songs li { display: flex; justify-content: space-between; align-items: center; gap: 10px; background: #FAFAFE; border: 1px solid rgba(26,26,46,0.08); border-radius: 10px; padding: 10px 12px; }
+  .qz-songs .st { font-weight: 700; font-size: 15px; } .qz-songs .sm { font-size: 12px; color: #888898; }
+  .qz-songs .links { display: flex; gap: 6px; flex-shrink: 0; }
+  .qz-songs .links a { font-size: 12px; font-weight: 700; color: #7B2D8E; text-decoration: none; border: 1px solid rgba(123,45,142,0.3); border-radius: 8px; padding: 6px 8px; white-space: nowrap; }
+  .qz-songs .links a:hover { background: #7B2D8E; color: #fff; }
+  .qz-radar { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+  .qz-radar svg { width: 220px; height: 220px; flex-shrink: 0; }
+  .qz-radar .legend { font-size: 13px; color: #555570; line-height: 1.6; }
+  .qz-radar .legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -1px; margin-right: 6px; }
+  .qz-pod { font-size: 14px; color: #555570; margin: 6px 0 16px; line-height: 1.5; }
+  .qz-pod a { color: #7B2D8E; font-weight: 600; text-decoration: none; } .qz-pod a:hover { text-decoration: underline; }
+  .qz-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .qz-toast { font-size: 12px; color: #7B2D8E; margin-top: 8px; min-height: 14px; word-break: break-all; }
+  .qz-note { font-size: 12px; color: #888898; margin-top: 10px; }
+  .fade { animation: qzIn .35s ease-out; } @keyframes qzIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @media (max-width: 480px) { .qz h1 { font-size: 28px; } .qz-opts { grid-template-columns: 1fr; } .qz-opt { min-height: 0; } .qz-result h2 { font-size: 30px; } .qz-result .in { padding: 20px 16px 16px; } }
+  @media (prefers-reduced-motion: reduce) { .fade { animation: none; } .qz-opt { transition: none; } }
+</style>
+<style>
+  /* --- Responsive: Tablet (1024px) --- */
+  @media (max-width: 1024px) {
+    #year-display { font-size: 48px; }
+    #legend { width: 140px; font-size: 10px; }
+    #instructions { display: none; }
+  }
+
+  /* --- Responsive: Large phone / small tablet (768px) --- */
+  @media (max-width: 768px) {
+    #controls {
+      flex-direction: column; gap: 6px; padding: 6px 12px;
+      align-items: stretch;
+    }
+    #controls > * { text-align: center; }
+    #legend {
+      position: static; width: 100%; max-height: 120px;
+      overflow-y: auto; margin: 4px 0;
+    }
+    #axis-controls {
+      position: relative; top: auto; left: auto;
+      transform: none; flex-wrap: wrap;
+      justify-content: center; gap: 6px;
+      padding: 4px 8px; font-size: 12px;
+    }
+    #header { padding: 12px 16px 4px; }
+    #header h1 { font-size: 20px; }
+    #header p { font-size: 12px; line-height: 1.4; }
+    #main {
+      flex-direction: column; padding: 8px 12px; gap: 12px;
+    }
+    #sidebar {
+      width: 100%; display: flex; flex-wrap: wrap; gap: 4px;
+    }
+  }
+
+  /* --- Responsive: Phone (480px) --- */
+  @media (max-width: 480px) {
+    #year-display {
+      font-size: 32px; bottom: 52px; right: 8px; opacity: 0.6;
+    }
+    #header h1 { font-size: 18px; }
+    #header p { font-size: 11px; }
+    #speed-control { display: none; }
+  }
+
+  /* --- Touch device helpers --- */
+  .touch-device circle,
+  .touch-device .bar-row,
+  .touch-device .dir-item,
+  .touch-device .cell {
+    cursor: pointer;
+  }
+</style>
+
+</head>
+<body>
+<nav class="site-nav">
+  <a href="index.html" class="nav-brand">Inside the Sound of Rahman</a>
+  <input type="checkbox" id="nav-toggle" class="nav-toggle-input">
+  <label for="nav-toggle" class="nav-toggle-label">&#9776;</label>
+  <div class="nav-links">
+    <a href="index.html">Explore</a>
+    <a href="song_database.html">Songs</a>
+    <a href="singers/index.html">Singers</a>
+    <a href="index.html#podcast">Podcast</a>
+    <a href="about.html">About</a>
+  </div>
+</nav>
+<div class="mobile-notice">Tap elements for details. Rotate for wider view.</div>
+<script>
+(function() {
+  // Detect touch device
+  if (!('ontouchstart' in window)) return;
+  document.body.classList.add('touch-device');
+
+  // Dismiss tooltips on tap-away
+  document.addEventListener('click', function(e) {
+    // Don't dismiss if tapping the tooltip itself
+    if (e.target.closest('#tooltip') || e.target.closest('#edge-tooltip')) return;
+    // Don't dismiss if tapping an interactive element (page handler will show new tooltip)
+    if (e.target.closest('circle') || e.target.closest('.bar-row') ||
+        e.target.closest('.dir-item') || e.target.closest('.cell') ||
+        e.target.closest('line[style]') || e.target.closest('.dot') ||
+        e.target.closest('.segment') || e.target.closest('rect[data-info]')) return;
+    // Dismiss all tooltips
+    var tt = document.getElementById('tooltip');
+    var ett = document.getElementById('edge-tooltip');
+    if (tt) tt.style.display = 'none';
+    if (ett) ett.style.display = 'none';
+  });
+
+  // Recalculate SVG dimensions on orientation change
+  window.addEventListener('orientationchange', function() {
+    setTimeout(function() { window.dispatchEvent(new Event('resize')); }, 200);
+  });
+})();
+</script>
+
+<style>.singer-link, .lyricist-link { color: #C02068; text-decoration: none; } .singer-link:hover, .lyricist-link:hover { text-decoration: underline; }</style>
+<script>
+window.__SINGER_MANIFEST = {"A. R. Rahman":"a-r-rahman","S. P. Balasubrahmanyam":"s-p-balasubrahmanyam","K. S. Chithra":"k-s-chithra","Hariharan":"hariharan","Sujatha Mohan":"sujatha-mohan","Srinivas":"srinivas","Shreya Ghoshal":"shreya-ghoshal","Karthik":"karthik","Chinmayi Sripada":"chinmayi-sripada","Mano":"mano","Udit Narayan":"udit-narayan","Sukhwinder Singh":"sukhwinder-singh","Swarnalatha":"swarnalatha","Sadhana Sargam":"sadhana-sargam","Blaaze":"blaaze","Haricharan":"haricharan","Shankar Mahadevan":"shankar-mahadevan","P. Unnikrishnan":"p-unnikrishnan","Sonu Nigam":"sonu-nigam","Shashaa Tirupati":"shashaa-tirupati","Naresh Iyer":"naresh-iyer","Benny Dayal":"benny-dayal","Alka Yagnik":"alka-yagnik","Madhushree":"madhushree","Anupama":"anupama","Kavita Krishnamurthy":"kavita-krishnamurthy","Vijay Prakash":"vijay-prakash","Harini":"harini","Javed Ali":"javed-ali","Jonita Gandhi":"jonita-gandhi","Tanvi Shah":"tanvi-shah","Unni Menon":"unni-menon","Sid Sriram":"sid-sriram","Anuradha Sriram":"anuradha-sriram","Mohit Chauhan":"mohit-chauhan","Suzanne D'Mello":"suzanne-dmello","Nikhita Gandhi":"nikhita-gandhi","Asha Bhosle":"asha-bhosle","S. Janaki":"s-janaki","G. V. Prakash Kumar":"g-v-prakash-kumar","Arijit Singh":"arijit-singh","Sarthak Kalyani":"sarthak-kalyani","Nakul Abhyankar":"nakul-abhyankar","A. R. Reihana":"a-r-reihana","Shahul Hameed":"shahul-hameed","A. R. Ameen":"a-r-ameen","Clinton Cerejo":"clinton-cerejo","Vasundhara Das":"vasundhara-das","Suresh Peters":"suresh-peters","Minmini":"minmini","Sathya Prakash":"sathya-prakash","Arjun Chandy":"arjun-chandy","Shakthisree Gopalan":"shakthisree-gopalan","Shweta Mohan":"shweta-mohan","Vijay Yesudas":"vijay-yesudas","Sunitha Sarathy":"sunitha-sarathy","Rakshita Suresh":"rakshita-suresh","K. J. Yesudas":"k-j-yesudas","Khatija Rahman":"khatija-rahman","Mohammed Aslam":"mohammed-aslam","Noel James":"noel-james","Kailash Kher":"kailash-kher","Sreekanth Hariharan":"sreekanth-hariharan","M. G. Sreekumar":"m-g-sreekumar","Malgudi Subha":"malgudi-subha","Bela Shende":"bela-shende","Aaryan Dinesh Kanagaratnam":"aaryan-dinesh-kanagaratnam","Richa Sharma":"richa-sharma","Kunal Ganjawala":"kunal-ganjawala","Neeti Mohan":"neeti-mohan","Hriday Gattani":"hriday-gattani","Shashwat Singh":"shashwat-singh","Rashid Ali":"rashid-ali","P. Jayachandran":"p-jayachandran","Raqeeb Alam":"raqeeb-alam","Febi Mani":"febi-mani","Dr. Narayanan":"dr-narayanan","Nakash Aziz":"nakash-aziz","Poorvi Koutish":"poorvi-koutish","Darshana KT":"darshana-kt","Lata Mangeshkar":"lata-mangeshkar","Palakkad Sreeram":"palakkad-sreeram","Adithya RK":"adithya-rk","Nivas":"nivas","Abhay Jodhpurkar":"abhay-jodhpurkar","S. P. B. Charan":"s-p-b-charan","Ganga Sitharasu":"ganga-sitharasu","Thoughtsfornow":"thoughtsfornow","Sanaa Moussa":"sanaa-moussa","Jithin Raj":"jithin-raj","KK":"kk","Nithyasree Mahadevan":"nithyasree-mahadevan","Theni Kunjarammal":"theni-kunjarammal","Bamba Bakya":"bamba-bakya","Sireesha Bhagavatula":"sireesha-bhagavatula","Vaishali Samant":"vaishali-samant","Dilshaad Shabbir Shaikh":"dilshaad-shabbir-shaikh","Remo Fernandes":"remo-fernandes","Lady Kash":"lady-kash","Kalyani Menon":"kalyani-menon","Gopika Poornima":"gopika-poornima","Faiz Mustafa":"faiz-mustafa","Shilpa Rao":"shilpa-rao","Deepthi Suresh":"deepthi-suresh","Sanah Moidutty":"sanah-moidutty","Sharanya Srinivas":"sharanya-srinivas","Lucky Ali":"lucky-ali","Adnan Sami":"adnan-sami","Sunidhi Chauhan":"sunidhi-chauhan","Mahalakshmi Iyer":"mahalakshmi-iyer","Sriram Parthasarathy":"sriram-parthasarathy","Reena Bhardwaj":"reena-bhardwaj","Sarath Santhosh":"sarath-santhosh","Dominique Cerejo":"dominique-cerejo","Ila Arun":"ila-arun","Aravind Srinivas":"aravind-srinivas","Nabyla Maan":"nabyla-maan","Aditya Rao":"aditya-rao","Pravin Mani":"pravin-mani","Hiral Viradia":"hiral-viradia","MC Heam":"mc-heam","Sunandha":"sunandha","Shiraz Uppal":"shiraz-uppal","Sapna Awasthi":"sapna-awasthi","T. K. Kala":"t-k-kala","Mathangi":"mathangi","Krissy":"krissy","Tippu":"tippu","Sayanora Philip":"sayanora-philip","Aslam Mustafa":"aslam-mustafa","Malaysia Vasudevan":"malaysia-vasudevan","Shaan":"shaan","Hema Sardesai":"hema-sardesai","Antara Nandy":"antara-nandy","Shenbagaraj":"shenbagaraj","T. S. Ayyappan":"t-s-ayyappan","Raja Hasan":"raja-hasan","Murtuza Mustafa":"murtuza-mustafa","Armaan Malik":"armaan-malik","Swagat Rathod":"swagat-rathod","Shiv":"shiv","Pop Shalini":"pop-shalini","Aparna Narayanan":"aparna-narayanan","Srimathumitha":"srimathumitha","Saindhavi":"saindhavi","Shi Millhouse":"shi-millhouse","Raven Millhouse":"raven-millhouse","Jaspreet Jasz":"jaspreet-jasz","Haripriya":"haripriya","Mahathi":"mahathi","Raja Kumari":"raja-kumari","Kavita Paudwal":"kavita-paudwal","Zubeen Garg":"zubeen-garg","Maria Roe Vincent":"maria-roe-vincent","Alphons Joseph":"alphons-joseph","Surjo Bhattacharya":"surjo-bhattacharya","George Peter":"george-peter","Amina Rafiq":"amina-rafiq","Pooja Tiwari":"pooja-tiwari","Natalie Di Luccio":"natalie-di-luccio","Sirkazhi G. Sivachidambaram":"sirkazhi-g-sivachidambaram","S. P. B. Pallavi":"s-p-b-pallavi","Sangeetha":"sangeetha","Naveen Kumar":"naveen-kumar","Vani Jayaram":"vani-jayaram","Devan Ekambaram":"devan-ekambaram","Murtuza Khan":"murtuza-khan","Balram":"balram","Mahesh Vinayakram":"mahesh-vinayakram","Arivu":"arivu","Vishal Mishra":"vishal-mishra","Shuba":"shuba","Sivamani":"sivamani","Sivasri Skandaprasad":"sivasri-skandaprasad","Keerthi Sagathia":"keerthi-sagathia","Nitesh Aher":"nitesh-aher","Alexandra Joy":"alexandra-joy","Rekha Sawhney":"rekha-sawhney","Anil Ban":"anil-ban","Shahin Badar":"shahin-badar","Manikka Vinayagam":"manikka-vinayagam","Bharathiraja":"bharathiraja","Daler Mehndi":"daler-mehndi","Dhanush":"dhanush","Rajinikanth":"rajinikanth","Henry Kuruvilla":"henry-kuruvilla","Sonu Kakkar":"sonu-kakkar","Reshmi":"reshmi","Shubha":"shubha","Mira Sengupta":"mira-sengupta","Keerthana Vaidyanathan":"keerthana-vaidyanathan","Deena Chandra Das":"deena-chandra-das","Ranu Mukherjee":"ranu-mukherjee","Viviane Chaix":"viviane-chaix","Rekha Bhardwaj":"rekha-bhardwaj","Ash King":"ash-king","Aditya Narayan":"aditya-narayan","Sowmya Raoh":"sowmya-raoh","Anuradha Paudwal":"anuradha-paudwal","P. Susheela":"p-susheela","Megha":"megha","Timmy":"timmy","Rafee":"rafee","Chitra Sivaraman":"chitra-sivaraman","Poetic Ammo":"poetic-ammo","Pradeep Kumar":"pradeep-kumar","Pavithra Chari":"pavithra-chari","Suvi":"suvi","Shweta Pandit":"shweta-pandit","Nirmala Seshadri":"nirmala-seshadri","T. L. Maharajan":"t-l-maharajan","Bombay Jayashri":"bombay-jayashri","Raghav Mathur":"raghav-mathur","Harshdeep Kaur":"harshdeep-kaur","Bonnie Chakraborty":"bonnie-chakraborty","Rahul Nambiar":"rahul-nambiar","Abhijeet Bhattacharya":"abhijeet-bhattacharya","Qadir Khan":"qadir-khan","The London Session Orchestra":"the-london-session-orchestra","Apache Indian":"apache-indian","Kalpana Raghavendar":"kalpana-raghavendar","Chandran":"chandran","Arpita Gandhi":"arpita-gandhi","Le Trio Joubran":"le-trio-joubran","Hans Raj Hans":"hans-raj-hans","Aalap Raju":"aalap-raju","Yogi Sekar":"yogi-sekar","George Doering":"george-doering","Mustafa Kutoane":"mustafa-kutoane","Jali Fily Cissokho":"jali-fily-cissokho","Suresh Wadkar":"suresh-wadkar","Shweta Shetty":"shweta-shetty","Ravi Khote":"ravi-khote","Heer":"heer"};
+window.__LYRICIST_MANIFEST = {"Vairamuthu":"vairamuthu","Irshad Kamil":"irshad-kamil","Javed Akhtar":"javed-akhtar","Mehboob":"mehboob","Vaali":"vaali","Veturi":"veturi","Gulzar":"gulzar","P. K. Mishra":"p-k-mishra","Sirivennela Seetharama Sastry":"sirivennela-seetharama-sastry","Rajasri":"rajasri","Anantha Sriram":"anantha-sriram","Pa. Vijay":"pa-vijay","Madhan Karky":"madhan-karky","Rakendu Mouli":"rakendu-mouli","Prasoon Joshi":"prasoon-joshi","A. M. Ratnam":"a-m-ratnam","Bhuvanachandra":"bhuvanachandra","Siva Ganesh":"siva-ganesh","Amitabh Bhattacharya":"amitabh-bhattacharya","Anand Bakshi":"anand-bakshi","Rafeeq Ahamed":"rafeeq-ahamed","Abbas Tyrewala":"abbas-tyrewala","Vivek":"vivek","Thamarai":"thamarai","Kabilan":"kabilan","Vanamali":"vanamali","Na. Muthukumar":"na-muthukumar","Chandrabose":"chandrabose","A. R. Rahman":"a-r-rahman","Raqeeb Alam":"raqeeb-alam","Navneet Virk":"navneet-virk","Blaaze":"blaaze","Sukhwinder Singh":"sukhwinder-singh","Vinayak Sasikumar":"vinayak-sasikumar","Ilango Krishnan":"ilango-krishnan","Traditional":"traditional","Suddala Ashok Teja":"suddala-ashok-teja","Swanand Kirkire":"swanand-kirkire","Sameer Samant":"sameer-samant","Palani Bharathi":"palani-bharathi","Jayanth Kaikini":"jayanth-kaikini","Sameer":"sameer","Mashook Rahman":"mashook-rahman","Nusrat Badr":"nusrat-badr","Yugabharathi":"yugabharathi","Vennelakanti":"vennelakanti","Samrat":"samrat","Dhanush":"dhanush","Kumaar":"kumaar","Ramajogayya Sastry":"ramajogayya-sastry","Siva Ananth":"siva-ananth","Mankombu Gopalakrishnan":"mankombu-gopalakrishnan","Jagadish Khebudkar":"jagadish-khebudkar","Shiv":"shiv","Vaibhav Joshi":"vaibhav-joshi","Pavan Bhat":"pavan-bhat","MC Heam":"mc-heam","Snehan":"snehan","Adi Shankara":"adi-shankara","Kalpradah":"kalpradah","Thoughtsfornow":"thoughtsfornow","Manoj Muntashir":"manoj-muntashir","Rahat Indori":"rahat-indori","Majrooh Sultanpuri":"majrooh-sultanpuri","Bichu Thirumala":"bichu-thirumala","Ashok Paliwal":"ashok-paliwal","Dinesh Kanagaratnam":"dinesh-kanagaratnam","Arivumathi":"arivumathi","Narsinh Mehta":"narsinh-mehta","R. Parthiban":"r-parthiban","Kandikonda":"kandikonda","Aaryan Dinesh Kanagaratnam":"aaryan-dinesh-kanagaratnam","Mani Ratnam":"mani-ratnam","Shellee":"shellee","Shuba":"shuba","Karthik Netha":"karthik-netha"};
+window.__singerBasePath = '';
+window.__lyricistBasePath = '';
+function escHtml(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+function singerLink(raw) {
+  if (!raw) return '';
+  var M = window.__SINGER_MANIFEST, bp = window.__singerBasePath || '';
+  var parts = raw.replace(/ & /g, ', ').split(',');
+  var out = [];
+  for (var i = 0; i < parts.length; i++) {
+    var name = parts[i].trim();
+    if (!name) continue;
+    var slug = M[name];
+    if (slug) out.push('<a href="' + bp + 'singers/' + slug + '.html" class="singer-link">' + escHtml(name) + '</a>');
+    else out.push(escHtml(name));
+  }
+  return out.join(', ');
+}
+function lyricistLink(raw) {
+  if (!raw) return '';
+  var M = window.__LYRICIST_MANIFEST, bp = window.__lyricistBasePath || '';
+  var parts = raw.replace(/ & /g, ', ').split(',');
+  var out = [];
+  for (var i = 0; i < parts.length; i++) {
+    var name = parts[i].trim();
+    if (!name) continue;
+    var slug = M[name];
+    if (slug) out.push('<a href="' + bp + 'lyricists/' + slug + '.html" class="lyricist-link">' + escHtml(name) + '</a>');
+    else out.push(escHtml(name));
+  }
+  return out.join(', ');
+}
+</script>
+
+<div class="qz" id="qz"></div>
+<script>
+var Q = {"archetypes":[{"id":0,"slug":"midnight-thoughts","name":"Midnight Thoughts","blurb":"A contemplative, beautiful sound, soothing and questioning at the same time.","songs":[{"t":"Tu Hi Re (Raga Charukeshi)","disp":"Tu Hi Re","a":"Bombay (Hindi)","y":1994,"l":"Hindi","k":null,"p":null,"d":1,"film":"Bombay","dist":0.452},{"t":"Roja Jaaneman","disp":"Roja Jaaneman","a":"Roja (Hindi)","y":1992,"l":"Hindi","k":null,"p":"3bS1taFqjZhkOBjvpim9OS","d":1,"film":"Roja","dist":0.388},{"t":"Khwaja Mere Khwaja","disp":"Khwaja Mere Khwaja","a":"Jodhaa Akbar (Hindi)","y":2008,"l":"Hindi","k":null,"p":"4Zuei1UAP5pB5ovra9dnnp","d":1,"film":"Jodhaa Akbar","dist":0.617},{"t":"Enna Sona","disp":"Enna Sona","a":"Ok Jaanu (Hindi)","y":2016,"l":"Hindi","k":null,"p":"6bdpj89aYEBjhpsenXAsmO","d":1,"film":"Ok Jaanu","dist":0.194},{"t":"Kaadhal Rojave","disp":"Kaadhal Rojave","a":"Roja (Tamil)","y":1992,"l":"Tamil","k":null,"p":"3bS1taFqjZhkOBjvpim9OS","d":1,"film":"Roja","dist":0.287}],"profile":[0.27,0.58,0.3,0.72,0.22,0.19],"ep":{"t":"1998 (Part 2: 1947 Earth)","u":"https://www.buzzsprout.com/2289931/episodes/18347210-1998-part-2-1947-earth"}},{"id":1,"slug":"restless-acoustic","name":"Restless Acoustic","blurb":"Bliss is within reach, but the stomach is hungry still.","songs":[{"t":"Agar Tum Saath Ho","disp":"Agar Tum Saath Ho","a":"Tamasha (soundtrack) (Hindi)","y":2015,"l":"Hindi","k":null,"p":null,"d":1,"film":"Tamasha","dist":0.522},{"t":"Nenjukkule","disp":"Nenjukkule","a":"Kadal (Tamil)","y":2012,"l":"Tamil","k":null,"p":"7FEWG1bL31YAcnxJQvxJJO","d":1,"film":"Kadal","dist":0.491},{"t":"Ae Ajnabi","disp":"Ae Ajnabi","a":"Dil Se... (Hindi)","y":1998,"l":"Hindi","k":null,"p":"1usJKPPaZ3J5XZFai2x98X","d":1,"film":"Dil Se...","dist":0.404},{"t":"Luka Chuppi","disp":"Luka Chuppi","a":"Rang De Basanti (Hindi)","y":2005,"l":"Hindi","k":null,"p":"500H9ENeR5AYbKU1ScK6ME","d":1,"film":"Rang De Basanti","dist":0.46},{"t":"Yeh Jo Des Hai Tera","disp":"Yeh Jo Des Hai Tera","a":"Swades (Hindi)","y":2004,"l":"Hindi","k":null,"p":"65fbHxPPnRGPXaGN3PtpXd","d":1,"film":"Swades","dist":0.482}],"profile":[0.3,0.4,0.29,0.78,0.3,0.78],"ep":{"t":"Cockroaches x A R Rahman: The Collab No One Saw Coming","u":"https://www.buzzsprout.com/2289931/episodes/19588118-cockroaches-x-a-r-rahman-the-collab-no-one-saw-coming"}},{"id":2,"slug":"a-quiet-dance","name":"A Quiet Dance","blurb":"The feet are keeping beat, the heart is full.","songs":[{"t":"Dil Se Re","disp":"Dil Se Re","a":"Dil Se... (Hindi)","y":1998,"l":"Hindi","k":null,"p":"30yySOIXHZYx94sLAySy2j","d":1,"film":"Dil Se...","dist":0.555},{"t":"Kehna Hi Kya","disp":"Kehna Hi Kya","a":"Bombay (Hindi)","y":1994,"l":"Hindi","k":null,"p":null,"d":1,"film":"Bombay","dist":0.275},{"t":"Munbe Vaa","disp":"Munbe Vaa","a":"Sillunu Oru Kaadhal / Nuvvu Nenu Prema (Tamil)","y":2006,"l":"Tamil","k":null,"p":null,"d":1,"film":"Sillunu Oru Kaadhal / Nuvvu Nenu Prema","dist":0.351},{"t":"Barso Re","disp":"Barso Re","a":"Guru (Hindi)","y":2006,"l":"Hindi","k":null,"p":"32DWojMZeZebVrfBkhAkKy","d":1,"film":"Guru","dist":0.319},{"t":"Sarsariya","disp":"Sarsariya","a":"Mohenjo Daro (Hindi)","y":2016,"l":"Hindi","k":null,"p":"6M6FW26eN6Dfbd7muvlNaH","d":1,"film":"Mohenjo Daro","dist":0.314}],"profile":[0.39,0.72,0.44,0.47,0.7,0.66],"ep":{"t":"1995 (Part 1)","u":"https://www.buzzsprout.com/2289931/episodes/15459654-1995-part-1"}},{"id":3,"slug":"the-big-groove","name":"The Big Groove","blurb":"The groove kicks in.","songs":[{"t":"Chaiyya Chaiyya","disp":"Chaiyya Chaiyya","a":"Dil Se... (Telugu)","y":1998,"l":"Telugu","k":null,"p":"5H4rKylLnO8KrmdXTRhj5s","d":1,"film":"Dil Se...","dist":0.274},{"t":"Antha Arabic Kadaloram (Humma Humma)","disp":"Humma Humma","a":"Bombay (Tamil)","y":1994,"l":"Tamil","k":null,"p":null,"d":1,"film":"Bombay","dist":0.527},{"t":"Urvashi Urvashi","disp":"Urvashi Urvashi","a":"Kaadhalan (Hindi)","y":1994,"l":"Hindi","k":null,"p":null,"d":1,"film":"Kaadhalan","dist":0.257},{"t":"Hosanna","disp":"Hosanna","a":"Ekk Deewana Tha (Hindi)","y":2011,"l":"Hindi","k":null,"p":"5NChQ2tXB9q9D8kdkLTWOL","d":1,"film":"Ekk Deewana Tha","dist":0.413},{"t":"Masakali","disp":"Masakali","a":"Delhi-6 (Hindi)","y":2009,"l":"Hindi","k":null,"p":"5iyNH1Dmxif1k4Nl1gMeuh","d":1,"film":"Delhi-6","dist":0.401}],"profile":[0.64,0.32,0.6,0.38,0.37,0.27],"ep":{"t":"1998 (Part 1: Dil Se)","u":"https://www.buzzsprout.com/2289931/episodes/18174129-1998-part-1-dil-se"}},{"id":4,"slug":"the-big-indian-groove","name":"The Big Indian Groove","blurb":"The groove kicks in, with a distinct Indian/folk twist.","songs":[{"t":"Rang De Basanti","disp":"Rang De Basanti","a":"Rang De Basanti (Hindi)","y":2005,"l":"Hindi","k":null,"p":"1SdFBc40uBU5Pqylo05VIC","d":1,"film":"Rang De Basanti","dist":0.418},{"t":"Simtaangaran","disp":"Simtaangaran","a":"Sarkar (Tamil)","y":2018,"l":"Tamil","k":null,"p":"5wAhrduRLWFLI3stVpoMV2","d":1,"film":"Sarkar","dist":0.283},{"t":"Aalaporaan Thamizhan","disp":"Aalaporaan Thamizhan","a":"Mersal (Tamil)","y":2017,"l":"Tamil","k":null,"p":"1CjXSN6vgWmniOCEycVFdN","d":1,"film":"Mersal","dist":0.341},{"t":"Ay Sakhi","disp":"Ay Sakhi","a":"Raanjhanaa (Hindi)","y":2013,"l":"Hindi","k":null,"p":"36XptTfNQ6kO9cN1Cp709V","d":1,"film":"Raanjhanaa","dist":0.295},{"t":"Patakha Guddi (Female Version)","disp":"Patakha Guddi","a":"Highway (Hindi)","y":2014,"l":"Hindi","k":null,"p":"7jpmNt5iCtSdXuT1xEGp8O","d":1,"film":"Highway","dist":0.441}],"profile":[0.75,0.78,0.76,0.32,0.71,0.54],"ep":{"t":"1995 (Part 2)","u":"https://www.buzzsprout.com/2289931/episodes/15560834-1995-part-2"}},{"id":5,"slug":"bright-lights","name":"Bright Lights","blurb":"Everything turned up: bright, loud and busy.","songs":[{"t":"Jai Ho (song)","disp":"Jai Ho","a":"Slumdog Millionaire: Music from the Motion Picture (English)","y":2008,"l":"English","k":null,"p":null,"d":1,"film":"Slumdog Millionaire","dist":0.507},{"t":"Kya Kare Kya Na Kare","disp":"Kya Kare Kya Na Kare","a":"Rangeela (Hindi)","y":1995,"l":"Hindi","k":null,"p":"0Bm14A0WmERM5WnY9ll9YW","d":1,"film":"Rangeela","dist":0.294},{"t":"Jiya Jale","disp":"Jiya Jale","a":"Dil Se... (Hindi)","y":1998,"l":"Hindi","k":null,"p":"16W3Eqvgh4Sl84RoHZYnNV","d":1,"film":"Dil Se...","dist":0.416},{"t":"Ramta Jogi","disp":"Ramta Jogi","a":"Taal (Hindi)","y":1999,"l":"Hindi","k":null,"p":"2fsPrE2NYiHOHPMuWbjvTj","d":1,"film":"Taal","dist":0.414},{"t":"Main Parwaana","disp":"Main Parwaana","a":"Pippa (Hindi)","y":2023,"l":"Hindi","k":null,"p":"00IBeiKNG6sFuK2QkQbhNo","d":1,"film":"Pippa","dist":0.325}],"profile":[0.76,0.27,0.73,0.26,0.74,0.68],"ep":{"t":"1996","u":"https://www.buzzsprout.com/2289931/episodes/16763025-1996"}}],"matchups":[[0,5],[3,1],[0,2],[3,4],[2,1],[4,5]],"situations":[{"q":"Headphones or dance floor?","a":["Headphones",[0,1,2]],"b":["Dance floor",[3,4,5]]},{"q":"Violin or synth?","a":["Violin",[0,2,4]],"b":["Synth",[1,3,5]]}],"axes":["Energy","Microtonal","Brightness","Acousticness","Rhythm","Tempo"]};
+var state;
+function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
+function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function slug(s) { return (s.t + '-' + s.a + '-' + s.y).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + (s.k ? '-' + s.k : ''); }
+function listenUrl(s) { return s.p ? 'https://open.spotify.com/track/' + s.p : 'https://www.youtube.com/results?search_query=' + encodeURIComponent(s.t + ' ' + s.film + ' AR Rahman'); }
+function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+function track(what) { try { if (window.goatcounter && goatcounter.count) goatcounter.count({ path: 'quiz/' + what, title: what, event: true }); } catch (e) {} }
+var root = document.getElementById('qz');
+
+function start() {
+  state = { i: 0, score: [0, 0, 0, 0, 0, 0], lastSong: [-1, -1, -1, -1, -1, -1], answered: 0, skipped: 0, decks: Q.archetypes.map(function (a) { return shuffle(a.songs); }), side: {} };
+  track('start');
+  question();
+}
+function intro() {
+  root.innerHTML = '';
+  var k = el('a', 'qz-kicker', 'From the Brothers in Music podcast'); k.href = 'index.html#podcast'; root.appendChild(k);
+  root.appendChild(el('h1', null, 'Which Rahman are you?'));
+  root.appendChild(el('p', 'lead', 'Eight taps. Six pairs of songs and two quick choices, and we tell you which of the six kinds of Rahman sound is yours. The six kinds come from the audio of ' + '1,568' + ' songs; the taste is all you.'));
+  var b = el('button', 'qz-btn primary', 'Start &rarr;'); b.type = 'button'; b.addEventListener('click', start); root.appendChild(b);
+  root.appendChild(el('p', 'qz-note', 'Takes under a minute. No sign-up, nothing stored.'));
+}
+function progress() {
+  var p = el('div', 'qz-progress'); var done = state.i;
+  p.innerHTML = '<span>' + (done + 1) + ' / 8</span><div class="qz-bar"><b style="width:' + Math.round(done / 8 * 100) + '%"></b></div>';
+  return p;
+}
+function draw(g, used) {
+  // next unused song from archetype g's shuffled deck (used = index already shown this question)
+  var deck = state.decks[g]; var key = 'q' + state.i + 'g' + g;
+  if (state.side[key] == null) state.side[key] = 0; else state.side[key] += 1;
+  var n = state.side[key];
+  return n < deck.length ? { song: deck[n], idx: n, left: deck.length - 1 - n } : null;
+}
+function songCard(g, pick, onPick, onSwap) {
+  var s = pick.song;
+  var card = el('div', 'qz-opt fade');
+  var top = el('div', null, '<div class="t">' + esc(s.disp || s.t) + '</div><div class="m"><b>' + esc(s.film) + '</b> (' + s.y + ') &middot; ' + esc(s.l) + '</div>');
+  card.appendChild(top);
+  var sub = el('div', 'qz-sub');
+  var play = el('a', null, '&#9654; hear it'); play.href = listenUrl(s); play.target = '_blank'; play.rel = 'noopener'; play.addEventListener('click', function (e) { e.stopPropagation(); });
+  sub.appendChild(play);
+  if (pick.left > 0) { var sw = el('button', null, "Don't know this one &#8635;"); sw.type = 'button'; sw.addEventListener('click', function (e) { e.stopPropagation(); onSwap(); }); sub.appendChild(sw); }
+  else sub.appendChild(el('span', null, ''));
+  card.appendChild(sub);
+  card.setAttribute('role', 'button'); card.tabIndex = 0;
+  card.addEventListener('click', onPick);
+  card.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onPick(); } });
+  return card;
+}
+function question() {
+  root.innerHTML = '';
+  if (state.i >= 8) return result();
+  root.appendChild(progress());
+  if (state.i < 6) {
+    var m = Q.matchups[state.i], ga = m[0], gb = m[1];
+    root.appendChild(el('div', 'qz-q', 'Pick one.'));
+    var opts = el('div', 'qz-opts'); root.appendChild(opts);
+    var picks = [draw(ga), draw(gb)];
+    function render() {
+      opts.innerHTML = '';
+      [ga, gb].forEach(function (g, side) {
+        var pk = picks[side];
+        if (!pk) { opts.appendChild(el('div', 'qz-opt situation', '<div class="m">No more songs on this side.</div>')); return; }
+        opts.appendChild(songCard(g, pk, function () { state.score[g] += 2; state.lastSong[g] = state.i; state.answered++; state.i++; question(); },
+          function () { picks[side] = draw(g); render(); }));
+      });
+    }
+    render();
+    var sk = el('div', 'qz-skip', '<button type="button">Skip this question</button>');
+    sk.querySelector('button').addEventListener('click', function () { state.skipped++; state.i++; question(); });
+    root.appendChild(sk);
+  } else {
+    var s = Q.situations[state.i - 6];
+    root.appendChild(el('div', 'qz-q', esc(s.q)));
+    var o = el('div', 'qz-opts'); root.appendChild(o);
+    [s.a, s.b].forEach(function (opt) {
+      var c = el('button', 'qz-opt situation fade', '<div class="t">' + esc(opt[0]) + '</div>'); c.type = 'button';
+      c.addEventListener('click', function () { opt[1].forEach(function (g) { state.score[g] += 1; }); state.answered++; state.i++; question(); });
+      o.appendChild(c);
+    });
+  }
+}
+function winner() {
+  var best = -1, bi = 0;
+  for (var g = 0; g < 6; g++) {
+    var sc = state.score[g];
+    if (sc > best || (sc === best && state.lastSong[g] > state.lastSong[bi])) { best = sc; bi = g; }
+  }
+  return bi;
+}
+function radarSVG(profile) {
+  var N = 6, R = 80, cx = 110, cy = 110, pts = function (vals) { return vals.map(function (v, i) { var a = -Math.PI / 2 + i * 2 * Math.PI / N; return (cx + Math.cos(a) * R * v).toFixed(1) + ',' + (cy + Math.sin(a) * R * v).toFixed(1); }).join(' '); };
+  var h = '<svg viewBox="0 0 220 220" role="img" aria-label="Sound profile radar">';
+  [0.25, 0.5, 0.75, 1].forEach(function (r) { h += '<polygon points="' + pts([r, r, r, r, r, r]) + '" fill="none" stroke="rgba(26,26,46,0.08)"/>'; });
+  for (var i = 0; i < N; i++) { var a = -Math.PI / 2 + i * 2 * Math.PI / N; h += '<line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + Math.cos(a) * R).toFixed(1) + '" y2="' + (cy + Math.sin(a) * R).toFixed(1) + '" stroke="rgba(26,26,46,0.08)"/>'; }
+  h += '<polygon points="' + pts([0.5, 0.5, 0.5, 0.5, 0.5, 0.5]) + '" fill="none" stroke="#1A1A2E" stroke-width="1.5" stroke-dasharray="4 3"/>';
+  h += '<polygon points="' + pts(profile) + '" fill="rgba(192,32,104,0.18)" stroke="#C02068" stroke-width="2.5"/>';
+  for (var j = 0; j < N; j++) { var b = -Math.PI / 2 + j * 2 * Math.PI / N, lx = cx + Math.cos(b) * (R + 18), ly = cy + Math.sin(b) * (R + 18); h += '<text x="' + lx.toFixed(1) + '" y="' + ly.toFixed(1) + '" font-size="10" fill="#555570" text-anchor="middle" dominant-baseline="middle">' + Q.axes[j] + '</text>'; }
+  return h + '</svg>';
+}
+function result(forced) {
+  var g = forced != null ? forced : winner(); var a = Q.archetypes[g];
+  root.innerHTML = '';
+  var box = el('div', 'qz-result fade'); var inn = el('div', 'in'); box.appendChild(inn); root.appendChild(box);
+  var h = '<div class="k">' + (forced != null ? 'A Rahman type' : 'You are') + '</div><h2>' + esc(a.name) + '</h2><div class="blurb">' + esc(a.blurb) + '</div>';
+  h += '<ul class="qz-songs">' + a.songs.slice(0, 3).map(function (s) {
+    return '<li><div><div class="st">' + esc(s.disp || s.t) + '</div><div class="sm">' + esc(s.film) + ' (' + s.y + ')</div></div><div class="links"><a href="' + listenUrl(s) + '" target="_blank" rel="noopener">&#9654; Listen</a>' + (s.d ? '<a href="indian_audio_map.html#' + slug(s) + '">DNA</a>' : '<a href="song_database.html#' + slug(s) + '">Song</a>') + '</div></li>';
+  }).join('') + '</ul>';
+  h += '<div class="qz-radar">' + radarSVG(a.profile) + '<div class="legend"><i style="background:#C02068"></i>This sound<br><i style="background:#1A1A2E;opacity:.7"></i>Catalogue average<br><span style="font-size:12px;color:#888898">Six axes, percentile within the catalogue; microtonal within the song’s decade.</span></div></div>';
+  h += '<div class="qz-pod"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#7B2D8E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px" aria-hidden="true"><path d="M4 14v-3a8 8 0 0 1 16 0v3"/><rect x="3" y="14" width="4" height="6" rx="1.5"/><rect x="17" y="14" width="4" height="6" rx="1.5"/></svg>Hear us on this sound: <a href="' + a.ep.u + '" target="_blank" rel="noopener">' + esc(a.ep.t) + '</a></div>';
+  h += '<div class="qz-actions"><button type="button" class="qz-btn primary small" data-act="share">Share</button><button type="button" class="qz-btn ghost small" data-act="again">&#8635; Take it again</button><a class="qz-btn ghost small" href="index.html">Pick a song by mood</a></div><div class="qz-toast"></div>';
+  if (forced == null && state.skipped) h += '<div class="qz-note">Based on ' + state.answered + ' of 8 questions.</div>';
+  inn.innerHTML = h;
+  inn.querySelector('[data-act="again"]').addEventListener('click', function () { start(); window.scrollTo(0, 0); });
+  inn.querySelector('[data-act="share"]').addEventListener('click', function () {
+    var url = location.origin + location.pathname.replace(/quiz\.html$/, '') + 'quiz/' + a.slug + '.html';
+    var text = 'I am ' + a.name + ' — which Rahman are you?';
+    var toast = inn.querySelector('.qz-toast'); track('share');
+    if (navigator.share) { navigator.share({ title: 'Which Rahman are you?', text: text, url: url }).catch(function () {}); return; }
+    if (navigator.clipboard) navigator.clipboard.writeText(url).then(function () { toast.textContent = 'Link copied.'; }, function () { toast.textContent = url; });
+    else toast.textContent = url;
+  });
+  if (forced == null) track('result/' + a.slug);
+  window.scrollTo(0, 0);
+}
+(function init() {
+  var q = /[?&]r=([a-z-]+)/.exec(location.search);
+  if (q) { var idx = Q.archetypes.map(function (a) { return a.slug; }).indexOf(q[1]); if (idx >= 0) { state = { i: 8, score: [0,0,0,0,0,0], lastSong: [-1,-1,-1,-1,-1,-1], answered: 8, skipped: 0 }; result(idx); var tb = el('p', 'qz-note', ''); return; } }
+  intro();
+})();
+</script>
+
+<style>
+#feedback-btn {
+  position: fixed; bottom: 52px; right: 16px; z-index: 9999;
+  background: #7B2D8E; color: #fff; border: none; border-radius: 50%;
+  width: 44px; height: 44px; font-size: 20px; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2); transition: transform 0.2s;
+  font-family: system-ui, sans-serif; line-height: 1;
+}
+#feedback-btn:hover { transform: scale(1.1); }
+#feedback-panel {
+  display: none; position: fixed; bottom: 104px; right: 16px; z-index: 9999;
+  background: #FAFAFE; border: 1px solid rgba(26,26,46,0.15);
+  border-radius: 12px; padding: 20px; width: 300px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+#feedback-panel.open { display: block; }
+#feedback-panel h3 {
+  margin: 0 0 12px; font-size: 15px; color: #1A1A2E; font-weight: 700;
+}
+#feedback-panel textarea {
+  width: 100%; height: 80px; border: 1px solid rgba(26,26,46,0.15);
+  border-radius: 8px; padding: 10px; font-size: 13px; resize: vertical;
+  font-family: inherit; background: #fff; color: #1A1A2E;
+}
+#feedback-panel textarea:focus { outline: 2px solid #7B2D8E; border-color: transparent; }
+#feedback-panel input[type=email] {
+  width: 100%; border: 1px solid rgba(26,26,46,0.15);
+  border-radius: 8px; padding: 8px 10px; font-size: 13px; margin-top: 8px;
+  font-family: inherit; background: #fff; color: #1A1A2E;
+}
+#feedback-panel input[type=email]:focus { outline: 2px solid #7B2D8E; border-color: transparent; }
+#feedback-panel .fb-hint { font-size: 11px; color: #888898; margin-top: 4px; }
+#feedback-panel button[type=submit] {
+  margin-top: 12px; background: #7B2D8E; color: #fff; border: none;
+  border-radius: 8px; padding: 10px 20px; font-size: 13px; font-weight: 600;
+  cursor: pointer; width: 100%; transition: background 0.2s;
+}
+#feedback-panel button[type=submit]:hover { background: #C02068; }
+#feedback-panel .fb-thanks {
+  text-align: center; padding: 20px 0; font-size: 14px; color: #1A1A2E;
+}
+@media (max-width: 480px) {
+  #feedback-panel { width: calc(100vw - 32px); right: 16px; bottom: 96px; }
+  #feedback-btn { bottom: 52px; right: 12px; }
+}
+</style>
+
+<button id="feedback-btn" onclick="toggleFeedback()" aria-label="Send feedback" title="Send feedback">&#9993;</button>
+<div id="feedback-panel">
+  <form id="feedback-form" action="https://formspree.io/f/xojkalry" method="POST">
+    <h3>Send us feedback</h3>
+    <textarea name="message" placeholder="What did you like? What could be better?" required></textarea>
+    <input type="email" name="_replyto" placeholder="Email (optional)">
+    <div class="fb-hint">We read every message.</div>
+    <input type="hidden" name="_subject" value="Rahman Viz Feedback">
+    <input type="hidden" name="page" id="fb-page">
+    <button type="submit">Send Feedback</button>
+  </form>
+</div>
+<script>
+function toggleFeedback() {
+  var p = document.getElementById('feedback-panel');
+  p.classList.toggle('open');
+  document.getElementById('fb-page').value = location.pathname;
+}
+document.getElementById('feedback-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  var form = this;
+  fetch(form.action, {
+    method: 'POST',
+    body: new FormData(form),
+    headers: { 'Accept': 'application/json' }
+  }).then(function(r) {
+    if (r.ok) {
+      form.innerHTML = '<div class="fb-thanks">Thanks for your feedback!</div>';
+      setTimeout(function() {
+        document.getElementById('feedback-panel').classList.remove('open');
+      }, 2000);
+    }
+  });
+});
+document.addEventListener('click', function(e) {
+  var panel = document.getElementById('feedback-panel');
+  var btn = document.getElementById('feedback-btn');
+  if (panel.classList.contains('open') && !panel.contains(e.target) && e.target !== btn) {
+    panel.classList.remove('open');
+  }
+});
+</script>
+
+<script data-goatcounter="https://brothersinmusic.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
