@@ -5,8 +5,8 @@
   var N = 1590;
   var EPISODES = [["Cockroaches x A R Rahman: The Collab No One Saw Coming", "https://www.buzzsprout.com/2289931/episodes/19588118-cockroaches-x-a-r-rahman-the-collab-no-one-saw-coming"], ["1999 (Part 1)", "https://www.buzzsprout.com/2289931/episodes/18530972-1999-part-1"], ["1998 (Part 2: 1947 Earth)", "https://www.buzzsprout.com/2289931/episodes/18347210-1998-part-2-1947-earth"], ["1998 (Part 1: Dil Se)", "https://www.buzzsprout.com/2289931/episodes/18174129-1998-part-1-dil-se"], ["1997: Vande Mataram", "https://www.buzzsprout.com/2289931/episodes/17683835-1997-vande-mataram"], ["1997 (Part 2)", "https://www.buzzsprout.com/2289931/episodes/17407780-1997-part-2"], ["1997 (Part 1)", "https://www.buzzsprout.com/2289931/episodes/17261998-1997-part-1"], ["1996", "https://www.buzzsprout.com/2289931/episodes/16763025-1996"], ["1995 (Part 2)", "https://www.buzzsprout.com/2289931/episodes/15560834-1995-part-2"], ["1995 (Part 1)", "https://www.buzzsprout.com/2289931/episodes/15459654-1995-part-1"], ["1994 (Part 2)", "https://www.buzzsprout.com/2289931/episodes/15011254-1994-part-2"], ["1994 (Part 1)", "https://www.buzzsprout.com/2289931/episodes/14744910-1994-part-1"], ["1993", "https://www.buzzsprout.com/2289931/episodes/14256448-1993"], ["1992", "https://www.buzzsprout.com/2289931/episodes/14153075-1992"]];   // [title, url], newest first; songs reference them by index
   var loading = null;
-  var MIN_MATCHES = 4;
-  var LANGS = ['Tamil', 'Hindi', 'Telugu', 'Malayalam'];
+  var MIN_MATCHES = 3;
+  var LANGS = ['Tamil', 'Hindi', 'Other'];   // Other = everything that is not Tamil or Hindi
   var ERAS = [['1990s', 1990, 1999], ['2000s', 2000, 2009], ['2010s', 2010, 2019], ['2020s', 2020, 2099]];
   // bands on the catalogue percentile: low < 0.4, mid 0.4-0.7, high > 0.7
   var MOOD = [['Dark & tender', 0, 0.4], ['In between', 0.4, 0.7], ['Bright & joyful', 0.7, 1.01]];
@@ -206,7 +206,8 @@ text-decoration:none;cursor:pointer;font-family:inherit;border:1.5px solid trans
   function inBand(v, band) { return v >= band[1] && v < band[2]; }
   function matches(song, s, widen) {
     var e = song.f[0], v = song.f[2];
-    if (s.lang >= 0 && song.l !== LANGS[s.lang]) return false;
+    if (s.lang === 2) { if (song.l === 'Tamil' || song.l === 'Hindi') return false; }
+    else if (s.lang >= 0 && song.l !== LANGS[s.lang]) return false;
     if (s.era >= 0 && (song.y < ERAS[s.era][1] || song.y > ERAS[s.era][2])) return false;
     if (s.mood >= 0) {
       var ok = inBand(v, MOOD[s.mood]);
@@ -220,13 +221,17 @@ text-decoration:none;cursor:pointer;font-family:inherit;border:1.5px solid trans
     }
     return true;
   }
+  // Decade and language are what people notice, so they hold as long as anything exists
+  // for them; mood and energy loosen first (neighbouring band, then dropped).
   function candidates() {
-    var steps = [
-      [state, false, ''],
-      [{ mood: state.mood, energy: state.energy, lang: state.lang, era: -1 }, false, 'Nothing quite fits that era, so here is the closest match from another decade.'],
-      [{ mood: state.mood, energy: state.energy, lang: state.lang, era: -1 }, true, 'Closest match: we loosened the mood a little.'],
-      [{ mood: state.mood, energy: state.energy, lang: -1, era: -1 }, true, 'Closest match: that mood is rare in that language, so this one is from another.'],
-      [{ mood: -1, energy: -1, lang: -1, era: -1 }, true, 'A wild card.']
+    var st = state, steps = [
+      [st, false, ''],
+      [st, true, 'Closest match: we loosened the mood a little.'],
+      [{ mood: -1, energy: -1, lang: st.lang, era: st.era }, false, 'Closest match: nothing from that decade and language fits that mood exactly, so here is one that keeps the decade and language.'],
+      [{ mood: st.mood, energy: st.energy, lang: -1, era: st.era }, true, 'Closest match: that mood is rare in that language, so this one is from the same decade in another language.'],
+      [{ mood: -1, energy: -1, lang: -1, era: st.era }, false, 'Closest match from that decade.'],
+      [{ mood: st.mood, energy: st.energy, lang: st.lang, era: -1 }, true, 'Nothing from that decade fits at all, so here is the closest match from another decade.'],
+      [{ mood: -1, energy: -1, lang: -1, era: -1 }, false, 'A wild card.']
     ];
     for (var i = 0; i < steps.length; i++) {
       var list = POOL.filter(function (s) { return matches(s, steps[i][0], steps[i][1]); });
