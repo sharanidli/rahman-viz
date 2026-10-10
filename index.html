@@ -314,7 +314,9 @@
   .hero .stats { margin-top: 28px; gap: 24px; }
   .hero .stat-num { font-size: 22px; }
 
-  .doors { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 8px 0 40px; }
+  .doors { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 8px 0 40px; }
+  .door.quiz { background: rgba(192,32,104,0.06); border-color: rgba(192,32,104,0.18); }
+  @media (max-width: 900px) { .doors { grid-template-columns: repeat(2, 1fr); } }
   .door {
     display: block; text-decoration: none; color: inherit; background: #fff;
     border: 1px solid rgba(26,26,46,0.10); border-radius: 14px; padding: 22px 20px 18px;
@@ -391,8 +393,7 @@
   </p>
   <!-- Song of the Day + mood picker: markup, styles and data come from picker.js (build_picker.py) -->
   <div id="song-of-the-day" class="sotd" aria-live="polite"></div>
-  <p class="pick-toggle"><button type="button" id="pick-toggle-btn">Want a different one? Pick by mood &darr;</button>
-     <span class="pick-sep">&middot;</span> <a class="quiz-link" href="quiz.html">Which Rahman are you? Take the quiz &rarr;</a></p>
+  <p class="pick-toggle"><button type="button" id="pick-toggle-btn">Want a different one? Pick by mood &darr;</button></p>
   <div id="rahman-picker" hidden></div>
   <!-- Stats: manually updated (see PROJECT_LOG.md for current counts) -->
   <div class="stats">
@@ -406,8 +407,14 @@
 
 <div class="content">
 
-  <!-- Three doors -->
+  <!-- Four doors -->
   <div class="doors">
+    <a class="door quiz" href="quiz.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M9.3 9.2a2.8 2.8 0 1 1 3.9 2.6c-.8.4-1.2 1-1.2 1.9v.5"/><circle cx="12" cy="17.3" r=".6" fill="currentColor"/></svg>
+      <h3>Which Rahman are you?</h3>
+      <p>Eight taps, six kinds of Rahman sound. Find yours, then share it.</p>
+      <span class="door-meta">Quiz &middot; under a minute</span>
+    </a>
     <a class="door" href="racing_bar.html">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3.5M8.5 21.5h7"/></svg>
       <h3>Who sings for Rahman?</h3>
