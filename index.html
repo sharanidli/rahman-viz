@@ -342,6 +342,16 @@
   .plink.primary { background: #C02068; border-color: #C02068; color: #fff; }
   .plink:hover { border-color: #C02068; color: #C02068; }
   .plink.primary:hover { background: #7B2D8E; border-color: #7B2D8E; color: #fff; }
+  .episodes-head { margin-top: 16px; font-size: 11px; font-weight: 700; color: #888898; text-transform: uppercase; letter-spacing: .5px; }
+  .episodes { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 8px; }
+  .episodes a {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+    text-decoration: none; color: #1A1A2E; background: #fff; border: 1px solid rgba(26,26,46,0.10);
+    border-radius: 10px; padding: 10px 12px; font-size: 13px;
+  }
+  .episodes a:hover { border-color: #C02068; }
+  .episodes .ep-title { font-weight: 700; }
+  .episodes .ep-meta { color: #888898; white-space: nowrap; font-size: 12px; }
   .explore-head { margin-top: 8px; }
   @media (max-width: 760px) {
     .doors { grid-template-columns: 1fr; }
@@ -427,7 +437,14 @@
         <a class="plink" href="https://podcasts.apple.com/us/podcast/brothers-in-music-the-ar-rahman-edition/id1721595218" target="_blank" rel="noopener">Apple Podcasts</a>
         <a class="plink" href="https://www.buzzsprout.com/2289931" target="_blank" rel="noopener">All episodes</a>
       </div>
-      <!-- PODCAST_EPISODES: latest episodes from the feed go here (phase 2) -->
+      <!-- PODCAST_EPISODES -->
+      <div class="episodes-head">Latest episodes</div>
+      <ul class="episodes">
+    <li><a href="https://www.buzzsprout.com/2289931/episodes/19588118-cockroaches-x-a-r-rahman-the-collab-no-one-saw-coming" target="_blank" rel="noopener"><span class="ep-title">Cockroaches x A R Rahman: The Collab No One Saw Coming</span><span class="ep-meta">3 Aug 2026 &middot; 48 min</span></a></li>
+    <li><a href="https://www.buzzsprout.com/2289931/episodes/18530972-1999-part-1" target="_blank" rel="noopener"><span class="ep-title">1999 (Part 1)</span><span class="ep-meta">19 Jan 2026 &middot; 102 min</span></a></li>
+    <li><a href="https://www.buzzsprout.com/2289931/episodes/18347210-1998-part-2-1947-earth" target="_blank" rel="noopener"><span class="ep-title">1998 (Part 2: 1947 Earth)</span><span class="ep-meta">13 Dec 2025 &middot; 34 min</span></a></li>
+      </ul>
+      <!-- /PODCAST_EPISODES -->
     </div>
   </section>
 

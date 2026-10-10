@@ -3,6 +3,7 @@
   // Song data lives in picker-data.json (or inline as window.__PICKER_DATA__ in the preview).
   var POOL = window.__PICKER_DATA__ || null;
   var N = 1590;
+  var EPISODES = [["Cockroaches x A R Rahman: The Collab No One Saw Coming", "https://www.buzzsprout.com/2289931/episodes/19588118-cockroaches-x-a-r-rahman-the-collab-no-one-saw-coming"], ["1999 (Part 1)", "https://www.buzzsprout.com/2289931/episodes/18530972-1999-part-1"], ["1998 (Part 2: 1947 Earth)", "https://www.buzzsprout.com/2289931/episodes/18347210-1998-part-2-1947-earth"], ["1998 (Part 1: Dil Se)", "https://www.buzzsprout.com/2289931/episodes/18174129-1998-part-1-dil-se"], ["1997: Vande Mataram", "https://www.buzzsprout.com/2289931/episodes/17683835-1997-vande-mataram"], ["1997 (Part 2)", "https://www.buzzsprout.com/2289931/episodes/17407780-1997-part-2"], ["1997 (Part 1)", "https://www.buzzsprout.com/2289931/episodes/17261998-1997-part-1"], ["1996", "https://www.buzzsprout.com/2289931/episodes/16763025-1996"], ["1995 (Part 2)", "https://www.buzzsprout.com/2289931/episodes/15560834-1995-part-2"], ["1995 (Part 1)", "https://www.buzzsprout.com/2289931/episodes/15459654-1995-part-1"], ["1994 (Part 2)", "https://www.buzzsprout.com/2289931/episodes/15011254-1994-part-2"], ["1994 (Part 1)", "https://www.buzzsprout.com/2289931/episodes/14744910-1994-part-1"], ["1993", "https://www.buzzsprout.com/2289931/episodes/14256448-1993"], ["1992", "https://www.buzzsprout.com/2289931/episodes/14153075-1992"]];   // [title, url], newest first; songs reference them by index
   var loading = null;
   var MIN_MATCHES = 4;
   var LANGS = ['Tamil', 'Hindi', 'Telugu', 'Malayalam'];
@@ -61,6 +62,7 @@ text-decoration:none;cursor:pointer;font-family:inherit;border:1.5px solid trans
 .pk-btn.ghost{background:#fff;color:#1A1A2E;border-color:rgba(26,26,46,0.18)}.pk-btn.ghost:hover{border-color:#C02068;color:#C02068}\
 #rahman-picker .pk-shuffle{font-size:22px;font-weight:700;color:#888898;min-height:36px;display:flex;align-items:center}\
 .pk-toast{font-size:12px;color:#7B2D8E;margin-top:8px;min-height:14px;word-break:break-all}\
+.pk-pod{font-size:13px;color:#555570;margin-top:10px;line-height:1.5}.pk-pod a{color:#7B2D8E;font-weight:600;text-decoration:none}.pk-pod a:hover{text-decoration:underline}\
 @media (max-width:480px){.sotd .sotd-inner{padding:18px 16px 16px}.sotd .sotd-title{font-size:28px}\
 #rahman-picker .pk-inner{padding:16px 14px 14px}#rahman-picker .pk-label{flex-basis:100%;margin-bottom:-2px}#rahman-picker .pk-title{font-size:25px}}\
 @media (prefers-reduced-motion:reduce){#rahman-picker .pk-result.show{animation:none}}';
@@ -94,6 +96,12 @@ text-decoration:none;cursor:pointer;font-family:inherit;border:1.5px solid trans
     if (bi < 0) return '';
     var hi = s.f[bi] >= 0.5, pct = Math.round((hi ? s.f[bi] : 1 - s.f[bi]) * 100);
     return (hi ? AXES[bi][0] : AXES[bi][1]) + ' ' + pct + '% of his songs.';
+  }
+  function podcastLine(s) {
+    if (!s.e || !s.e.length || !EPISODES.length) return '';
+    var links = s.e.map(function (i) { var e = EPISODES[i]; return e ? '<a href="' + e[1] + '" target="_blank" rel="noopener">' + esc(e[0]) + '</a>' : ''; }).filter(Boolean).join(' and ');
+    if (!links) return '';
+    return '<div class="pk-pod"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#7B2D8E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px" aria-hidden="true"><path d="M4 14v-3a8 8 0 0 1 16 0v3"/><rect x="3" y="14" width="4" height="6" rx="1.5"/><rect x="17" y="14" width="4" height="6" rx="1.5"/></svg>' + (s.ek === 'f' ? 'We talked about this film in ' + links + ' on the podcast.' : 'Our podcast episodes on ' + s.y + ': ' + links + '.') + '</div>';
   }
   function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
   function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
@@ -162,6 +170,7 @@ text-decoration:none;cursor:pointer;font-family:inherit;border:1.5px solid trans
       h += '<div class="sotd-meta"><b>' + esc(film(s)) + '</b> (' + s.y + ') &middot; ' + esc(s.l) + (s.s ? ' &middot; ' + esc(s.s) : '') + '</div>';
       var f = fact(s);
       if (f) h += '<div class="sotd-fact">' + esc(f) + '</div>';
+      h += podcastLine(s);
       h += actions(s, true, false) + '<div class="pk-toast"></div></div>';
       box.innerHTML = h;
       wireShare(box, s);
@@ -244,6 +253,7 @@ text-decoration:none;cursor:pointer;font-family:inherit;border:1.5px solid trans
     if (s.s) h += '<div class="pk-meta">' + esc(s.s) + '</div>';
     h += '<div class="pk-bars">' + bar('mood', 'dark', 'bright', s.f[2]) + bar('energy', 'soft', 'intense', s.f[0]) + '</div>';
     h += '<div class="pk-note">' + esc(note) + '</div>';
+    h += podcastLine(s);
     h += actions(s, true, true) + '<div class="pk-toast"></div>';
     resultEl.innerHTML = h;
     resultEl.classList.add('show');
